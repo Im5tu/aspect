@@ -1,0 +1,41 @@
+<Project>
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" Condition="Exists($([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../')))" />
+
+    <PropertyGroup>
+        <!-- Ensure that we get the intellisense in the correct places -->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <!-- pre-release packages get the label preview -->
+        <MinVerDefaultPreReleasePhase>preview</MinVerDefaultPreReleasePhase>
+        <!-- no need to run MinVer on debug builds -->
+        <MinVerSkip Condition="'$(Configuration)' == 'Debug'">true</MinVerSkip>
+    </PropertyGroup>
+
+    <Target Name="SetupProperties" BeforeTargets="Build">
+        <PropertyGroup>
+            <!--<PackageIconUrl>SET ME</PackageIconUrl>-->
+            <!-- NU5048: PackageIconUrl is no longer supported -->
+            <!-- NU5105: Ignore warning about semver -->
+            <NoWarn>$(NoWarn);NU5048;NU5105</NoWarn>
+            <!-- Ensure that the url to the repository is published as part of the package -->
+            <PublishRepositoryUrl>true</PublishRepositoryUrl>
+            <!-- Set the repository url on build if it's not set -->
+            <RepositoryUrl Condition="$(RepositoryUrl) == ''">$(PackageProjectUrl).git</RepositoryUrl>
+        </PropertyGroup>
+
+        <!-- Nuget packages -->
+        <PropertyGroup Condition="$(IsPackable) == 'true'">
+            <!-- If we are packable, generate a nuget package automagically -->
+            <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+            <!-- Embed source files that are not tracked by the source control manager in the PDB. -->
+            <EmbedUntrackedSources>true</EmbedUntrackedSources>
+            <!-- Ensure that pdb's can be added to nuget packages -->
+            <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+            <!-- Default to allowing source link -->
+            <EnableSourceLink Condition="$(EnableSourceLink) == ''">true</EnableSourceLink>
+            <!-- NUGET package output path -->
+            <PackageOutputPath>$(ArtifactRoot)artifacts/nupkgs</PackageOutputPath>
+            <!-- Always optimize in release mode -->
+            <Optimize Condition="$(Configuration) == 'Release'">true</Optimize>
+        </PropertyGroup>
+    </Target>
+</Project>

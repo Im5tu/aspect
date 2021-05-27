@@ -1,0 +1,28 @@
+# (REQUIRED)
+resource "AwsSecurityGroup" # Resource type that the policy is for
+
+# (OPTIONAL BLOCK)
+# Only include resources that match the following criteria
+# Without this block, all available resources from the role are available
+# Example: Include security groups that have egress ip's defined
+include {                                
+    #input.Type == "AWS.SecurityGroup"       # string supported operators: ==, !=
+                                            # numeric supported operators: >, >=, <=, <, ==, !=
+    #contains(input.Tags, 5)                # sample function call
+}
+
+# (OPTIONAL BLOCK)
+# From what is either available or matching the include block,
+# Remove any resources that don't match the following conditions
+# Example: Remove any security group with a specified tag
+exclude {
+    #input.Tags[_].Key == "ExcludeMe"
+}
+
+# (REQUIRED - must have at least 1 statement)
+# For each resource that we are going to process ()
+validate {
+    #input.EgressRules[_].IPV4Ranges[_].CIDR == "0.0.0.0/0"
+    #input.Type == "AWS.SecurityGroup"
+    input.Account.Id.Id == "123"
+}

@@ -1,0 +1,28 @@
+# editorconfig.org
+root = true
+
+[*]
+indent_size = 4
+indent_style = space
+tab_width = 4
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{cs,vb,fs}]
+dotnet_diagnostic.CA1012.severity = error       # Abstract types should not have public constructors
+dotnet_diagnostic.CA1815.severity = error       # Override equals and quality operators
+dotnet_diagnostic.CA1310.severity = error       # Don't depend on users locale for string comparisons
+dotnet_diagnostic.CA1816.severity = error       # Call GC.SuppresFinalize
+dotnet_diagnostic.CA1309.severity = error       # Use ordinal string comparison
+dotnet_diagnostic.CA1307.severity = error       # Explicitly pass in string comparison type
+dotnet_diagnostic.CA2007.severity = suggestion  # Consider adding .ConfigureAwait(false)
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.{lock,sh}]
+end_of_line = lf
+
+[*.sln]
+indent_style = tab

@@ -1,0 +1,21 @@
+<Project>
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" Condition="Exists($([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../')))" />
+
+    <!-- Global settings -->
+    <PropertyGroup>
+        <!-- Setup company specific information -->
+        <Authors>$(Company)</Authors>
+        <!-- Allow us to use all the latest goodness from all over -->
+        <LangVersion>Latest</LangVersion>
+        <!-- Enable nullable reference types -->
+        <Nullable>enable</Nullable>
+        <!-- Treat all warnings as errors -->
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <!-- The root for all of the artefacts -->
+        <ArtifactRoot>$(MSBuildThisFileDirectory)</ArtifactRoot>
+        <!-- Link the project URL so that we get the correct URL in NuGet Package Explorer etc. -->
+        <PackageProjectUrl>https://github.com/im5tu/aspect.git</PackageProjectUrl>
+        <!-- Set the repository root for other tasks -->
+        <RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
+    </PropertyGroup>
+</Project>

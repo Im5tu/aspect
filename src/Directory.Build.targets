@@ -1,0 +1,22 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" Condition="Exists($([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../')))" />
+
+  <ItemGroup>
+    <!-- These packages will be installed into every project -->
+    <!-- SourceLink allows you to jump debug a nuget package -->
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <!-- Minimal versioning without dependencies, see: https://github.com/adamralph/minver -->
+    <PackageReference Include="MinVer" Version="2.4.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <Target Name="ValidateNugetProperties" BeforeTargets="Compile" Condition="$(IsPackable) == 'true'">
+    <!-- Ensure that we have the package description set -->
+<!--    <Error Code="PKG001" Text="The Description property must be set on the project '$(MSBuildProjectName)'" Condition="$(Description) == ''"/>-->
+  </Target>
+</Project>

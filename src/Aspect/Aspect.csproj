@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Aspect.Policies\Aspect.Policies.csproj" />
+      <ProjectReference Include="..\Aspect.Providers.AWS\Aspect.Providers.AWS.csproj" />
+      <ProjectReference Include="..\Aspect.Providers.Azure\Aspect.Providers.Azure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    </ItemGroup>
+
+</Project>

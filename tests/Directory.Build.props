@@ -1,0 +1,10 @@
+<Project>
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" Condition="Exists($([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../')))" />
+
+    <PropertyGroup>
+        <!-- None of our test applications should be packable by default -->
+        <IsPackable>false</IsPackable>
+        <!-- Occassionally, we don't pick up test projects, so let's auto detect this -->
+        <IsTestProject Condition="$(MSBuildProjectName.EndsWith('Tests')) OR $(MSBuildProjectName.EndsWith('Test'))">true</IsTestProject>
+    </PropertyGroup>
+</Project>
