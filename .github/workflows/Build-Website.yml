@@ -10,11 +10,12 @@ on:
   pull_request:
 
 jobs:
-  weebsite-build:
+  website-build:
     name: Build Website
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     defaults:
       working-directory: ./docs
+
     steps:
       - uses: actions/checkout@v2
         with:
