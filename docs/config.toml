@@ -3,7 +3,7 @@ languageCode = "en-us"
 title = "Aspect"
 themesDir = "themes"
 theme = "hugo-whisper-theme"
-publishDir = "docs"
+publishDir = "public"
 
 [minify]
   minifyOutput = true
