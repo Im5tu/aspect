@@ -18,6 +18,10 @@
 # Mono auto generated files
 mono_crash.*
 
+# Hugo files
+docs/docs/
+docs/public/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
