@@ -1,9 +1,0 @@
-baseURL = "https://cloudaspect.app"
-languageCode = "en-us"
-title = "Aspect"
-themesDir = "themes"
-theme = "hugo-whisper-theme"
-publishDir = "docs"
-
-[minify]
-  minifyOutput = true
