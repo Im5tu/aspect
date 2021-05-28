@@ -12,6 +12,8 @@ jobs:
   weebsite-build:
     name: Build Website
     runs-on: ubuntu-18.04
+    defaults:
+      working-directory: ./docs
     steps:
       - uses: actions/checkout@v2
         with:
