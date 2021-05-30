@@ -5,7 +5,7 @@ ARG app
 ARG Version
 COPY . /app/
 WORKDIR /app/
-RUN dotnet publish "/app/${app}/${app}.csproj" -c Release -r alpine-x64 /p:Version=${Version}
+RUN dotnet publish "/app/src/${app}/${app}.csproj" -c Release -r alpine-x64 /p:Version=${Version}
 
 FROM mcr.microsoft.com/dotnet/runtime-deps:5.0-alpine
 ARG app
