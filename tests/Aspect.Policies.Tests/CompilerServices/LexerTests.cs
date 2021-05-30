@@ -303,6 +303,7 @@ validate";
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseValidationSection()
         {
+            var lineEndingLength = Environment.NewLine.Length;
             var policy = @"validate {
     input.Type == ""AWS.SecurityGroup""
 }";
@@ -314,7 +315,7 @@ validate";
             // validate {
             ValidateToken<IdentifierSyntaxToken>(tokens[i++], 1, 1, 8);
             ValidateToken<BraceSyntaxToken>(tokens[i++], 10, 1);
-            ValidateToken<LineEndingSyntaxToken>(tokens[i++], 11, 1, 2);
+            ValidateToken<LineEndingSyntaxToken>(tokens[i++], 11, 1, lineEndingLength);
 
             // input.Type == ""AWS.SecurityGroup""
             ValidateToken<IdentifierSyntaxToken>(tokens[i++], 5, 2, 5, t => t.Identifier.Should().Be("input"));
@@ -323,7 +324,7 @@ validate";
             ValidateToken<EqualsSyntaxToken>(tokens[i++], 16, 2, 2);
             ValidateToken<QuotedIdentifierSyntaxToken>(tokens[i++], 19, 2, 19,
                 t => t.ParsedValue.Should().Be("AWS.SecurityGroup"));
-            ValidateToken<LineEndingSyntaxToken>(tokens[i++], 38, 2, 2);
+            ValidateToken<LineEndingSyntaxToken>(tokens[i++], 38, 2, lineEndingLength);
 
             // }
             ValidateToken<BraceSyntaxToken>(tokens[i++], 1, 3);
