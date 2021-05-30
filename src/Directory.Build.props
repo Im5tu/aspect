@@ -2,8 +2,6 @@
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" Condition="Exists($([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../')))" />
 
     <PropertyGroup>
-        <!-- Ensure that we get the intellisense in the correct places -->
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <!-- pre-release packages get the label preview -->
         <MinVerDefaultPreReleasePhase>preview</MinVerDefaultPreReleasePhase>
         <!-- no need to run MinVer on debug builds -->
@@ -20,22 +18,53 @@
             <PublishRepositoryUrl>true</PublishRepositoryUrl>
             <!-- Set the repository url on build if it's not set -->
             <RepositoryUrl Condition="$(RepositoryUrl) == ''">$(PackageProjectUrl).git</RepositoryUrl>
+            <!-- Default to allowing source link -->
+            <EnableSourceLink Condition="$(EnableSourceLink) == ''">true</EnableSourceLink>
+            <!-- Always optimize in release mode -->
+            <Optimize Condition="$(Configuration) == 'Release'">true</Optimize>
+            <!-- Embed symbols -->
+            <DebugType>embedded</DebugType>
         </PropertyGroup>
 
         <!-- Nuget packages -->
         <PropertyGroup Condition="$(IsPackable) == 'true'">
+            <!-- Ensure that we get the intellisense in the correct places -->
+            <GenerateDocumentationFile>true</GenerateDocumentationFile>
             <!-- If we are packable, generate a nuget package automagically -->
             <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
             <!-- Embed source files that are not tracked by the source control manager in the PDB. -->
             <EmbedUntrackedSources>true</EmbedUntrackedSources>
             <!-- Ensure that pdb's can be added to nuget packages -->
             <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-            <!-- Default to allowing source link -->
-            <EnableSourceLink Condition="$(EnableSourceLink) == ''">true</EnableSourceLink>
             <!-- NUGET package output path -->
             <PackageOutputPath>$(ArtifactRoot)artifacts/nupkgs</PackageOutputPath>
-            <!-- Always optimize in release mode -->
-            <Optimize Condition="$(Configuration) == 'Release'">true</Optimize>
+        </PropertyGroup>
+
+        <!-- Apps -->
+        <PropertyGroup Condition="$(OutputType) == 'Exe' AND $(IsPackable) != 'true'">
+            <!-- APP output path -->
+            <PublishDir>$(RepositoryRoot)artifacts/app/$(RuntimeIdentifier)</PublishDir>
+        </PropertyGroup>
+
+        <PropertyGroup Condition="$(SelfContained) == 'true' AND $(PublishSingleFile) == 'true'">
+            <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+        </PropertyGroup>
+
+        <!-- Trimmer settings: https://docs.microsoft.com/en-us/dotnet/core/deploying/trimming-options#trimming-framework-library-features -->
+        <PropertyGroup Condition="$(PublishTrimmed) == 'true'">
+            <!-- Prevent warnings from unused code in dependencies -->
+            <TrimmerDefaultAction>link</TrimmerDefaultAction>
+            <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
+            <EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
+            <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
+            <EventSourceSupport>false</EventSourceSupport>
+            <HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
+            <DebugType>none</DebugType>
+        </PropertyGroup>
+
+        <!-- ReadyToRun settings -->
+        <PropertyGroup Condition="$(PublishReadyToRun) == 'true'">
+            <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
         </PropertyGroup>
     </Target>
 </Project>

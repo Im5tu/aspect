@@ -1,74 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.EC2;
 using Amazon.IdentityManagement;
 using Amazon.SecurityToken;
 using Aspect.Abstractions;
-using Aspect.Policies.CompilerServices;
+using Aspect.Commands;
 using Aspect.Providers.AWS;
 using Aspect.Providers.AWS.Models;
-using Aspect.Providers.AWS.Models.EC2;
 using Aspect.Providers.AWS.Resources.EC2;
 using Newtonsoft.Json;
+using Spectre.Console.Cli;
 
 namespace Aspect
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static int Main(string[] args)
         {
-            /*
-                https://blog.elmah.io/how-to-create-a-colored-cli-with-system-commandline-and-spectre/
-
-                Filetypes:
-                    - .aspect                                               # A single policy document
-
-                aspect policy init <file>                                   # Create new policy document
-                aspect policy list <directory>                              # Displays all of the policies in the specified directory (recursive)
-                aspect policy watch <file>                                  # Watches a specified file and continually checks that it's valid when it changes
-                aspect policy validate <file>                               # Validates a specified policy document
-
-                aspect run <directory>                                      # Loads all the policies from the directory and evaluates them
-
-             */
-
-            var compiler = new PolicyCompiler();
-            //var securityGroups = (await GetSecurityGroupsAsync()).ToList();
-            var securityGroups = new AwsSecurityGroup[] {null!}.ToList();
-
-            try
+            var app = new CommandApp();
+            app.Configure(config =>
             {
-                if (!compiler.IsPolicyFileValid(@"D:\dev\temp\Aspect\temp\test.policy"))
+                config.Settings.ApplicationName = "aspect";
+
+                config.AddCommand<AutoCompleteCommand>("autocomplete")
+                    .WithDescription("Generate an autocomplete script for either powershell or bash.");
+
+                config.AddCommand<LanguageServerCommand>("langserver")
+                    .WithDescription("Starts the language server.");
+
+                config.AddBranch("policy", p =>
                 {
-                    return;
-                }
+                    p.AddCommand<PolicyInitCommand>("init")
+                        .WithDescription("Create a new policy or policy suite")
+                        .WithExample(new[] {"policy", "init", "D:\\policies\\my_new_policy.policy"});
+                    p.AddCommand<PolicyListCommand>("list")
+                        .WithAlias("ls")
+                        .WithDescription("List policies in a directory")
+                        .WithExample(new[] {"policy", "list", "D:\\policies"});
+                    p.AddCommand<PolicyValidateCommand>("validate")
+                        .WithDescription("Validate one or more policy documents")
+                        .WithExample(new[] {"policy", "validate", "D:\\policies"});
 
-                var evaluator = compiler.GetFunctionForPolicy(new FileCompilationUnit(@"D:\dev\temp\Aspect\temp\test.policy"));
-                for (var i = 0; i < 1; i++)
-                {
-                    var sw = Stopwatch.StartNew();
+                    p.SetDescription("Create, list and validate policy documents.");
+                });
 
-                    foreach (var sg in securityGroups)
-                    {
-                        var awsSG = (AwsSecurityGroup) sg;
-                        var result = evaluator(sg);
-                        Console.WriteLine($"{awsSG.Arn} - {result}");
-                    }
+                config.AddCommand<RunCommand>("run")
+                    .WithDescription("Run a one or more policies against your cloud infrastructure.")
+                    .WithExample(new[] {"run", "D:\\policies"});
 
-                    sw.Stop();
-                    Console.WriteLine($"Completed in {sw.ElapsedMilliseconds:0.00}ms ({(sw.ElapsedMilliseconds / securityGroups.Count)}ms per invocation)");
-                }
+                config.AddCommand<WatchCommand>("watch")
+                    .WithDescription("Watch a specific directory for changes and validate them.")
+                    .WithExample(new[] {"watch", "D:\\policies"});
 
-                await Task.Yield();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
+#if DEBUG
+                config.PropagateExceptions();
+                config.ValidateExamples();
+#endif
+            });
+            return app.Run(args);
         }
 
         private static async Task<AwsAccount> GetCurrentAwsAccountAsync()
