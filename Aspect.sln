@@ -44,7 +44,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{45C3E575-38C6-4C0B-A57A-D72783946E5A}"
 ProjectSection(SolutionItems) = preProject
 	.github\workflows\ci-pipeline.yml = .github\workflows\ci-pipeline.yml
-	.github\workflows\release-builds.yml = .github\workflows\release-builds.yml
+	.github\workflows\Build-Website.yml = .github\workflows\Build-Website.yml
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4F2448DD-5CE3-4EFC-9D36-BD842B48AA41}"
@@ -57,6 +57,12 @@ ProjectSection(SolutionItems) = preProject
 	LICENSE = LICENSE
 	README.md = README.md
 	SECURITY.md = SECURITY.md
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{AEFC11A7-8CFE-42B9-9C3D-7EACD9E83427}"
+ProjectSection(SolutionItems) = preProject
+	src\docker\alpine.dockerfile = src\docker\alpine.dockerfile
+	src\docker\windows.dockerfile = src\docker\windows.dockerfile
 EndProjectSection
 EndProject
 Global
@@ -81,6 +87,7 @@ Global
 		{487D238F-45C0-41BF-B9D3-4B4539C9938A} = {ABA536DA-D6B4-4EE6-BB09-F64578000CEF}
 		{45C3E575-38C6-4C0B-A57A-D72783946E5A} = {40A8A693-B756-41E2-9F6E-D4732467D5B6}
 		{40A8A693-B756-41E2-9F6E-D4732467D5B6} = {4F2448DD-5CE3-4EFC-9D36-BD842B48AA41}
+		{AEFC11A7-8CFE-42B9-9C3D-7EACD9E83427} = {2567D961-CD92-4F8F-81EC-5728760D849C}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{B93989B4-3CB7-4E41-B165-2BEC1CE67CBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
