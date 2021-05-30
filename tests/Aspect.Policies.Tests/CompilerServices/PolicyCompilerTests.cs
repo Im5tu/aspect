@@ -81,8 +81,7 @@ validate {{
             executor(testObject).Should().Be(expected);
         }
 
-        //[Theory(Timeout = TestTimeoutMs)]
-        [Theory]
+        [Theory(Timeout = TestTimeoutMs, Skip = "Implementation not complete")]
         [InlineData("input.Enumerable[_] == 1", ResourcePolicyExecution.Passed)]
         [InlineData("input.Nested.List[_].Values[_] == 1", ResourcePolicyExecution.Passed)]
         [InlineData("input.Nested.List[_].Values[_] == 5", ResourcePolicyExecution.Failed)]
