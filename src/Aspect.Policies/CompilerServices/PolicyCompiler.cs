@@ -8,8 +8,6 @@ namespace Aspect.Policies.CompilerServices
 {
     internal class PolicyCompiler
     {
-        // TODO :: TASK :: Build execute path for an object
-
         public Func<IResource, ResourcePolicyExecution> GetFunctionForPolicy(CompilationUnit source)
         {
             var context = new CompilationContext(source);
@@ -21,30 +19,19 @@ namespace Aspect.Policies.CompilerServices
             return new LinqExpressionGenerator().Generate(policy!);
         }
 
-        public bool IsPolicyFileValid(string filename) => IsPolicyValid(new FileCompilationUnit(filename));
-        public bool IsPolicyValid(string policy) => IsPolicyValid(new SourceTextCompilationUnit(policy));
-        private bool IsPolicyValid(CompilationUnit source)
+        public string? GetResourceForPolicyFile(string filename) => BuildPolicy(new CompilationContext(new FileCompilationUnit(filename)))?.Resource;
+
+        public bool IsPolicyFileValid(string filename) => IsPolicyValid(new FileCompilationUnit(filename), out _);
+        public bool IsPolicyFileValid(string filename, out CompilationContext context) => IsPolicyValid(new FileCompilationUnit(filename), out context);
+        public bool IsPolicyValid(string policy) => IsPolicyValid(new SourceTextCompilationUnit(policy), out _);
+        public bool IsPolicyValid(string policy, out CompilationContext context) => IsPolicyValid(new SourceTextCompilationUnit(policy), out context);
+        private bool IsPolicyValid(CompilationUnit source, out CompilationContext context)
         {
-            var context = new CompilationContext(source);
+            context = new CompilationContext(source);
             var policy = BuildPolicy(context);
 
             if (policy is null)
-            {
-                Console.WriteLine("No policy returned!");
                 return false;
-            }
-
-            Console.WriteLine("Include:");
-            foreach(var i in policy.Include?.Expressions ?? Enumerable.Empty<AbstractExpression>())
-                Console.WriteLine("    - " + i);
-
-            Console.WriteLine("Exclude:");
-            foreach(var i in policy.Exclude?.Expressions ?? Enumerable.Empty<AbstractExpression>())
-                Console.WriteLine("    - " + i);
-
-            Console.WriteLine("Validate:");
-            foreach(var i in policy.Validation.Expressions)
-                Console.WriteLine("    - " + i);
 
             return context.Errors.Count == 0;
         }
