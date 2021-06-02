@@ -21,6 +21,7 @@ mono_crash.*
 # Hugo files
 docs/docs/
 docs/public/
+docs/resources/_gen/
 
 # Build results
 [Dd]ebug/

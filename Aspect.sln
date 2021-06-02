@@ -30,8 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aspect.Policies.Tests", "te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{D72770C1-10AF-47F6-BB13-D884FD748BB0}"
 ProjectSection(SolutionItems) = preProject
-	docs\Compiler.md = docs\Compiler.md
-	docs\Built-In-Functions.md = docs\Built-In-Functions.md
+	docs\config.toml = docs\config.toml
+	docs\content\index.md = docs\content\index.md
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{40A8A693-B756-41E2-9F6E-D4732467D5B6}"
@@ -65,6 +65,42 @@ ProjectSection(SolutionItems) = preProject
 	src\docker\windows.dockerfile = src\docker\windows.dockerfile
 EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{09E0832E-41B4-45E4-8528-6CC27B1C8A6E}"
+ProjectSection(SolutionItems) = preProject
+	docs\content\docs\_index.md = docs\content\docs\_index.md
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "aws", "aws", "{60F0F46F-2A10-47A1-B091-FB6DF2FF3E64}"
+ProjectSection(SolutionItems) = preProject
+	docs\content\docs\AWS\_index.md = docs\content\docs\AWS\_index.md
+	docs\content\docs\AWS\Configuration.md = docs\content\docs\AWS\Configuration.md
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "azure", "azure", "{F1F704C6-1BE2-4131-945B-C1B1AB0DAA78}"
+ProjectSection(SolutionItems) = preProject
+	docs\content\docs\Azure\_index.md = docs\content\docs\Azure\_index.md
+	docs\content\docs\Azure\Configuration.md = docs\content\docs\Azure\Configuration.md
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "getting-started", "getting-started", "{8C765C6A-3377-4A79-A55A-B71FDBA136AE}"
+ProjectSection(SolutionItems) = preProject
+	docs\content\docs\Getting Started\_index.md = docs\content\docs\Getting Started\_index.md
+	docs\content\docs\Getting Started\builtin-functions.md = docs\content\docs\Getting Started\builtin-functions.md
+	docs\content\docs\Getting Started\installation.md = docs\content\docs\Getting Started\installation.md
+	docs\content\docs\Getting Started\policy-syntax.md = docs\content\docs\Getting Started\policy-syntax.md
+	docs\content\docs\Getting Started\your-first-policy.md = docs\content\docs\Getting Started\your-first-policy.md
+	docs\content\docs\Getting Started\commands.md = docs\content\docs\Getting Started\commands.md
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "contributing", "contributing", "{8316D2F4-ED9A-477B-86FD-C4A795770F75}"
+ProjectSection(SolutionItems) = preProject
+	docs\content\docs\Contributing\_index.md = docs\content\docs\Contributing\_index.md
+	docs\content\docs\Contributing\code-of-conduct.md = docs\content\docs\Contributing\code-of-conduct.md
+	docs\content\docs\Contributing\compiler.md = docs\content\docs\Contributing\compiler.md
+	docs\content\docs\Contributing\local-development.md = docs\content\docs\Contributing\local-development.md
+	docs\content\docs\Contributing\pull-requests.md = docs\content\docs\Contributing\pull-requests.md
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,6 +124,11 @@ Global
 		{45C3E575-38C6-4C0B-A57A-D72783946E5A} = {40A8A693-B756-41E2-9F6E-D4732467D5B6}
 		{40A8A693-B756-41E2-9F6E-D4732467D5B6} = {4F2448DD-5CE3-4EFC-9D36-BD842B48AA41}
 		{AEFC11A7-8CFE-42B9-9C3D-7EACD9E83427} = {2567D961-CD92-4F8F-81EC-5728760D849C}
+		{09E0832E-41B4-45E4-8528-6CC27B1C8A6E} = {D72770C1-10AF-47F6-BB13-D884FD748BB0}
+		{60F0F46F-2A10-47A1-B091-FB6DF2FF3E64} = {09E0832E-41B4-45E4-8528-6CC27B1C8A6E}
+		{F1F704C6-1BE2-4131-945B-C1B1AB0DAA78} = {09E0832E-41B4-45E4-8528-6CC27B1C8A6E}
+		{8C765C6A-3377-4A79-A55A-B71FDBA136AE} = {09E0832E-41B4-45E4-8528-6CC27B1C8A6E}
+		{8316D2F4-ED9A-477B-86FD-C4A795770F75} = {09E0832E-41B4-45E4-8528-6CC27B1C8A6E}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{B93989B4-3CB7-4E41-B165-2BEC1CE67CBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
