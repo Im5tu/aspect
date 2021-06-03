@@ -10,7 +10,11 @@ namespace Aspect.Commands
         public string? Resource { get; init; }
 
         [Description("Initialize a policy suite instead of a policy")]
-        [CommandOption("--suite")]
+        [CommandOption("-s|--suite")]
         public bool? InitializeSuite { get; init; }
+
+        [Description("Display the generated policy in the console")]
+        [CommandOption("-d|--display")]
+        public bool? Display { get; init; }
     }
 }

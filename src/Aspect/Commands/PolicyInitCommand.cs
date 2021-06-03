@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aspect.Abstractions;
@@ -22,10 +23,7 @@ namespace Aspect.Commands
 
         public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] PolicyInitCommandSettings settings)
         {
-            if (string.IsNullOrWhiteSpace(settings.FileName))
-                return ValidationResult.Error("Please specify a file name.");
-
-            if (File.Exists(settings.FileName))
+            if (!string.IsNullOrWhiteSpace(settings.FileName) && File.Exists(settings.FileName))
                 return ValidationResult.Error($"The file {settings.FileName} already exists.");
 
             return base.Validate(context, settings);
@@ -35,19 +33,20 @@ namespace Aspect.Commands
         {
             string policy;
             if (settings.InitializeSuite.GetValueOrDefault(false))
-            {
                 policy = InitializePolicySuite();
-            }
             else
-            {
                 policy = InitializePolicyFile(settings.Resource);
+
+            if (settings.Display.GetValueOrDefault(false))
+                AnsiConsole.WriteLine(policy);
+
+            if (!string.IsNullOrWhiteSpace(settings.FileName))
+            {
+                using var file = File.CreateText(settings.FileName);
+                file.Write(policy);
+                file.Flush();
+                file.Close();
             }
-
-
-            using var file = File.CreateText(settings.FileName!);
-            file.Write(policy);
-            file.Flush();
-            file.Close();
 
             return 0;
         }
