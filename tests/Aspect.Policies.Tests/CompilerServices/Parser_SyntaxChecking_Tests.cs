@@ -13,7 +13,7 @@ namespace Aspect.Policies.Tests.CompilerServices
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseBasicOfSyntax()
         {
-            var policy = @"resource ""Test""
+            var policy = @"resource ""TestResource""
 
 include {
     input.Type == ""Test""
@@ -38,7 +38,7 @@ validate {
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseBasicOfSyntaxWhenIncludeMissing()
         {
-            var policy = @"resource ""Test""
+            var policy = @"resource ""TestResource""
 
 exclude {
     input.Type == ""Test""
@@ -59,7 +59,7 @@ validate {
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseBasicOfSyntaxWhenIncludeEmpty()
         {
-            var policy = @"resource ""Test""
+            var policy = @"resource ""TestResource""
 
 include {}
 
@@ -82,7 +82,7 @@ validate {
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseBasicOfSyntaxWhenExcludeMissing()
         {
-            var policy = @"resource ""Test""
+            var policy = @"resource ""TestResource""
 
 include {
     input.Type == ""Test""
@@ -103,7 +103,7 @@ validate {
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseBasicOfSyntaxWhenExcludeEmpty()
         {
-            var policy = @"resource ""Test""
+            var policy = @"resource ""TestResource""
 
 exclude {}
 
@@ -130,7 +130,7 @@ validate {
         [InlineData("include", "startsWith(input.Type, \"AWS\")")]
         public async Task CanParseBasicExpressionForSection(string section, string expression)
         {
-            var policy = $@"resource ""Test""
+            var policy = $@"resource ""TestResource""
 
 {section} {{
     {expression}
@@ -146,7 +146,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseEqualityForStringProperty()
         {
-            var policy = @"resource ""Test""
+            var policy = @"resource ""TestResource""
 validate {
     input.Type == ""Test""
 }";
@@ -161,7 +161,7 @@ validate {
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseEqualityForStringProperty_WhenTypesDifferent()
         {
-            var policy = @"resource ""Test""
+            var policy = @"resource ""TestResource""
 validate {
     input.Type == 123
 }";
@@ -174,7 +174,7 @@ validate {
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseNegativeEqualityForStringProperty()
         {
-            var policy = @"resource ""Test""
+            var policy = @"resource ""TestResource""
 validate {
     input.Type != ""Test""
 }";
@@ -189,7 +189,7 @@ validate {
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseNegativeEqualityForStringProperty_WhenTypesDifferent()
         {
-            var policy = @"resource ""Test""
+            var policy = @"resource ""TestResource""
 validate {
     input.Type != 123
 }";
@@ -202,7 +202,7 @@ validate {
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseEqualityForInt16Property()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Int16 == {Int16.MaxValue}
 }}";
@@ -217,7 +217,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseEqualityForInt16Property_WhenTypesDifferent()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Int16 == ""{Int16.MaxValue}""
 }}";
@@ -230,7 +230,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseNegativeEqualityForInt16Property()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Int16 != {Int16.MaxValue}
 }}";
@@ -245,7 +245,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseNegativeEqualityForInt16Property_WhenTypesDifferent()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Int16 == ""{Int16.MaxValue}""
 }}";
@@ -258,7 +258,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseEqualityForInt32Property()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Int32 == {Int32.MaxValue}
 }}";
@@ -273,7 +273,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseEqualityForInt32Property_WhenTypesDifferent()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Int32 == ""{Int32.MaxValue}""
 }}";
@@ -286,7 +286,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseNegativeEqualityForInt32Property()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Int32 != {Int32.MaxValue}
 }}";
@@ -301,7 +301,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseNegativeEqualityForInt32Property_WhenTypesDifferent()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Int32 == ""{Int32.MaxValue}""
 }}";
@@ -314,7 +314,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseEqualityForInt64Property()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Int64 == {Int64.MaxValue}
 }}";
@@ -329,7 +329,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseEqualityForInt64Property_WhenTypesDifferent()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Int64 == ""{Int64.MaxValue}""
 }}";
@@ -342,7 +342,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseNegativeEqualityForInt64Property()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Int64 != {Int64.MaxValue}
 }}";
@@ -357,7 +357,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseNegativeEqualityForInt64Property_WhenTypesDifferent()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Int64 == ""{Int64.MaxValue}""
 }}";
@@ -370,7 +370,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseEqualityForDecimalProperty()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Decimal == {Decimal.MaxValue}.0
 }}";
@@ -385,7 +385,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseEqualityForDecimalProperty_WhenTypesDifferent()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Decimal == ""{Decimal.MaxValue}.0""
 }}";
@@ -398,7 +398,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseNegativeEqualityForDecimalProperty()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Decimal != {Decimal.MaxValue}.0
 }}";
@@ -413,7 +413,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseNegativeEqualityForDecimalProperty_WhenTypesDifferent()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Decimal == ""{Decimal.MaxValue}.0""
 }}";
@@ -426,7 +426,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseArrayAnySyntaxOnInput()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Enumerable[_] == 0
 }}";
@@ -439,7 +439,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task ErrorWhenOnlyInputIsSpecified()
         {
-            var policy = @"resource ""Test""
+            var policy = @"resource ""TestResource""
 validate {
     input == ""123""
 }";
@@ -450,7 +450,7 @@ validate {
         [Fact(Timeout = TestTimeoutMs)]
         public async Task ErrorWhenSomethingOtherThanInputSpecified()
         {
-            var policy = @"resource ""Test""
+            var policy = @"resource ""TestResource""
 validate {
     something.Something == ""123""
 }";
@@ -462,7 +462,7 @@ validate {
         [Fact(Timeout = TestTimeoutMs)]
         public async Task ErrorWhenCollectionSyntaxIsIncorrect()
         {
-            var policy = @"resource ""Test""
+            var policy = @"resource ""TestResource""
 validate {
     input.List[a] == ""123""
 }";
@@ -473,7 +473,7 @@ validate {
         [Fact(Timeout = TestTimeoutMs)]
         public async Task ErrorWhenNoConstantExpression()
         {
-            var policy = @"resource ""Test""
+            var policy = @"resource ""TestResource""
 validate {
     input.Type ==
 }";
@@ -484,7 +484,7 @@ validate {
         [Fact(Timeout = TestTimeoutMs)]
         public async Task ErrorWhenUnsupportedConstantSyntax()
         {
-            var policy = @"resource ""Test""
+            var policy = @"resource ""TestResource""
 validate {
     input.Type == [123,456]
 }";

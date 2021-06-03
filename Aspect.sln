@@ -103,6 +103,8 @@ ProjectSection(SolutionItems) = preProject
 	docs\content\docs\Contributing\pull-requests.md = docs\content\docs\Contributing\pull-requests.md
 EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aspect.Providers.Azure.Models", "src\Aspect.Providers.Azure.Models\Aspect.Providers.Azure.Models.csproj", "{874D3494-EB61-434F-BC0C-94F68E30815F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +133,7 @@ Global
 		{8316D2F4-ED9A-477B-86FD-C4A795770F75} = {D72770C1-10AF-47F6-BB13-D884FD748BB0}
 		{F1F704C6-1BE2-4131-945B-C1B1AB0DAA78} = {D72770C1-10AF-47F6-BB13-D884FD748BB0}
 		{60F0F46F-2A10-47A1-B091-FB6DF2FF3E64} = {D72770C1-10AF-47F6-BB13-D884FD748BB0}
+		{874D3494-EB61-434F-BC0C-94F68E30815F} = {2567D961-CD92-4F8F-81EC-5728760D849C}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{B93989B4-3CB7-4E41-B165-2BEC1CE67CBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -217,5 +220,17 @@ Global
 		{487D238F-45C0-41BF-B9D3-4B4539C9938A}.Release|x64.Build.0 = Release|Any CPU
 		{487D238F-45C0-41BF-B9D3-4B4539C9938A}.Release|x86.ActiveCfg = Release|Any CPU
 		{487D238F-45C0-41BF-B9D3-4B4539C9938A}.Release|x86.Build.0 = Release|Any CPU
+		{874D3494-EB61-434F-BC0C-94F68E30815F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{874D3494-EB61-434F-BC0C-94F68E30815F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{874D3494-EB61-434F-BC0C-94F68E30815F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{874D3494-EB61-434F-BC0C-94F68E30815F}.Debug|x64.Build.0 = Debug|Any CPU
+		{874D3494-EB61-434F-BC0C-94F68E30815F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{874D3494-EB61-434F-BC0C-94F68E30815F}.Debug|x86.Build.0 = Debug|Any CPU
+		{874D3494-EB61-434F-BC0C-94F68E30815F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{874D3494-EB61-434F-BC0C-94F68E30815F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{874D3494-EB61-434F-BC0C-94F68E30815F}.Release|x64.ActiveCfg = Release|Any CPU
+		{874D3494-EB61-434F-BC0C-94F68E30815F}.Release|x64.Build.0 = Release|Any CPU
+		{874D3494-EB61-434F-BC0C-94F68E30815F}.Release|x86.ActiveCfg = Release|Any CPU
+		{874D3494-EB61-434F-BC0C-94F68E30815F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

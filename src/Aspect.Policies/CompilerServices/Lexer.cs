@@ -4,14 +4,8 @@ using Aspect.Policies.CompilerServices.SyntaxTokens;
 
 namespace Aspect.Policies.CompilerServices
 {
-    internal class Lexer
+    internal class Lexer : ILexer
     {
-        public static Lexer Instance { get; } = new();
-
-        private Lexer()
-        {
-        }
-
         public IReadOnlyCollection<SyntaxToken> GetAllSyntaxTokens(CompilationContext context)
             => GetAllSyntaxTokensImpl(context).ToList();
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Aspect.Abstractions;
 using Aspect.Policies.CompilerServices.Expressions;
 using Aspect.Policies.CompilerServices.SyntaxTokens;
 using StatementBlock = System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.IReadOnlyList<Aspect.Policies.CompilerServices.SyntaxTokens.SyntaxToken>>;
@@ -10,12 +11,13 @@ using StatementBlock = System.Collections.Generic.IReadOnlyCollection<System.Col
 namespace Aspect.Policies.CompilerServices
 {
     // TODO :: TASK :: type checking for all the expression generation, we need to know whether the policy is assignable to the property type
-    internal sealed class Parser : AbstractParser
+    internal sealed class Parser : AbstractParser, IParser
     {
-        public static Parser Instance { get; } = new();
+        private readonly IResourceTypeLocator _resourceTypeLocator;
 
-        private Parser()
+        public Parser(IResourceTypeLocator resourceTypeLocator)
         {
+            _resourceTypeLocator = resourceTypeLocator;
         }
 
         public PolicyAst? Parse(CompilationContext context, IEnumerable<SyntaxToken> tokens)
@@ -89,8 +91,7 @@ namespace Aspect.Policies.CompilerServices
                 return new StatementExpression(expressions);
             }
 
-            var type = Types.GetType(policy.Resource);
-            if (type is null)
+            if (!_resourceTypeLocator.TryLocateType(policy.Resource, out var type))
             {
                 context.RaiseError("CA-PAR-009");
                 return null;

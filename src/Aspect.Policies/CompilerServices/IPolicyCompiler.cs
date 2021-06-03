@@ -1,0 +1,19 @@
+﻿using System;
+using Aspect.Abstractions;
+using Aspect.Policies.CompilerServices.Generator;
+
+namespace Aspect.Policies.CompilerServices
+{
+    internal interface IPolicyCompiler
+    {
+        Func<IResource, ResourcePolicyExecution>? GetFunctionForPolicy(CompilationUnit source);
+        Func<IResource, ResourcePolicyExecution>? GetFunctionForPolicy(CompilationUnit source, out Type? resource);
+        Func<IResource, ResourcePolicyExecution>? GetFunctionForPolicy(CompilationContext context);
+        Func<IResource, ResourcePolicyExecution>? GetFunctionForPolicy(CompilationContext context, out Type? resource);
+        string? GetResourceForPolicyFile(string filename);
+        bool IsPolicyFileValid(string filename);
+        bool IsPolicyFileValid(string filename, out CompilationContext context);
+        bool IsPolicyValid(string policy);
+        bool IsPolicyValid(string policy, out CompilationContext context);
+    }
+}

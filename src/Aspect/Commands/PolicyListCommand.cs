@@ -10,6 +10,13 @@ namespace Aspect.Commands
 {
     internal class PolicyListCommand : Command<PolicyListCommandSettings>
     {
+        private readonly IPolicyCompiler _policyCompiler;
+
+        public PolicyListCommand(IPolicyCompiler policyCompiler)
+        {
+            _policyCompiler = policyCompiler;
+        }
+
         public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] PolicyListCommandSettings commandSettings)
         {
             if (!string.IsNullOrWhiteSpace(commandSettings.Directory) && !Directory.Exists(commandSettings.Directory))
@@ -38,7 +45,7 @@ namespace Aspect.Commands
             {
                 var fi = new FileInfo(policy);
                 var policyName = fi.FullName;
-                var resource = PolicyCompiler.GetResourceForPolicyFile(policy) ?? "[italic red]<invalid policy>[/]";
+                var resource = _policyCompiler.GetResourceForPolicyFile(policy) ?? "[italic red]<invalid policy>[/]";
                 table.AddRow(policyName, resource, fi.CreationTime.ToString("O"), fi.LastWriteTime.ToString("O"));
             }
 

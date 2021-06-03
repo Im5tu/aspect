@@ -8,9 +8,9 @@ using Aspect.Providers.AWS.Models;
 
 namespace Aspect.Providers.AWS
 {
-    internal abstract class AwsResourceExplorer : IResourceExplorer<AwsAccount, AwsAccountIdentifier>
+    internal abstract class AWSResourceExplorer : IResourceExplorer<AwsAccount, AwsAccountIdentifier>
     {
-        protected AwsResourceExplorer(Type resourceType)
+        protected AWSResourceExplorer(Type resourceType)
         {
             ResourceType = resourceType;
         }

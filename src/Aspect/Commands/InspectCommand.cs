@@ -17,45 +17,37 @@ namespace Aspect.Commands
 {
     internal class InspectCommand : AsyncCommand<InspectCommandSettings>
     {
-        private readonly Dictionary<Type, IResourceExplorer<AwsAccount, AwsAccountIdentifier>> _awsProviders = new();
-        private readonly Dictionary<Type, IResourceExplorer> _azureProviders = new();
+        private readonly IPolicyCompiler _policyCompiler;
+        private readonly IReadOnlyDictionary<string,ICloudProvider> _cloudProviders;
         private readonly List<IResource> _resources = new List<IResource>();
-        private string? _resource = null;
-        private string? _provider;
 
-        public InspectCommand(IEnumerable<IResourceExplorer> resourceExplorers)
+        public InspectCommand(IReadOnlyDictionary<string, ICloudProvider> cloudProviders, IPolicyCompiler policyCompiler)
         {
-
-            foreach (var provider in resourceExplorers)
-            {
-                if (provider is IResourceExplorer<AwsAccount, AwsAccountIdentifier> awsProvider)
-                    _awsProviders[awsProvider.ResourceType] = awsProvider;
-                // TODO :: Add Azure
-            }
+            _cloudProviders = cloudProviders;
+            _policyCompiler = policyCompiler;
         }
 
         public override async Task<int> ExecuteAsync(CommandContext context, InspectCommandSettings settings)
         {
-            _provider = AnsiConsole.Prompt(new SelectionPrompt<string>
-            {
-                Title = "Select cloud provider:",
-                Choices = {"AWS", "Azure"}
-            });
+            var providerSelection = new SelectionPrompt<string> { Title = "Select cloud provider:" };
+            providerSelection.AddChoices(_cloudProviders.Keys);
+            var provider = _cloudProviders[AnsiConsole.Prompt(providerSelection)];
 
-            var resource = GetResources();
-            if (resource is null)
-                return 1;
+            var regionPrompt = new SelectionPrompt<string> { Title = "Select region:" };
+            regionPrompt.AddChoices(provider.GetAllRegions());
+            var region = AnsiConsole.Prompt(regionPrompt);
 
-            var result = await LoadResources();
+            var (resourceName, resourceType) = GetResources(provider);
+            var result = await LoadResources(provider, resourceType, region);
 
             if (!result)
                 return 1;
 
-            await HandleCommands();
+            await HandleCommands(resourceName, resourceType, provider, region);
             return 0;
         }
 
-        private async Task<bool> LoadResources()
+        private async Task<bool> LoadResources(ICloudProvider provider, Type resourceType, string region)
         {
             try
             {
@@ -65,9 +57,6 @@ namespace Aspect.Commands
                     {
                         _resources.Clear();
 
-                        if (_resource is null)
-                            return;
-
                         Action<string> updater = str =>
                         {
                             if (!str.EndsWith("...", StringComparison.Ordinal))
@@ -76,10 +65,7 @@ namespace Aspect.Commands
                             statusContext.Status(str);
                         };
 
-                        if (_provider == "AWS")
-                        {
-                            _resources.AddRange(await new AWSResourceLoader().LoadResourcesForType(_resource, statusUpdater: updater));
-                        }
+                        _resources.AddRange(await provider.DiscoverResourcesAsync(region, resourceType, updater, default));
                     });
                 return true;
             }
@@ -90,29 +76,18 @@ namespace Aspect.Commands
             }
         }
 
-        private string? GetResources()
+        private (string resourceName, Type resourceType) GetResources(ICloudProvider provider)
         {
             var resourcePrompt = new SelectionPrompt<string>
             {
                 Title = "Select resource to inspect:",
             };
-
-            if (_provider == "Azure")
-            {
-                AnsiConsole.MarkupLine("[red]Azure is not currently supported by this interface.[/]");
-                return null;
-            }
-
-            if (_provider == "AWS")
-                resourcePrompt.AddChoices(Types.GetTypes(_provider).Select(x => x.Name));
-            else
-                return null;
-
-            _resource = AnsiConsole.Prompt(resourcePrompt);
-            return _resource;
+            resourcePrompt.AddChoices(provider.GetResources().Keys);
+            var answer = AnsiConsole.Prompt(resourcePrompt);
+            return (answer, provider.GetResources()[answer]);
         }
 
-        private async Task HandleCommands()
+        private async Task HandleCommands(string resourceName, Type resourceType, ICloudProvider provider, string region)
         {
             do
             {
@@ -125,8 +100,8 @@ namespace Aspect.Commands
                 AnsiConsole.Clear();
                 if ("help".Equals(answer, StringComparison.OrdinalIgnoreCase))
                 {
-                    AnsiConsole.MarkupLine($"Available properties for input '{_resource}':");
-                    AnsiConsole.MarkupLine(string.Join(Environment.NewLine, Types.GetType(_resource!, _provider!)!.GetProperties().OrderBy(x => x.Name).Select(x => $"  - {x.Name}")));
+                    AnsiConsole.MarkupLine($"Available properties for input '{resourceName}':");
+                    AnsiConsole.MarkupLine(string.Join(Environment.NewLine, resourceType.GetProperties().OrderBy(x => x.Name).Select(x => $"  - {x.Name}")));
                     AnsiConsole.MarkupLine(string.Empty);
                     continue;
                 }
@@ -139,22 +114,22 @@ namespace Aspect.Commands
 
                 if ("refresh".Equals(answer, StringComparison.OrdinalIgnoreCase))
                 {
-                    await LoadResources();
+                    await LoadResources(provider, resourceType, region);
                     continue;
                 }
 
-                await ExecutePolicy(answer);
+                await ExecutePolicy(answer, resourceName);
             } while (true);
         }
 
-        private async Task ExecutePolicy(string input)
+        private async Task ExecutePolicy(string input, string resourceName)
         {
-            var policy = $@"resource ""{_resource}""
+            var policy = $@"resource ""{resourceName}""
 validate {{
 {string.Join(Environment.NewLine, input.Split("&&", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Select(x => "    " + x))}
 }}";
             var cntx = new CompilationContext(new SourceTextCompilationUnit(policy));
-            var func = PolicyCompiler.GetFunctionForPolicy(cntx);
+            var func = _policyCompiler.GetFunctionForPolicy(cntx);
 
             if (func is null)
             {

@@ -13,11 +13,6 @@ namespace Aspect.Policies.Tests.CompilerServices
     {
         public const int TestTimeoutMs = 1000;
 
-        public PolicyCompilerTests()
-        {
-            Types.AddResource("Test", typeof(TestResource));
-        }
-
         [Theory(Timeout = TestTimeoutMs)]
         [InlineData("input.Int16 == 16", ResourcePolicyExecution.Passed)]
         [InlineData("input.Int16 >= 16", ResourcePolicyExecution.Passed)]
@@ -35,7 +30,7 @@ namespace Aspect.Policies.Tests.CompilerServices
         [InlineData("input.Nested.Name != \"Nested\"", ResourcePolicyExecution.Failed)]
         public async Task WillExecuteFunctionAgainstSpecifiedProperties(string policyPart, ResourcePolicyExecution expected)
         {
-            var policy = $@"resource ""Test""
+            var policy = $@"resource ""TestResource""
 
 validate {{
     {policyPart}
@@ -64,7 +59,7 @@ validate {{
         [InlineData("contains(input.Nested.Name, \"ESTE\", true)", ResourcePolicyExecution.Failed)]
         public async Task UsingFunctionsWorksAsExpected(string policyPart, ResourcePolicyExecution expected)
         {
-            var policy = $@"resource ""Test""
+            var policy = $@"resource ""TestResource""
 
 validate {{
     {policyPart}
@@ -89,7 +84,7 @@ validate {{
         [InlineData("input.Array[_] == 1", ResourcePolicyExecution.Passed)]
         public async Task UsingArrayIterationsAsExpected(string policyPart, ResourcePolicyExecution expected)
         {
-            var policy = $@"resource ""Test""
+            var policy = $@"resource ""TestResource""
 
 validate {{
     {policyPart}
@@ -107,7 +102,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task WillReturnNullResultWhenInputIsNull()
         {
-            var policy = $@"resource ""Test""
+            var policy = $@"resource ""TestResource""
 
 validate {{
     input.Type == ""Test""
@@ -119,7 +114,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task WillReturnSkippedByPolicyWhenIncludeConditionNotMet()
         {
-            var policy = $@"resource ""Test""
+            var policy = $@"resource ""TestResource""
 
 include {{
     input.Name != ""Test""
@@ -135,7 +130,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task WillReturnSkippedByPolicyWhenExcludeConditionNotMet()
         {
-            var policy = $@"resource ""Test""
+            var policy = $@"resource ""TestResource""
 
 exclude {{
     input.Name == ""Test""
@@ -155,7 +150,7 @@ validate {{
             // Task is needed to work around this issue: https://github.com/xunit/xunit/issues/2222
             var c = new CompilationContext(new SourceTextCompilationUnit(policyDocument));
             context = c;
-            return Task.Run(() => PolicyCompiler.GetFunctionForPolicy(c.Source));
+            return Task.Run(() => new PolicyCompiler(new Lexer(), new Parser(new TestResourceTypeLocator())).GetFunctionForPolicy(c.Source));
         }
     }
 }

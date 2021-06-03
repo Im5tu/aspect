@@ -361,7 +361,7 @@ validate";
             // Task is needed to work around this issue: https://github.com/xunit/xunit/issues/2222
             var c = new CompilationContext(new SourceTextCompilationUnit(policyDocument));
             context = c;
-            return Task.Run(() => Lexer.Instance.GetAllSyntaxTokens(c).ToList());
+            return Task.Run(() => new Lexer().GetAllSyntaxTokens(c).ToList());
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Aspect.Policies.Tests.CompilerServices
     public class TestResource : IResource
     {
         public string Name { get; set; } = null!;
-        public string Type { get; set; } = "Test";
+        public string Type { get; set; } = nameof(TestResource);
         public string Region { get; } = "eu-west-1";
         public IReadOnlyList<KeyValuePair<string, string>> Tags { get; set; } = null!;
 

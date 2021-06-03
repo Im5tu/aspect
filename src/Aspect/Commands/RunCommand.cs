@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Aspect.Abstractions;
 using Aspect.Policies;
 using Aspect.Runners;
 using Spectre.Console;
@@ -15,13 +16,15 @@ namespace Aspect.Commands
     internal class RunCommand : AsyncCommand<RunCommandSettings>
     {
         private readonly IPolicySuiteRunner _policySuiteRunner;
+        private readonly IReadOnlyDictionary<string,ICloudProvider> _cloudProviders;
         private bool _isDirectory = false;
         private bool _isPolicySuite = false;
         private bool _isBuiltIn = false;
 
-        public RunCommand(IPolicySuiteRunner policySuiteRunner)
+        public RunCommand(IPolicySuiteRunner policySuiteRunner, IReadOnlyDictionary<string, ICloudProvider> cloudProviders)
         {
             _policySuiteRunner = policySuiteRunner;
+            _cloudProviders = cloudProviders;
         }
 
         public override ValidationResult Validate(CommandContext context, RunCommandSettings settings)
@@ -86,11 +89,7 @@ namespace Aspect.Commands
             {
                 result = new PolicySuite
                 {
-                    Scopes = new[]
-                    {
-                        new PolicySuiteScope {Type = "AWS", Name = "AWS", Regions = PolicyRegions.AWS.All, Policies = new[] {name}},
-                        new PolicySuiteScope {Type = "Azure", Name = "Azure", Regions = PolicyRegions.Azure.All, Policies = new[] {name}},
-                    }
+                    Scopes = _cloudProviders.Select(x => new PolicySuiteScope { Type = x.Key, Name = x.Key, Regions = x.Value.GetAllRegions(), Policies = new [] { name }}).ToList()
                 };
             }
 

@@ -12,6 +12,13 @@ namespace Aspect.Commands
 {
     internal class PolicyValidateCommand : Command<PolicyValidateCommandSettings>
     {
+        private readonly IPolicyCompiler _policyCompiler;
+
+        public PolicyValidateCommand(IPolicyCompiler policyCompiler)
+        {
+            _policyCompiler = policyCompiler;
+        }
+
         public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] PolicyValidateCommandSettings settings)
         {
             if (string.IsNullOrWhiteSpace(settings.FileOrDirectory))
@@ -53,7 +60,7 @@ namespace Aspect.Commands
             var directoryHasErrors = false;
             foreach (var policy in policyFiles.OrderBy(x => x))
             {
-                var isValid = PolicyCompiler.IsPolicyFileValid(policy, out var cntx);
+                var isValid = _policyCompiler.IsPolicyFileValid(policy, out var cntx);
                 results.Add(cntx);
                 directoryHasErrors |= !isValid;
             }

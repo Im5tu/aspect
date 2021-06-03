@@ -16,11 +16,13 @@ namespace Aspect.Runners
 {
     internal sealed class PolicySuiteRunner : IPolicySuiteRunner
     {
+        private readonly IPolicyCompiler _policyCompiler;
         private readonly Dictionary<Type, IResourceExplorer<AwsAccount, AwsAccountIdentifier>> _awsProviders = new();
         private readonly Dictionary<Type, IResourceExplorer> _azureProviders = new();
 
-        public PolicySuiteRunner(IEnumerable<IResourceExplorer> resourceExplorers)
+        public PolicySuiteRunner(IEnumerable<IResourceExplorer> resourceExplorers, IPolicyCompiler policyCompiler)
         {
+            _policyCompiler = policyCompiler;
             foreach (var provider in resourceExplorers)
             {
                 if (provider is IResourceExplorer<AwsAccount, AwsAccountIdentifier> awsProvider)
@@ -117,7 +119,7 @@ namespace Aspect.Runners
             var compiledPolicies = policies.Select(x =>
             {
                 var context = new CompilationContext(x);
-                var func = PolicyCompiler.GetFunctionForPolicy(context, out var resource);
+                var func = _policyCompiler.GetFunctionForPolicy(context, out var resource);
                 if (func is null || resource is null)
                 {
                     context.WriteCompilationResultToConsole();

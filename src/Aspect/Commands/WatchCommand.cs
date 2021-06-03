@@ -12,6 +12,13 @@ namespace Aspect.Commands
 {
     internal class WatchCommand : WaitableCommand<WatchCommandSettings>
     {
+        private readonly IPolicyCompiler _policyCompiler;
+
+        public WatchCommand(IPolicyCompiler policyCompiler)
+        {
+            _policyCompiler = policyCompiler;
+        }
+
         public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] WatchCommandSettings settings)
         {
             if (string.IsNullOrWhiteSpace(settings.Directory))
@@ -46,7 +53,7 @@ namespace Aspect.Commands
                         Thread.Sleep(250); // Sleep is to work around file access issues because multiple events fire
 
                         AnsiConsole.Clear();
-                        PolicyCompiler.IsPolicyFileValid(args.FullPath, out var cntx);
+                        _policyCompiler.IsPolicyFileValid(args.FullPath, out var cntx);
                         cntx.WriteCompilationResultToConsole();
                     };
 

@@ -8,12 +8,6 @@ namespace Aspect.Policies.Tests.CompilerServices
     {
         public const int TestTimeoutMs = 1000;
 
-        public ParserTests()
-        {
-            Types.AddResource("Test", typeof(TestResource));
-        }
-
-
         internal static async Task<PolicyAst?> GetPolicyAstForDocument(string policyDocument)
             => await GetPolicyAstForDocument(policyDocument, out _);
         internal static Task<PolicyAst?> GetPolicyAstForDocument(string policyDocument, out CompilationContext context)
@@ -23,8 +17,11 @@ namespace Aspect.Policies.Tests.CompilerServices
             context = c;
             return Task.Run(() =>
             {
-                var tokens = Lexer.Instance.GetAllSyntaxTokens(c).ToList();
-                return Parser.Instance.Parse(c, tokens);
+                var lexer = new Lexer();
+                var parser = new Parser(new TestResourceTypeLocator());
+
+                var tokens = lexer.GetAllSyntaxTokens(c).ToList();
+                return parser.Parse(c, tokens);
             });
         }
     }

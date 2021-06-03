@@ -12,7 +12,7 @@ using Aspect.Providers.AWS.Models.EC2;
 
 namespace Aspect.Providers.AWS.Resources.EC2
 {
-    internal sealed class SecurityGroupResourceExplorer : AwsResourceExplorer
+    internal sealed class SecurityGroupResourceExplorer : AWSResourceExplorer
     {
         public SecurityGroupResourceExplorer()
             : base(typeof(AwsSecurityGroup))

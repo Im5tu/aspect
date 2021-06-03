@@ -1,6 +1,9 @@
 ﻿using Aspect.Commands;
 using Aspect.Dependencies;
+using Aspect.Policies;
+using Aspect.Providers.AWS;
 using Aspect.Providers.AWS.Resources;
+using Aspect.Providers.Azure;
 using Aspect.Runners;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
@@ -64,7 +67,9 @@ namespace Aspect
         {
             var services = new ServiceCollection()
                 .AddSingleton<IPolicySuiteRunner, PolicySuiteRunner>()
-                .AddAWSResourceExplorers();
+                .AddCompilerService()
+                .AddAWSCloudProvider()
+                .AddAzureCloudProvider();
 
             return new MicrosoftDiTypeRegistrar(services);
         }

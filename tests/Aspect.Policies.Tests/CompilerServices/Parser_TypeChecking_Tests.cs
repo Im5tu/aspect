@@ -26,7 +26,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseEqualityForInt32AndInt16Property()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Int32 == {Int16.MaxValue}
 }}";
@@ -41,7 +41,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseEqualityForInt64AndInt16Property()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Int64 == {Int16.MaxValue}
 }}";
@@ -56,7 +56,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseEqualityForDecimalAndInt16Property()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Decimal == {Int16.MaxValue}
 }}";
@@ -71,7 +71,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseEqualityForInt64AndInt32Property()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Int64 == {Int32.MaxValue}
 }}";
@@ -86,7 +86,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseEqualityForDecimalAndInt32Property()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Decimal == {Int32.MaxValue}
 }}";
@@ -101,7 +101,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task CanParseEqualityForDecimalAndInt64Property()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.Decimal == {Int64.MaxValue}
 }}";
@@ -117,7 +117,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task EnsureThatPropertyExistsOnType()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.NotExistsOnType == 123
 }}";
@@ -128,7 +128,7 @@ validate {{
         [Fact(Timeout = TestTimeoutMs)]
         public async Task EnsureThatPropertyExistsOnType_Collection()
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     input.NotExistsOnType[_] == 123
 }}";
@@ -150,7 +150,7 @@ validate {{
         [InlineData("123(input.Something,1)")]
         public async Task EnsureThatFunctionExists(string func)
         {
-            var policy = @$"resource ""Test""
+            var policy = @$"resource ""TestResource""
 validate {{
     {func}
 }}";
