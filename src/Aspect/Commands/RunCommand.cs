@@ -78,6 +78,7 @@ namespace Aspect.Commands
                 table.AddColumns("Policy", "IsValid", "Errors");
                 table.AddRow(settings.FileOrDirectory, validationResult.IsValid ? "[green]Valid[/]" : "[red]Invalid[/]", string.Join(Environment.NewLine, validationResult.Errors.Select(x => $"- {x}")));
                 AnsiConsole.Render(table);
+                return 1;
             }
 
             var results = (await _policySuiteRunner.RunPoliciesAsync(policy, default)).ToList();
