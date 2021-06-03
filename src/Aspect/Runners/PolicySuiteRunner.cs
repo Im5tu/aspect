@@ -120,7 +120,7 @@ namespace Aspect.Runners
 
             if (File.GetAttributes(policyName).HasFlag(FileAttributes.Directory))
             {
-                foreach (var file in Directory.EnumerateFiles(policyName, "*.policy", SearchOption.AllDirectories))
+                foreach (var file in Directory.EnumerateFiles(policyName, $"*{FileExtensions.PolicyFileExtension}", SearchOption.AllDirectories))
                     yield return new FileCompilationUnit(file);
 
                 yield break;

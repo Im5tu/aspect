@@ -114,7 +114,7 @@ namespace Aspect.Commands
 
         private PolicySuite LoadPolicySuiteFromName(string name)
         {
-            if (!name.EndsWith(".suite", StringComparison.OrdinalIgnoreCase))
+            if (!name.EndsWith(FileExtensions.PolicySuiteExtension, StringComparison.OrdinalIgnoreCase))
                 throw new Exception("Invalid policy suite");
 
             if (name.StartsWith("builtin", StringComparison.OrdinalIgnoreCase))

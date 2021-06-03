@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Aspect.Extensions;
+using Aspect.Policies;
 using Aspect.Policies.CompilerServices;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -44,11 +45,11 @@ namespace Aspect.Commands
             if (isDirectory)
             {
                 var directory = settings.FileOrDirectory!;
-                if (!directory.EndsWith("\\", StringComparison.Ordinal))
-                    directory += "\\";
+                if (!directory.EndsWith(Path.DirectorySeparatorChar))
+                    directory += Path.DirectorySeparatorChar;
 
                 var searchOption = settings.Recursive.GetValueOrDefault(false) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-                policyFiles.AddRange(Directory.EnumerateFiles(directory, "*.policy", searchOption));
+                policyFiles.AddRange(Directory.EnumerateFiles(directory, $"*{FileExtensions.PolicyFileExtension}", searchOption));
             }
             else
             {
