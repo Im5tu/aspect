@@ -29,8 +29,8 @@ namespace Aspect.Commands
 
         public override async Task<int> ExecuteAsync(CommandContext context, InspectCommandSettings settings)
         {
-            var provider = _cloudProviders[PromptOrDefault("Select cloud provider:", _cloudProviders.Keys, "AWS")];
-            var region = PromptOrDefault("Select region:", provider.GetAllRegions().OrderBy(x => x));
+            var provider = _cloudProviders[ConsoleExtensions.PromptOrDefault("Select cloud provider:", _cloudProviders.Keys, "AWS")];
+            var region = ConsoleExtensions.PromptOrDefault("Select region:", provider.GetAllRegions().OrderBy(x => x));
 
             var (resourceName, resourceType) = GetResources(provider);
             var result = await LoadResources(provider, resourceType, region);
@@ -74,7 +74,7 @@ namespace Aspect.Commands
         private (string resourceName, Type resourceType) GetResources(ICloudProvider provider)
         {
             var resources = provider.GetResources();
-            var answer = PromptOrDefault("Select resource:", resources.Keys);
+            var answer = ConsoleExtensions.PromptOrDefault("Select resource:", resources.Keys);
             return (answer, resources[answer]);
         }
 
@@ -166,18 +166,6 @@ validate {{
                 });
         }
 
-        private static string PromptOrDefault(string message, IEnumerable<string> choices, string defaultValue = "")
-        {
-            var prompt = new SelectionPrompt<string> { Title = message };
-            prompt.AddChoices(choices);
 
-            if (prompt.Choices.Count == 0)
-                return defaultValue;
-
-            if (prompt.Choices.Count == 1)
-                return prompt.Choices[0];
-
-            return AnsiConsole.Prompt(prompt);
-        }
     }
 }
