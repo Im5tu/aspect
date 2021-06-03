@@ -68,8 +68,11 @@ namespace Aspect
             var services = new ServiceCollection()
                 .AddSingleton<IPolicySuiteRunner, PolicySuiteRunner>()
                 .AddCompilerService()
-                .AddAWSCloudProvider()
-                .AddAzureCloudProvider();
+                .AddAWSCloudProvider();
+
+            #if DEBUG
+                services.AddAzureCloudProvider();
+            #endif
 
             return new MicrosoftDiTypeRegistrar(services);
         }

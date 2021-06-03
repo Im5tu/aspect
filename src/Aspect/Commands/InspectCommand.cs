@@ -29,13 +29,8 @@ namespace Aspect.Commands
 
         public override async Task<int> ExecuteAsync(CommandContext context, InspectCommandSettings settings)
         {
-            var providerSelection = new SelectionPrompt<string> { Title = "Select cloud provider:" };
-            providerSelection.AddChoices(_cloudProviders.Keys);
-            var provider = _cloudProviders[AnsiConsole.Prompt(providerSelection)];
-
-            var regionPrompt = new SelectionPrompt<string> { Title = "Select region:" };
-            regionPrompt.AddChoices(provider.GetAllRegions());
-            var region = AnsiConsole.Prompt(regionPrompt);
+            var provider = _cloudProviders[PromptOrDefault("Select cloud provider:", _cloudProviders.Keys, "AWS")];
+            var region = PromptOrDefault("Select region:", provider.GetAllRegions().OrderBy(x => x));
 
             var (resourceName, resourceType) = GetResources(provider);
             var result = await LoadResources(provider, resourceType, region);
@@ -78,13 +73,9 @@ namespace Aspect.Commands
 
         private (string resourceName, Type resourceType) GetResources(ICloudProvider provider)
         {
-            var resourcePrompt = new SelectionPrompt<string>
-            {
-                Title = "Select resource to inspect:",
-            };
-            resourcePrompt.AddChoices(provider.GetResources().Keys);
-            var answer = AnsiConsole.Prompt(resourcePrompt);
-            return (answer, provider.GetResources()[answer]);
+            var resources = provider.GetResources();
+            var answer = PromptOrDefault("Select resource:", resources.Keys);
+            return (answer, resources[answer]);
         }
 
         private async Task HandleCommands(string resourceName, Type resourceType, ICloudProvider provider, string region)
@@ -173,6 +164,20 @@ validate {{
                     });
                     await tsk;
                 });
+        }
+
+        private static string PromptOrDefault(string message, IEnumerable<string> choices, string defaultValue = "")
+        {
+            var prompt = new SelectionPrompt<string> { Title = message };
+            prompt.AddChoices(choices);
+
+            if (prompt.Choices.Count == 0)
+                return defaultValue;
+
+            if (prompt.Choices.Count == 1)
+                return prompt.Choices[0];
+
+            return AnsiConsole.Prompt(prompt);
         }
     }
 }
