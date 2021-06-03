@@ -1,0 +1,59 @@
+name: Create Release
+on:
+  workflow_dispatch:
+      version:
+        description: 'The version number to use'     
+        required: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout repository and submodules
+      uses: actions/checkout@v2.3.4
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1.8.0
+      with:
+        dotnet-version: '5.0.x'
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Publish windows
+      run: dotnet publish -c Release -r win-x64 /p:PublishCli=true /p:Version=${{ github.event.inputs.version }}
+    - name: Publish linux
+      run: dotnet publish -c Release -r linux-x64 /p:PublishCli=true /p:Version=${{ github.event.inputs.version }}
+    - name: Publish linux
+      run: dotnet publish -c Release -r linux-musl-x64 /p:PublishCli=true /p:Version=${{ github.event.inputs.version }}
+    - name: Zip releases
+      run: |
+        zip ./artifacts/release/aspect-${{ github.event.inputs.version }}-win-x64.zip ./artifacts/app/win-x64/aspect.exe
+        zip ./artifacts/release/aspect-${{ github.event.inputs.version }}-linux-x64.zip ./artifacts/app/linux-x64/aspect
+        zip ./artifacts/release/aspect-${{ github.event.inputs.version }}-linux-musl-x64.zip ./artifacts/app/linux-musl-x64/aspect
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+    - name: Login to DockerHub
+      uses: docker/login-action@v1 
+      with:
+        username: ${{ secrets.DOCKERHUB_LOGIN }}
+        password: ${{ secrets.DOCKERHUB_PAT }}
+    - name: Build Docker Image
+      id: docker_build
+      uses: docker/build-push-action@v2
+      with:
+        file: src/docker/alpine.dockerfile
+        tags: |
+          im5tu/aspect:latest
+          im5tu/aspect:alpine
+          im5tu/aspect:${{ github.event.inputs.version }}
+          im5tu/aspect:${{ github.event.inputs.version }}-alpine
+
+        push: true
+        build-arg:
+          - app=Aspect
+          - Version=${{ github.event.inputs.version }}
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          automatic_release_tag: ${{ github.event.inputs.version }}
+          files: |
+            ./artifacts/release/aspect-*.zip
