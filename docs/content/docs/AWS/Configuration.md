@@ -5,3 +5,10 @@ weight: 1
 ---
 
 Coming Soon!
+
+
+Docker:
+
+```bash
+docker run --rm -it -v $HOME/.aws:/root/.aws:ro im5tu/aspect:latest
+```
