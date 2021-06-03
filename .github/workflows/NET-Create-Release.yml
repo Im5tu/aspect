@@ -24,7 +24,7 @@ jobs:
       run: dotnet publish -c Release -r win-x64 /p:PublishCli=true /p:Version=${{ github.event.inputs.version }}
     - name: Publish linux
       run: dotnet publish -c Release -r linux-x64 /p:PublishCli=true /p:Version=${{ github.event.inputs.version }}
-    - name: Publish linux
+    - name: Publish linux (musl)
       run: dotnet publish -c Release -r linux-musl-x64 /p:PublishCli=true /p:Version=${{ github.event.inputs.version }}
     - name: Zip releases
       run: |
