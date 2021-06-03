@@ -2,8 +2,28 @@ baseURL = "https://cloudaspect.app"
 languageCode = "en-us"
 title = "Aspect"
 themesDir = "themes"
-theme = "hugo-whisper-theme"
+theme = "ace-documentation"
 publishDir = "public"
+
+
 
 [minify]
   minifyOutput = true
+
+# Enable Google Analytics by entering your tracking id
+googleAnalytics = ""
+
+[params]
+ordersectionsby = "weight" # ordersectionsby = "title"
+disableSearch = true # default is false
+disableReadmoreNav = true # set true to hide prev/next navigation, default is false
+highlightClientSide = true # set true to use highlight.pack.js instead of the default hugo chroma highlighter
+menushortcutsnewtab = true # set true to open shortcuts links to a new tab/window
+
+[outputs]
+home = [ "HTML", "RSS", "JSON"]
+
+[[menu.shortcuts]]
+name = "<i class='fab fa-github'></i>"
+url = "https://github.com/im5tu/aspect"
+weight = 1
