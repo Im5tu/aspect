@@ -46,13 +46,9 @@ jobs:
           im5tu/aspect:alpine
           im5tu/aspect:${{ github.event.inputs.version }}
           im5tu/aspect:${{ github.event.inputs.version }}-alpine
-
         push: true
-        build-arg: |
-          app=Aspect
-          Version=${{ github.event.inputs.version }}
-          
-      - uses: "marvinpinto/action-automatic-releases@latest"
+        build-args: app=Aspect,Version=${{ github.event.inputs.version }}
+      - uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
