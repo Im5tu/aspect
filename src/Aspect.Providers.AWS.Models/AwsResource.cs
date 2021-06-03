@@ -17,13 +17,22 @@ namespace Aspect.Providers.AWS.Models
         public string Arn { get; }
 
         /// <inheritDoc />
-        protected AwsResource(AwsAccount account, string arn, string name, IReadOnlyList<KeyValuePair<string, string>> tags, string type)
-            : base(account, name, tags, type)
+        protected AwsResource(AwsAccount account, string arn, string name, IReadOnlyList<KeyValuePair<string, string>> tags, string type, string region)
+            : base(account, name, tags, type, region)
         {
             if (string.IsNullOrWhiteSpace(arn))
                 throw new ArgumentNullException(nameof(arn), "ARN cannot be null, empty or whitespace.");
 
             Arn = arn;
+        }
+
+        protected override string FormatProperty(string propertyName)
+        {
+            return propertyName switch
+            {
+                nameof(Arn) => Arn,
+                _ => base.FormatProperty(propertyName)
+            };
         }
     }
 }

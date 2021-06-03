@@ -18,6 +18,11 @@ namespace Aspect.Abstractions
         string Type { get; }
 
         /// <summary>
+        ///     The region that the resource is located in
+        /// </summary>
+        string Region { get; }
+
+        /// <summary>
         ///     The tags associated with the resource
         /// </summary>
         IReadOnlyList<KeyValuePair<string, string>> Tags { get; }

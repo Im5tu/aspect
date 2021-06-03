@@ -1,28 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon;
 using Aspect.Abstractions;
 using Aspect.Providers.AWS.Models;
 
 namespace Aspect.Providers.AWS
 {
-    /// <summary>
-    ///
-    /// </summary>
-    public abstract class AwsResourceExplorer : IResourceExplorer
+    internal abstract class AwsResourceExplorer : IResourceExplorer<AwsAccount, AwsAccountIdentifier>
     {
-        /// <summary>
-        ///     The AWS account associated with this resource explorer instance
-        /// </summary>
-        protected AwsAccount Account { get; }
-
-        /// <param name="account">The AWS account associated with this resource explorer instance</param>
-        protected AwsResourceExplorer(AwsAccount account)
+        protected AwsResourceExplorer(Type resourceType)
         {
-            Account = account;
+            ResourceType = resourceType;
         }
 
         /// <inheritDoc />
-        public abstract Task<IEnumerable<IResource>> DiscoverResourcesAsync(CancellationToken cancellationToken);
+        public Type ResourceType { get; }
+
+        /// <inheritDoc />
+        public async Task<IEnumerable<IResource>> DiscoverResourcesAsync(AwsAccount account, string region, CancellationToken cancellationToken)
+        {
+            var endpoint = RegionEndpoint.GetBySystemName(region);
+            if (endpoint is null)
+                throw new Exception($"Region '{region}' is invalid");
+
+            return await DiscoverResourcesAsync(account, endpoint, cancellationToken);
+        }
+
+        protected abstract Task<IEnumerable<IResource>> DiscoverResourcesAsync(AwsAccount account, RegionEndpoint region, CancellationToken cancellationToken);
     }
 }

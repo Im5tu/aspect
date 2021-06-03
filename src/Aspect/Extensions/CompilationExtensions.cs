@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Aspect.Policies;
 using Aspect.Policies.CompilerServices;
 using Spectre.Console;
 
@@ -17,6 +18,17 @@ namespace Aspect.Extensions
         internal static string FormatMessage(this CompilationWarning warning)
         {
             return $"[orange1]{warning.Code} - {GetMessageForCode(warning.Code)} - Line {warning.Line} Position: {warning.Position}[/]";
+        }
+
+        internal static string GetPolicyName(this CompilationUnit source)
+        {
+            var policy = "inline";
+            if (source is FileCompilationUnit fcu)
+                policy = new FileInfo(fcu.FileName).FullName;
+            else if (source is BuiltInResourceCompilationUnit bircu)
+                policy = bircu.Name;
+
+            return policy;
         }
 
         internal static string GetMessageForCode(string code)
@@ -60,21 +72,17 @@ namespace Aspect.Extensions
 
             foreach (var cntx in contexts)
             {
-                var isValid = cntx.Errors.Count == 0;
                 var errors = string.Join(Environment.NewLine, cntx.Errors.Select(x => x.FormatMessage()));
                 var warnings = string.Join(Environment.NewLine, cntx.Warnings.Select(x => x.FormatMessage()));
-
-                var policy = "inline";
-                if (cntx.Source is FileCompilationUnit fcu)
-                    policy = new FileInfo(fcu.FileName).FullName;
+                var policy = cntx.Source.GetPolicyName();
 
                 if (failedOnly)
                 {
-                    if (!isValid)
-                        table.AddRow(policy, isValid ? "[green]Valid[/]" : "[red]Invalid[/]", errors, warnings);
+                    if (!cntx.IsValid)
+                        table.AddRow(policy, "[red]Invalid[/]", errors, warnings);
                 }
                 else
-                    table.AddRow(policy, isValid ? "[green]Valid[/]" : "[red]Invalid[/]", errors, warnings);
+                    table.AddRow(policy, cntx.IsValid ? "[green]Valid[/]" : "[red]Invalid[/]", errors, warnings);
             }
 
             if (table.Rows.Count > 0)

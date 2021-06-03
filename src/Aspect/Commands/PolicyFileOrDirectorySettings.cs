@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Spectre.Console.Cli;
+﻿using Spectre.Console.Cli;
 
 namespace Aspect.Commands
 {

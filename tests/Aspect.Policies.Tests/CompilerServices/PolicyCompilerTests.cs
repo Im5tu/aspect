@@ -49,7 +49,7 @@ validate {{
             };
             var executor = await GetPolicyValidatorForPolicy(policy);
 
-            executor(testObject).Should().Be(expected);
+            executor?.Invoke(testObject).Should().Be(expected);
         }
 
         [Theory(Timeout = TestTimeoutMs)]
@@ -78,7 +78,7 @@ validate {{
             };
             var executor = await GetPolicyValidatorForPolicy(policy);
 
-            executor(testObject).Should().Be(expected);
+            executor?.Invoke(testObject).Should().Be(expected);
         }
 
         [Theory(Timeout = TestTimeoutMs, Skip = "Implementation not complete")]
@@ -101,7 +101,7 @@ validate {{
                 Array = new [] { 1, 2, 3 },
             };
             var executor = await GetPolicyValidatorForPolicy(policy);
-            executor(testObject).Should().Be(expected);
+            executor?.Invoke(testObject).Should().Be(expected);
         }
 
         [Fact(Timeout = TestTimeoutMs)]
@@ -113,7 +113,7 @@ validate {{
     input.Type == ""Test""
 }}";
             var executor = await GetPolicyValidatorForPolicy(policy);
-            executor(null!).Should().Be(ResourcePolicyExecution.Null);
+            executor?.Invoke(null!).Should().Be(ResourcePolicyExecution.Null);
         }
 
         [Fact(Timeout = TestTimeoutMs)]
@@ -129,7 +129,7 @@ validate {{
     input.Type == ""Test""
 }}";
             var executor = await GetPolicyValidatorForPolicy(policy);
-            executor(new TestResource { Name = "Test" }).Should().Be(ResourcePolicyExecution.SkippedByPolicy);
+            executor?.Invoke(new TestResource { Name = "Test" }).Should().Be(ResourcePolicyExecution.SkippedByPolicy);
         }
 
         [Fact(Timeout = TestTimeoutMs)]
@@ -145,23 +145,17 @@ validate {{
     input.Type == ""Test""
 }}";
             var executor = await GetPolicyValidatorForPolicy(policy);
-            executor(new TestResource { Name = "Test" }).Should().Be(ResourcePolicyExecution.SkippedByPolicy);
+            executor?.Invoke(new TestResource { Name = "Test" }).Should().Be(ResourcePolicyExecution.SkippedByPolicy);
         }
 
-
-        internal static async Task<Func<IResource, ResourcePolicyExecution>> GetPolicyValidatorForPolicy(string policyDocument)
+        internal static async Task<Func<IResource, ResourcePolicyExecution>?> GetPolicyValidatorForPolicy(string policyDocument)
             => await GetPolicyValidatorForPolicy(policyDocument, out _);
-        internal static Task<Func<IResource, ResourcePolicyExecution>> GetPolicyValidatorForPolicy(string policyDocument, out CompilationContext context)
+        internal static Task<Func<IResource, ResourcePolicyExecution>?> GetPolicyValidatorForPolicy(string policyDocument, out CompilationContext context)
         {
             // Task is needed to work around this issue: https://github.com/xunit/xunit/issues/2222
             var c = new CompilationContext(new SourceTextCompilationUnit(policyDocument));
             context = c;
-            return Task.Run(() =>
-            {
-                var compiler = new PolicyCompiler();
-                return compiler.GetFunctionForPolicy(c.Source);
-            });
+            return Task.Run(() => PolicyCompiler.GetFunctionForPolicy(c.Source));
         }
-
     }
 }

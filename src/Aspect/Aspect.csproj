@@ -16,14 +16,21 @@
     </PropertyGroup>
     
     <ItemGroup>
+        <EmbeddedResource Include="BuiltIn\**\*.policy" />
+        <EmbeddedResource Include="BuiltIn\**\*.suite" />
+    </ItemGroup>
+    
+    <ItemGroup>
       <ProjectReference Include="..\Aspect.Policies\Aspect.Policies.csproj" />
       <ProjectReference Include="..\Aspect.Providers.AWS\Aspect.Providers.AWS.csproj" />
       <ProjectReference Include="..\Aspect.Providers.Azure\Aspect.Providers.Azure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
       <PackageReference Include="Spectre.Console" Version="0.39.0" />
+      <PackageReference Include="YamlDotNet" Version="11.1.1" />
     </ItemGroup>
 
 </Project>

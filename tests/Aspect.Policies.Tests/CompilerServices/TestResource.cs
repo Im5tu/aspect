@@ -9,6 +9,7 @@ namespace Aspect.Policies.Tests.CompilerServices
     {
         public string Name { get; set; } = null!;
         public string Type { get; set; } = "Test";
+        public string Region { get; } = "eu-west-1";
         public IReadOnlyList<KeyValuePair<string, string>> Tags { get; set; } = null!;
 
 

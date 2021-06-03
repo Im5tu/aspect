@@ -21,7 +21,7 @@ namespace Aspect.Policies.Tests.CompilerServices
         {
             var tokens = await GetTokensForPolicy(value, out var context);
             tokens.Count.Should().Be(0);
-            context.Warnings.Count.Should().Be(1);
+            context.Warnings.Count().Should().Be(1);
             context.Warnings.First().Code.Should().Be("CA-LEX-004");
         }
 

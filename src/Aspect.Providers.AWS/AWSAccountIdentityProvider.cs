@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon.IdentityManagement;
@@ -37,15 +36,15 @@ namespace Aspect.Providers.AWS
         public async Task<AwsAccount> GetAccountAsync(CancellationToken cancellationToken)
         {
             var stsResponse = await _stsClient.GetCallerIdentityAsync(new GetCallerIdentityRequest(), cancellationToken);
-            Console.WriteLine("STS Response:");
-            Console.WriteLine(JsonSerializer.Serialize(stsResponse));
+            //Console.WriteLine("STS Response:");
+            //Console.WriteLine(JsonSerializer.Serialize(stsResponse));
 
             var request = new ListAccountAliasesRequest();
             var response = await _iamClient.ListAccountAliasesAsync(request, cancellationToken);
 
-            Console.WriteLine("Account Aliases:");
-            Console.WriteLine(string.Join(",", response.AccountAliases));
-            Console.WriteLine();
+            //Console.WriteLine("Account Aliases:");
+            //Console.WriteLine(string.Join(",", response.AccountAliases));
+            //Console.WriteLine();
 
             if (response.AccountAliases.Count == 0)
                 return new AwsAccount(new AwsAccountIdentifier(stsResponse.Account));

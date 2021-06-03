@@ -7,7 +7,8 @@ namespace Aspect.Abstractions
     ///     The basis for all cloud provider accounts
     /// </summary>
     [DebuggerDisplay("{ToString(),nq}")]
-    public abstract class Account<T> where T : AccountIdentifier
+    public abstract class Account<T> : IFormatProperties
+        where T : AccountIdentifier
     {
         /// <summary>
         ///     The account identifier
@@ -31,5 +32,15 @@ namespace Aspect.Abstractions
 
         /// <inheritdoc />
         public override string ToString() => $"{Type} Account: {Id}";
+
+        public virtual string Format(string propertyName)
+        {
+            return propertyName switch
+            {
+                nameof(Id) => Id.ToString(),
+                nameof(Type) => Type,
+                _ => string.Empty
+            };
+        }
     }
 }

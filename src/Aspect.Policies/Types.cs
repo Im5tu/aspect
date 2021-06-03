@@ -8,11 +8,12 @@ namespace Aspect.Policies
 {
     internal static class Types
     {
-        private static readonly Dictionary<string, Type> _types = new();
+        private static readonly Dictionary<string, Type> _awsTypes = new();
+        private static readonly Dictionary<string, Type> _azureTypes = new();
 
         static Types()
         {
-            foreach (var t in typeof(AwsSecurityGroup).Assembly.GetTypes().Where(x => x.IsAssignableTo(typeof(IResource)) && !x.IsAbstract))
+            foreach (var t in typeof(AwsSecurityGroup).Assembly.GetTypes().Where(x => x.IsAssignableTo(typeof(IResource)) && !x.IsAbstract && x.IsClass))
                 AddResource(t);
         }
 
@@ -25,7 +26,6 @@ namespace Aspect.Policies
             if (type.IsAbstract || !type.IsAssignableTo(typeof(IResource)))
                 return;
 
-            // TODO :: TASK :: How to manage this? Source Gen?
             AddResource(type.Name, type);
         }
 
@@ -34,9 +34,28 @@ namespace Aspect.Policies
             if (type.IsAbstract || !type.IsAssignableTo(typeof(IResource)))
                 return;
 
-            _types[name] = type;
+            _awsTypes[name] = type;
         }
 
-        internal static Type? GetType(string name) => _types.TryGetValue(name, out var type) ? type : null;
+        internal static IEnumerable<Type> GetTypes(string provider)
+        {
+            if ("AWS".Equals(provider, StringComparison.OrdinalIgnoreCase))
+                return _awsTypes.Values;
+            if ("Azure".Equals(provider, StringComparison.OrdinalIgnoreCase))
+                return _azureTypes.Values;
+
+            return Enumerable.Empty<Type>();
+        }
+
+        internal static Type? GetType(string name) => _awsTypes.TryGetValue(name, out var type) ? type : _azureTypes.TryGetValue(name, out type) ? type : null;
+        internal static Type? GetType(string name, string provider)
+        {
+            if ("AWS".Equals(provider, StringComparison.OrdinalIgnoreCase) && _awsTypes.TryGetValue(name, out var type))
+                return type;
+            if ("Azure".Equals(provider, StringComparison.OrdinalIgnoreCase) && _azureTypes.TryGetValue(name, out type))
+                return type;
+
+            return null;
+        }
     }
 }

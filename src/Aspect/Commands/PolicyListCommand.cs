@@ -29,7 +29,6 @@ namespace Aspect.Commands
                 directory += "\\";
 
             var searchOption = commandSettings.Recursive.GetValueOrDefault(false) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-            var compiler = new PolicyCompiler();
             var table = new Table();
             table.AddColumn("Policy");
             table.AddColumn("Resource");
@@ -39,7 +38,7 @@ namespace Aspect.Commands
             {
                 var fi = new FileInfo(policy);
                 var policyName = fi.FullName;
-                var resource = compiler.GetResourceForPolicyFile(policy) ?? "[italic red]<invalid policy>[/]";
+                var resource = PolicyCompiler.GetResourceForPolicyFile(policy) ?? "[italic red]<invalid policy>[/]";
                 table.AddRow(policyName, resource, fi.CreationTime.ToString("O"), fi.LastWriteTime.ToString("O"));
             }
 

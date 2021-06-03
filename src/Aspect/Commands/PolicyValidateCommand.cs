@@ -31,9 +31,7 @@ namespace Aspect.Commands
 
         public override int Execute([NotNull] CommandContext context, [NotNull] PolicyValidateCommandSettings settings)
         {
-            var compiler = new PolicyCompiler();
             var isDirectory = File.GetAttributes(settings.FileOrDirectory!).HasFlag(FileAttributes.Directory);
-
             var policyFiles = new List<string>();
 
             if (isDirectory)
@@ -55,7 +53,7 @@ namespace Aspect.Commands
             var directoryHasErrors = false;
             foreach (var policy in policyFiles.OrderBy(x => x))
             {
-                var isValid = compiler.IsPolicyFileValid(policy, out var cntx);
+                var isValid = PolicyCompiler.IsPolicyFileValid(policy, out var cntx);
                 results.Add(cntx);
                 directoryHasErrors |= !isValid;
             }

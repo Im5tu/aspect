@@ -46,8 +46,7 @@ namespace Aspect.Commands
                         Thread.Sleep(250); // Sleep is to work around file access issues because multiple events fire
 
                         AnsiConsole.Clear();
-                        var compiler = new PolicyCompiler();
-                        compiler.IsPolicyFileValid(args.FullPath, out var cntx);
+                        PolicyCompiler.IsPolicyFileValid(args.FullPath, out var cntx);
                         cntx.WriteCompilationResultToConsole();
                     };
 

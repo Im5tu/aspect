@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Aspect.Providers.AWS.Models.EC2
 {
@@ -25,8 +27,8 @@ namespace Aspect.Providers.AWS.Models.EC2
         public IReadOnlyCollection<Rule> EgressRules => _egressRules;
 
         /// <inheritDoc />
-        public AwsSecurityGroup(AwsAccount account, string arn, string name, IReadOnlyList<KeyValuePair<string, string>> tags)
-            : base(account, arn, name, tags, nameof(AwsSecurityGroup))
+        public AwsSecurityGroup(AwsAccount account, string arn, string name, IReadOnlyList<KeyValuePair<string, string>> tags, string region)
+            : base(account, arn, name, tags, nameof(AwsSecurityGroup), region)
         {
         }
 
@@ -40,6 +42,17 @@ namespace Aspect.Providers.AWS.Models.EC2
         /// </summary>
         /// <param name="rule"></param>
         public void AddEgressRule(Rule rule) => _egressRules.Add(rule);
+
+        protected override string FormatProperty(string propertyName)
+        {
+            return propertyName switch
+            {
+                nameof(Description) => Description ?? string.Empty,
+                nameof(IngressRules) => string.Join(Environment.NewLine, IngressRules.Select(x => $"- {x.ToString()}")),
+                nameof(EgressRules) => string.Join(Environment.NewLine, EgressRules.Select(x => $"- {x.ToString()}")),
+                _ => base.FormatProperty(propertyName)
+            };
+        }
 
         /// <summary>
         ///     Represents an EC2

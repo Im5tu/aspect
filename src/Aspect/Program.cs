@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Amazon;
-using Amazon.EC2;
-using Amazon.IdentityManagement;
-using Amazon.SecurityToken;
-using Aspect.Abstractions;
-using Aspect.Commands;
-using Aspect.Providers.AWS;
-using Aspect.Providers.AWS.Models;
-using Aspect.Providers.AWS.Resources.EC2;
-using Newtonsoft.Json;
+﻿using Aspect.Commands;
+using Aspect.Dependencies;
+using Aspect.Providers.AWS.Resources;
+using Aspect.Runners;
+using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
 
 namespace Aspect
@@ -19,16 +11,21 @@ namespace Aspect
     {
         static int Main(string[] args)
         {
-            var app = new CommandApp();
+            var app = new CommandApp(RegisterServices());
             app.Configure(config =>
             {
                 config.Settings.ApplicationName = "aspect";
 
                 config.AddCommand<AutoCompleteCommand>("autocomplete")
-                    .WithDescription("Generate an autocomplete script for either powershell or bash.");
+                    .WithDescription("Generate an autocomplete script for either powershell or bash.")
+                    .IsHidden();
 
                 config.AddCommand<LanguageServerCommand>("langserver")
-                    .WithDescription("Starts the language server.");
+                    .WithDescription("Starts the language server.")
+                    .IsHidden();
+
+                config.AddCommand<InspectCommand>("inspect")
+                    .WithDescription("REPL style interface for listing resources that match the specified conditions");
 
                 config.AddBranch("policy", p =>
                 {
@@ -48,7 +45,8 @@ namespace Aspect
 
                 config.AddCommand<RunCommand>("run")
                     .WithDescription("Run a one or more policies against your cloud infrastructure.")
-                    .WithExample(new[] {"run", "D:\\policies"});
+                    .WithExample(new[] {"run", "D:\\policies"})
+                    .IsHidden();
 
                 config.AddCommand<WatchCommand>("watch")
                     .WithDescription("Watch a specific directory for changes and validate them.")
@@ -62,24 +60,13 @@ namespace Aspect
             return app.Run(args);
         }
 
-        private static async Task<AwsAccount> GetCurrentAwsAccountAsync()
+        private static ITypeRegistrar RegisterServices()
         {
-            var accountProvider = new AWSAccountIdentityProvider(new AmazonSecurityTokenServiceClient(), new AmazonIdentityManagementServiceClient());
-            return (AwsAccount) await accountProvider.GetAccountAsync(default);
-        }
+            var services = new ServiceCollection()
+                .AddSingleton<IPolicySuiteRunner, PolicySuiteRunner>()
+                .AddAWSResourceExplorers();
 
-        private static async Task<IEnumerable<IResource>> GetSecurityGroupsAsync()
-        {
-            var serializerOptions = new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore};
-            var account = await GetCurrentAwsAccountAsync();
-            Console.WriteLine(account.ToString());
-
-            var sgLoader = new SecurityGroupResourceExplorer(account, new AmazonEC2Client(RegionEndpoint.EUWest1));
-
-            Console.WriteLine();
-            Console.WriteLine("Security Groups:");
-            return await sgLoader.DiscoverResourcesAsync(default);
-            //Console.WriteLine(JsonConvert.SerializeObject(groups.First(x => x.Tags.Count > 0), serializerOptions));
+            return new MicrosoftDiTypeRegistrar(services);
         }
     }
 }

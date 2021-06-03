@@ -18,11 +18,16 @@ namespace Aspect.Policies.CompilerServices
         /// <summary>
         ///     A collection of compilation errors
         /// </summary>
-        public IReadOnlyCollection<CompilationError> Errors => _errors;
+        public IEnumerable<CompilationError> Errors => _errors;
         /// <summary>
         ///     A collection of compilation warnings
         /// </summary>
-        public IReadOnlyCollection<CompilationWarning> Warnings => _warnings;
+        public IEnumerable<CompilationWarning> Warnings => _warnings;
+
+        /// <summary>
+        ///     Determines whether there are errors after the compiler has run
+        /// </summary>
+        public bool IsValid => _errors.Count == 0;
 
         /// <param name="source">The source to use for the compilation</param>
         public CompilationContext(CompilationUnit source)
