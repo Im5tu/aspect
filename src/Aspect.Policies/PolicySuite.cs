@@ -2,10 +2,10 @@
 
 namespace Aspect.Policies
 {
-    internal sealed class PolicySuite
+    public sealed class PolicySuite
     {
         public string? Name { get; init; }
         public string? Description { get; init; }
-        public IEnumerable<PolicySuiteScope>? Scopes { get; init; }
+        public IEnumerable<PolicyElement>? Policies { get; init; }
     }
 }

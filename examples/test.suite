@@ -1,6 +1,6 @@
 name: AWS Best Practises
 description: The best practises for all AWS resources. (EXPERIMENTAL)
-scopes:
+policies:
     -   type: AWS
         name: EU Must have tag IFR
         regions:

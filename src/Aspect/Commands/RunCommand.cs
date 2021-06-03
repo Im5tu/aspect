@@ -69,6 +69,7 @@ namespace Aspect.Commands
                 return -1;
 
             var policy = LoadPolicySuite(settings.FileOrDirectory);
+            // TODO :: TASK :: Validate policy suite
             var results = (await _policySuiteRunner.RunPoliciesAsync(policy, default)).ToList();
             var formattedResult = new Result
             {
@@ -93,7 +94,7 @@ namespace Aspect.Commands
             {
                 result = new PolicySuite
                 {
-                    Scopes = _cloudProviders.Select(x => new PolicySuiteScope { Type = x.Key, Name = x.Key, Regions = x.Value.GetAllRegions(), Policies = new [] { name }}).ToList()
+                    Policies = _cloudProviders.Select(x => new PolicyElement { Type = x.Key, Name = x.Key, Regions = x.Value.GetAllRegions(), Policies = new [] { name }}).ToList()
                 };
             }
 

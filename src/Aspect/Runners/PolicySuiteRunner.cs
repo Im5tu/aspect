@@ -25,7 +25,7 @@ namespace Aspect.Runners
 
         public async Task<IEnumerable<PolicySuiteRunResult>> RunPoliciesAsync(PolicySuite suite, CancellationToken cancellationToken = default)
         {
-            var scopes = suite.Scopes?.ToList();
+            var scopes = suite.Policies?.ToList();
             if (scopes is null || scopes.Count == 0)
                 return Enumerable.Empty<PolicySuiteRunResult>();
 
@@ -33,7 +33,7 @@ namespace Aspect.Runners
             return await Task.WhenAll(resultScopes);
         }
 
-        private async Task<PolicySuiteRunResult> RunPolicy(PolicySuiteScope scope, CancellationToken cancellationToken)
+        private async Task<PolicySuiteRunResult> RunPolicy(PolicyElement scope, CancellationToken cancellationToken)
         {
             if (!_cloudProviders.TryGetValue(scope.Type ?? string.Empty, out var provider))
             {
@@ -76,7 +76,7 @@ namespace Aspect.Runners
 
             return resources;
         }
-        private List<CompilationUnit> GetPolicies(PolicySuiteScope scope)
+        private List<CompilationUnit> GetPolicies(PolicyElement scope)
         {
             var policies = new List<CompilationUnit>();
             foreach (var policy in scope.Policies ?? Enumerable.Empty<string>())

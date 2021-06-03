@@ -2,7 +2,7 @@
 
 namespace Aspect.Policies
 {
-    internal sealed class PolicySuiteScope
+    public sealed class PolicyElement
     {
         public string? Type { get; init; }
         public string? Name { get; init; }
