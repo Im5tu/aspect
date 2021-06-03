@@ -32,6 +32,14 @@ jobs:
         zip artifacts/release/aspect-${{ github.event.inputs.version }}-win-x64.zip artifacts/app/win-x64/aspect.exe
         zip artifacts/release/aspect-${{ github.event.inputs.version }}-linux-x64.zip artifacts/app/linux-x64/aspect
         zip artifacts/release/aspect-${{ github.event.inputs.version }}-linux-musl-x64.zip artifacts/app/linux-musl-x64/aspect
+    - name: Start Deployment To DockerHub
+      uses: bobheadxi/deployments@v0.4.3
+      if: github.ref == 'refs/heads/main'
+      id: deployment
+      with:
+        step: start
+        token: ${{ secrets.GITHUB_TOKEN }}
+        env: DockerHub
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
     - name: Login to DockerHub
@@ -53,6 +61,13 @@ jobs:
         build-args: |
           app=Aspect
           Version=${{ github.event.inputs.version }}
+    - name: Update DockerHub Deployment Status
+      uses: bobheadxi/deployments@v0.4.3
+      with:
+        step: finish
+        token: ${{ secrets.GITHUB_TOKEN }}
+        status: ${{ job.status }}
+        deployment_id: ${{ steps.deployment.outputs.deployment_id }}
     - uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
