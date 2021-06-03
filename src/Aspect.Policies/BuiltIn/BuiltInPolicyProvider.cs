@@ -30,6 +30,8 @@ namespace Aspect.Policies.BuiltIn
                 }, StringComparer.OrdinalIgnoreCase);
         }
 
+        public IEnumerable<BuiltInResourceCompilationUnit> GetAllResources() => _resources.Values;
+
         public bool TryGetPolicy(string name, [NotNullWhen(true)] out BuiltInResourceCompilationUnit? compilationUnit)
             => _resources.TryGetValue(name, out compilationUnit);
 

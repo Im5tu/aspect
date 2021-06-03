@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Aspect.Policies;
+using Aspect.Policies.BuiltIn;
 using Aspect.Policies.CompilerServices;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -13,15 +14,17 @@ namespace Aspect.Commands
     internal sealed class PolicyListCommand : Command<PolicyListCommandSettings>
     {
         private readonly IPolicyCompiler _policyCompiler;
+        private readonly IBuiltInPolicyProvider _builtInPolicyProvider;
 
-        public PolicyListCommand(IPolicyCompiler policyCompiler)
+        public PolicyListCommand(IPolicyCompiler policyCompiler, IBuiltInPolicyProvider builtInPolicyProvider)
         {
             _policyCompiler = policyCompiler;
+            _builtInPolicyProvider = builtInPolicyProvider;
         }
 
         public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] PolicyListCommandSettings commandSettings)
         {
-            if (!string.IsNullOrWhiteSpace(commandSettings.Directory) && !Directory.Exists(commandSettings.Directory))
+            if (!string.IsNullOrWhiteSpace(commandSettings.Directory) && !commandSettings.Directory.Equals("builtin", StringComparison.OrdinalIgnoreCase) && !Directory.Exists(commandSettings.Directory))
                 return ValidationResult.Error($"The directory {commandSettings.Directory} does not exist.");
 
             return base.Validate(context, commandSettings);
@@ -34,7 +37,7 @@ namespace Aspect.Commands
             if (string.IsNullOrWhiteSpace(directory))
                 directory = Environment.CurrentDirectory;
 
-            if (!directory.EndsWith(Path.DirectorySeparatorChar))
+            if (!directory.Equals("builtin", StringComparison.OrdinalIgnoreCase) && !directory.EndsWith(Path.DirectorySeparatorChar))
                 directory += Path.DirectorySeparatorChar;
 
             var rows = directory.Equals("builtin", StringComparison.OrdinalIgnoreCase)
@@ -57,7 +60,18 @@ namespace Aspect.Commands
 
         private IEnumerable<(string policy, string resource, string creationDate, string lastUpdated)> GetBuiltInPolicies()
         {
-            return Enumerable.Empty<(string policy, string resource, string creationDate, string lastUpdated)>();
+            foreach (var resource in _builtInPolicyProvider.GetAllResources())
+            {
+                if (resource.Name.EndsWith(FileExtensions.PolicyFileExtension, StringComparison.OrdinalIgnoreCase))
+                {
+                    var r = _policyCompiler.GetResourceForPolicy(resource) ?? "[italic red]Invalid Resource[/]";
+                    yield return (resource.Name, r, "", "");
+                }
+                else
+                {
+                    yield return (resource.Name, "Various", "", "");
+                }
+            }
         }
 
         private IEnumerable<(string policy, string resource, string creationDate, string lastUpdated)> GetPoliciesFromDirectory(string directory, SearchOption searchOption)
@@ -67,7 +81,7 @@ namespace Aspect.Commands
             {
                 var fi = new FileInfo(policy);
                 var policyName = fi.FullName;
-                var resource = _policyCompiler.GetResourceForPolicyFile(policy) ?? "[italic red]Invalid Resource[/]";
+                var resource = _policyCompiler.GetResourceForPolicy(policy) ?? "[italic red]Invalid Resource[/]";
                 rows.Add((policyName, resource, fi.CreationTime.ToString("O"), fi.LastWriteTime.ToString("O")));
             }
 

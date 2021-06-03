@@ -35,7 +35,8 @@ namespace Aspect.Policies.CompilerServices
             resource = policy.ResourceType;
             return new LinqExpressionGenerator().Generate(policy);
         }
-        public string? GetResourceForPolicyFile(string filename) => BuildPolicy(new CompilationContext(new FileCompilationUnit(filename)))?.Resource;
+        public string? GetResourceForPolicy(string filename) => GetResourceForPolicy(new FileCompilationUnit(filename));
+        public string? GetResourceForPolicy(CompilationUnit source) => BuildPolicy(new CompilationContext(source))?.Resource;
         public bool IsPolicyFileValid(string filename) => IsPolicyValid(new FileCompilationUnit(filename), out _);
         public bool IsPolicyFileValid(string filename, out CompilationContext context) => IsPolicyValid(new FileCompilationUnit(filename), out context);
         public bool IsPolicyValid(string policy) => IsPolicyValid(new SourceTextCompilationUnit(policy), out _);

@@ -10,7 +10,8 @@ namespace Aspect.Policies.CompilerServices
         Func<IResource, ResourcePolicyExecution>? GetFunctionForPolicy(CompilationUnit source, out Type? resource);
         Func<IResource, ResourcePolicyExecution>? GetFunctionForPolicy(CompilationContext context);
         Func<IResource, ResourcePolicyExecution>? GetFunctionForPolicy(CompilationContext context, out Type? resource);
-        string? GetResourceForPolicyFile(string filename);
+        string? GetResourceForPolicy(string filename);
+        string? GetResourceForPolicy(CompilationUnit source);
         bool IsPolicyFileValid(string filename);
         bool IsPolicyFileValid(string filename, out CompilationContext context);
         bool IsPolicyValid(string policy);
