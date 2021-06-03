@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Aspect.Abstractions;
+using Aspect.Formatters;
 using Aspect.Policies;
 using Aspect.Runners;
 using Spectre.Console;
@@ -67,13 +68,16 @@ namespace Aspect.Commands
             if (string.IsNullOrWhiteSpace(settings.FileOrDirectory))
                 return -1;
 
-            await Task.Yield();
-
             var policy = LoadPolicySuite(settings.FileOrDirectory);
+            var results = (await _policySuiteRunner.RunPoliciesAsync(policy, default)).ToList();
+            var formattedResult = new Result
+            {
+                Errors = results.Where(x => x.Error is not null).Select(x => x.Error!).ToList(),
+                FailedResources = results.Where(x => x.FailedResources is not null).SelectMany(x => x.FailedResources!).ToList()
+            };
 
-            AnsiConsole.WriteLine(new SerializerBuilder().WithIndentedSequences().Build().Serialize(policy));
+            await new JsonFormatter().FormatAsync(formattedResult);
 
-            var results = await _policySuiteRunner.RunPoliciesAsync(policy, default);
             return 0;
         }
 
@@ -147,6 +151,12 @@ namespace Aspect.Commands
 
                 return deserializer.Deserialize<PolicySuite>(policy);
             }
+        }
+
+        private class Result
+        {
+            public IEnumerable<string>? Errors { get; set; }
+            public IEnumerable<PolicySuiteRunResult.FailedResource>? FailedResources { get; set; }
         }
     }
 }
