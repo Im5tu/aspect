@@ -1,5 +1,7 @@
 ﻿using Aspect.Abstractions;
+using Aspect.Policies.BuiltIn;
 using Aspect.Policies.CompilerServices;
+using Aspect.Policies.Suite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -13,6 +15,8 @@ namespace Aspect.Policies
             services.TryAddSingleton<ILexer, Lexer>();
             services.TryAddSingleton<IPolicyCompiler, PolicyCompiler>();
             services.TryAddSingleton<IPolicySuiteValidator, PolicySuiteValidator>();
+            services.TryAddSingleton<IBuiltInPolicyProvider, BuiltInPolicyProvider>();
+            services.TryAddSingleton<IPolicySuiteSerializer, PolicySuiteSerializer>();
             return services.TryAddCoreServices();
         }
     }

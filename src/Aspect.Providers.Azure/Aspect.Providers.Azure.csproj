@@ -6,10 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Aspect.Abstractions\Aspect.Abstractions.csproj" />
         <ProjectReference Include="..\Aspect.Providers.Azure.Models\Aspect.Providers.Azure.Models.csproj" />
     </ItemGroup>
-    
+
     <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
     </ItemGroup>

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using Aspect.Abstractions;
 using Aspect.Formatters;
 using Aspect.Policies;
+using Aspect.Policies.BuiltIn;
+using Aspect.Policies.Suite;
 using Aspect.Runners;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace Aspect.Commands
 {
@@ -19,15 +19,23 @@ namespace Aspect.Commands
         private readonly IPolicySuiteRunner _policySuiteRunner;
         private readonly IReadOnlyDictionary<string,ICloudProvider> _cloudProviders;
         private readonly IPolicySuiteValidator _policySuiteValidator;
+        private readonly IBuiltInPolicyProvider _builtInPolicyProvider;
+        private readonly IPolicySuiteSerializer _policySuiteSerializer;
         private bool _isDirectory = false;
         private bool _isPolicySuite = false;
         private bool _isBuiltIn = false;
 
-        public RunCommand(IPolicySuiteRunner policySuiteRunner, IReadOnlyDictionary<string, ICloudProvider> cloudProviders, IPolicySuiteValidator policySuiteValidator)
+        public RunCommand(IPolicySuiteRunner policySuiteRunner,
+            IReadOnlyDictionary<string, ICloudProvider> cloudProviders,
+            IPolicySuiteValidator policySuiteValidator,
+            IBuiltInPolicyProvider builtInPolicyProvider,
+            IPolicySuiteSerializer policySuiteSerializer)
         {
             _policySuiteRunner = policySuiteRunner;
             _cloudProviders = cloudProviders;
             _policySuiteValidator = policySuiteValidator;
+            _builtInPolicyProvider = builtInPolicyProvider;
+            _policySuiteSerializer = policySuiteSerializer;
         }
 
         public override ValidationResult Validate(CommandContext context, RunCommandSettings settings)
@@ -45,21 +53,15 @@ namespace Aspect.Commands
 
                 if (_isDirectory && !Directory.Exists(settings.FileOrDirectory))
                     return ValidationResult.Error($"Specified directory '{settings.FileOrDirectory}' does not exist.");
-                else if (settings.FileOrDirectory.StartsWith("builtin", StringComparison.OrdinalIgnoreCase))
-                {
-                    _isBuiltIn = true;
-                }
-                else if (!File.Exists(settings.FileOrDirectory))
+                if (!File.Exists(settings.FileOrDirectory))
                     return ValidationResult.Error($"Specified file '{settings.FileOrDirectory}' does not exist.");
-                else
-                {
-                    var fi = new FileInfo(settings.FileOrDirectory);
 
-                    if (fi.Extension.Equals(FileExtensions.PolicySuiteExtension, StringComparison.OrdinalIgnoreCase))
-                        _isPolicySuite = true;
-                    else if (!fi.Extension.Equals(FileExtensions.PolicyFileExtension, StringComparison.OrdinalIgnoreCase))
-                        return ValidationResult.Error($"Filename must end with either '{FileExtensions.PolicyFileExtension}' or '{FileExtensions.PolicySuiteExtension}'.");
-                }
+                var fi = new FileInfo(settings.FileOrDirectory);
+
+                if (fi.Extension.Equals(FileExtensions.PolicySuiteExtension, StringComparison.OrdinalIgnoreCase))
+                    _isPolicySuite = true;
+                else if (!fi.Extension.Equals(FileExtensions.PolicyFileExtension, StringComparison.OrdinalIgnoreCase))
+                    return ValidationResult.Error($"Filename must end with either '{FileExtensions.PolicyFileExtension}' or '{FileExtensions.PolicySuiteExtension}'.");
             }
 
             return base.Validate(context, settings);
@@ -97,9 +99,7 @@ namespace Aspect.Commands
         {
             PolicySuite result;
 
-            if (_isBuiltIn)
-                result = LoadPolicySuiteFromName(name);
-            else if (_isPolicySuite)
+            if (_isBuiltIn || _isPolicySuite)
                 result = LoadPolicySuiteFromName(name);
             else
             {
@@ -112,58 +112,20 @@ namespace Aspect.Commands
             return result;
         }
 
-        private static PolicySuite LoadPolicySuiteFromName(string name)
+        private PolicySuite LoadPolicySuiteFromName(string name)
         {
-            const string builtInAws = "builtin\\aws\\";
-            const string builtInAzure = "builtin\\azure\\";
-
             if (!name.EndsWith(".suite", StringComparison.OrdinalIgnoreCase))
                 throw new Exception("Invalid policy suite");
 
             if (name.StartsWith("builtin", StringComparison.OrdinalIgnoreCase))
             {
-                if (name.StartsWith(builtInAws, StringComparison.OrdinalIgnoreCase))
-                {
-                    var prefix = "Aspect.BuiltIn.AWS.";
-                    if (LoadResourcesFromAssemblyByKeyPrefix(prefix).TryGetValue(name.Substring(builtInAws.Length), out var suite))
-                        return LoadFromString(suite);
-                }
-                else if (name.StartsWith(builtInAzure, StringComparison.OrdinalIgnoreCase))
-                {
-                    var prefix = "Aspect.BuiltIn.Azure.";
-                    if (LoadResourcesFromAssemblyByKeyPrefix(prefix).TryGetValue(name.Substring(builtInAzure.Length), out var suite))
-                        return LoadFromString(suite);
-                }
+                if (_builtInPolicyProvider.TryGetPolicySuite(name, out var policySuite))
+                    return policySuite;
             }
             else
-            {
-                return LoadFromString(File.ReadAllText(name));
-            }
+                return _policySuiteSerializer.Deserialize(File.ReadAllText(name));
 
             throw new Exception("Policy not found");
-
-            Dictionary<string, string> LoadResourcesFromAssemblyByKeyPrefix(string prefix)
-            {
-                var assembly = typeof(RunCommand).Assembly;
-                return assembly.GetManifestResourceNames()
-                    .Where(x => x.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-                    .ToDictionary(x => x.Substring(prefix.Length), x =>
-                    {
-                        // manifest stream cannot be null here, but the compiler doesn't know that
-                        using var sr = new StreamReader(assembly.GetManifestResourceStream(x)!);
-                        return sr.ReadToEnd();
-                    }, StringComparer.OrdinalIgnoreCase);
-            }
-
-            PolicySuite LoadFromString(string policy)
-            {
-                var deserializer = new DeserializerBuilder()
-                    .IgnoreUnmatchedProperties()
-                    .WithNamingConvention(UnderscoredNamingConvention.Instance)
-                    .Build();
-
-                return deserializer.Deserialize<PolicySuite>(policy);
-            }
         }
 
         private class Result

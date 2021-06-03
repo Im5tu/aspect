@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using Aspect.Abstractions;
 using Aspect.Extensions;
 using Aspect.Policies;
+using Aspect.Policies.BuiltIn;
 using Aspect.Policies.CompilerServices;
 using Aspect.Policies.CompilerServices.Generator;
+using Aspect.Policies.Suite;
 
 namespace Aspect.Runners
 {
@@ -16,11 +18,13 @@ namespace Aspect.Runners
     {
         private readonly IReadOnlyDictionary<string, ICloudProvider> _cloudProviders;
         private readonly IPolicyCompiler _policyCompiler;
+        private readonly IBuiltInPolicyProvider _builtInPolicyProvider;
 
-        public PolicySuiteRunner(IReadOnlyDictionary<string, ICloudProvider> cloudProviders, IPolicyCompiler policyCompiler)
+        public PolicySuiteRunner(IReadOnlyDictionary<string, ICloudProvider> cloudProviders, IPolicyCompiler policyCompiler, IBuiltInPolicyProvider builtInPolicyProvider)
         {
             _cloudProviders = cloudProviders;
             _policyCompiler = policyCompiler;
+            _builtInPolicyProvider = builtInPolicyProvider;
         }
 
         public async Task<IEnumerable<PolicySuiteRunResult>> RunPoliciesAsync(PolicySuite suite, CancellationToken cancellationToken = default)
@@ -103,36 +107,14 @@ namespace Aspect.Runners
             var types = compiledPolicies.Select(x => x!.Resource!).Distinct().ToList();
             return (compiledPolicies, types);
         }
-        private static IEnumerable<CompilationUnit> LoadPoliciesByName(string policyName)
+        private IEnumerable<CompilationUnit> LoadPoliciesByName(string policyName)
         {
-            const string builtInAws = "builtin\\aws\\";
-            const string builtInAzure = "builtin\\azure\\";
-
-            if (policyName.StartsWith(builtInAws, StringComparison.OrdinalIgnoreCase))
-            {
-                var prefix = "Aspect.BuiltIn.AWS.";
-                var name = policyName.Substring(builtInAws.Length);
-                if (LoadResourcesFromAssemblyByKeyPrefix(prefix).TryGetValue(name, out var policy))
-                    yield return new BuiltInResourceCompilationUnit(name, policy);
-                else
-                {
-                    // TODO :: ERROR : Invalid built in policy
-                }
-
+            if (policyName.EndsWith(FileExtensions.PolicySuiteExtension, StringComparison.OrdinalIgnoreCase))
                 yield break;
-            }
 
-            if (policyName.StartsWith(builtInAzure, StringComparison.OrdinalIgnoreCase))
+            if (policyName.StartsWith("builtin\\", StringComparison.OrdinalIgnoreCase) && _builtInPolicyProvider.TryGetPolicy(policyName, out var compilationUnit))
             {
-                var prefix = "Aspect.BuiltIn.Azure.";
-                var name = policyName.Substring(builtInAzure.Length);
-                if (LoadResourcesFromAssemblyByKeyPrefix(prefix).TryGetValue(name, out var policy))
-                    yield return new BuiltInResourceCompilationUnit(name, policy);
-                else
-                {
-                    // TODO :: ERROR : Invalid built in policy
-                }
-
+                yield return compilationUnit;
                 yield break;
             }
 
@@ -148,21 +130,6 @@ namespace Aspect.Runners
             {
                 yield return new FileCompilationUnit(policyName);
                 yield break;
-            }
-
-            // TODO :: ERROR : Invalid built in policy
-
-            static Dictionary<string, string> LoadResourcesFromAssemblyByKeyPrefix(string prefix)
-            {
-                var assembly = typeof(IPolicySuiteRunner).Assembly;
-                return assembly.GetManifestResourceNames()
-                    .Where(x => x.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-                    .ToDictionary(x => x.Substring(prefix.Length), x =>
-                    {
-                        // manifest stream cannot be null here, but the compiler doesn't know that
-                        using var sr = new StreamReader(assembly.GetManifestResourceStream(x)!);
-                        return sr.ReadToEnd();
-                    }, StringComparer.OrdinalIgnoreCase);
             }
         }
 

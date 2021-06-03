@@ -7,6 +7,7 @@ using System.Threading;
 using Aspect.Extensions;
 using Aspect.Policies;
 using Aspect.Policies.CompilerServices;
+using Aspect.Policies.Suite;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using YamlDotNet.Serialization;

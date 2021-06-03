@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Aspect.Policies
+namespace Aspect.Policies.Suite
 {
     public class PolicySuiteValidationResult
     {

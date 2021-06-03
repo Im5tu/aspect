@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Aspect.Abstractions;
 
-namespace Aspect.Policies
+namespace Aspect.Policies.Suite
 {
     internal sealed class PolicySuiteValidator : IPolicySuiteValidator
     {

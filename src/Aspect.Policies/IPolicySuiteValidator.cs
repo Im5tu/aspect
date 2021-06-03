@@ -1,4 +1,6 @@
-﻿namespace Aspect.Policies
+﻿using Aspect.Policies.Suite;
+
+namespace Aspect.Policies
 {
     public interface IPolicySuiteValidator
     {

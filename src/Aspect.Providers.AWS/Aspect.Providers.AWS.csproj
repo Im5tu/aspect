@@ -6,7 +6,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Aspect.Abstractions\Aspect.Abstractions.csproj" />
       <ProjectReference Include="..\Aspect.Providers.AWS.Models\Aspect.Providers.AWS.Models.csproj" />
     </ItemGroup>
 
