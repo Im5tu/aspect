@@ -25,8 +25,8 @@ namespace Aspect.Commands
             if (string.IsNullOrWhiteSpace(directory))
                 directory = Environment.CurrentDirectory;
 
-            if (!directory.EndsWith("\\", StringComparison.Ordinal))
-                directory += "\\";
+            if (!directory.EndsWith(Path.DirectorySeparatorChar))
+                directory += Path.DirectorySeparatorChar;
 
             var searchOption = commandSettings.Recursive.GetValueOrDefault(false) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
             var table = new Table();
