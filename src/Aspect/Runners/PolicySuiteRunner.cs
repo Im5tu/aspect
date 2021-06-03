@@ -9,26 +9,18 @@ using Aspect.Extensions;
 using Aspect.Policies;
 using Aspect.Policies.CompilerServices;
 using Aspect.Policies.CompilerServices.Generator;
-using Aspect.Providers.AWS;
-using Aspect.Providers.AWS.Models;
 
 namespace Aspect.Runners
 {
     internal sealed class PolicySuiteRunner : IPolicySuiteRunner
     {
+        private readonly IReadOnlyDictionary<string, ICloudProvider> _cloudProviders;
         private readonly IPolicyCompiler _policyCompiler;
-        private readonly Dictionary<Type, IResourceExplorer<AwsAccount, AwsAccountIdentifier>> _awsProviders = new();
-        private readonly Dictionary<Type, IResourceExplorer> _azureProviders = new();
 
-        public PolicySuiteRunner(IEnumerable<IResourceExplorer> resourceExplorers, IPolicyCompiler policyCompiler)
+        public PolicySuiteRunner(IReadOnlyDictionary<string, ICloudProvider> cloudProviders, IPolicyCompiler policyCompiler)
         {
+            _cloudProviders = cloudProviders;
             _policyCompiler = policyCompiler;
-            foreach (var provider in resourceExplorers)
-            {
-                if (provider is IResourceExplorer<AwsAccount, AwsAccountIdentifier> awsProvider)
-                    _awsProviders[awsProvider.ResourceType] = awsProvider;
-                // TODO :: Add Azure
-            }
         }
 
         public async Task<IEnumerable<PolicySuiteRunResult>> RunPoliciesAsync(PolicySuite suite, CancellationToken cancellationToken = default)
@@ -43,9 +35,9 @@ namespace Aspect.Runners
 
         private async Task<PolicySuiteRunResult> RunPolicy(PolicySuiteScope scope, CancellationToken cancellationToken)
         {
-            if (!new[] {"AWS", "Azure"}.Contains(scope.Type ?? string.Empty))
+            if (!_cloudProviders.TryGetValue(scope.Type ?? string.Empty, out var provider))
             {
-                // TODO :: ERROR : Sort this out
+                return new PolicySuiteRunResult { Error = $"Invalid cloud provider: '{scope.Type ?? string.Empty}'" };
             }
 
             // Get all the policies we need
@@ -55,55 +47,35 @@ namespace Aspect.Runners
             var (evaluators, types) = GetCompiledPolicies(policies);
 
             // Load all of the resources
-            List<IResource> resources;
-            if (scope.Type!.Equals("AWS", StringComparison.OrdinalIgnoreCase))
-            {
-                resources = await LoadAWSResourcesAsync(scope.Regions!, types, cancellationToken);
-            }
-            else
-            {
-                resources = new List<IResource>();
-            }
+            var resources = await LoadAWSResourcesAsync(scope.Regions!, types, provider, cancellationToken);
 
             // Validation
-            var failedResources = new List<(IResource resource, CompilationUnit source)>();
+            var failedResources = new List<PolicySuiteRunResult.FailedResource>();
             foreach (var resource in resources)
             {
                 foreach (var eval in evaluators)
                 {
                     if (eval.Evaluator!(resource) == ResourcePolicyExecution.Failed)
-                        failedResources.Add((resource, eval.Source));
+                        failedResources.Add(new PolicySuiteRunResult.FailedResource { Resource = resource, Source = eval.Source.GetPolicyName() });
                 }
             }
 
-            // TODO :: Dump resources properly
-            Console.WriteLine("Failed resources:");
-            foreach (var r in failedResources.OrderBy(x => x.resource.Region).ThenBy(x => x.resource.Name))
-            {
-                Console.WriteLine($"{r.resource.Region} - {r.resource.Name}");
-            }
-
-            return new PolicySuiteRunResult();
+            return new PolicySuiteRunResult { FailedResources = failedResources };
         }
 
-        private async Task<List<IResource>> LoadAWSResourcesAsync(IEnumerable<string> regions, List<Type> types, CancellationToken cancellationToken)
+        private async Task<List<IResource>> LoadAWSResourcesAsync(IEnumerable<string> regions, List<Type> types, ICloudProvider provider, CancellationToken cancellationToken)
         {
             var resources = new List<IResource>();
-            var account = await new AWSAccountIdentityProvider().GetAccountAsync(cancellationToken);
-
             foreach (var region in regions)
             {
-                foreach (var provider in _awsProviders)
+                foreach (var type in types)
                 {
-                    if (types.Contains(provider.Key))
-                        resources.AddRange(await provider.Value.DiscoverResourcesAsync(account, region, cancellationToken));
+                    resources.AddRange(await provider.DiscoverResourcesAsync(region, type, _ => { }, cancellationToken));
                 }
             }
 
             return resources;
         }
-
-
         private List<CompilationUnit> GetPolicies(PolicySuiteScope scope)
         {
             var policies = new List<CompilationUnit>();
