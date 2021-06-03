@@ -48,10 +48,10 @@ jobs:
           im5tu/aspect:${{ github.event.inputs.version }}-alpine
         push: true
         build-args: app=Aspect,Version=${{ github.event.inputs.version }}
-      - uses: marvinpinto/action-automatic-releases@latest
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: false
-          automatic_release_tag: ${{ github.event.inputs.version }}
-          files: |
-            ./artifacts/release/aspect-*.zip
+    - uses: marvinpinto/action-automatic-releases@latest
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        prerelease: false
+        automatic_release_tag: ${{ github.event.inputs.version }}
+        files: |
+          ./artifacts/release/aspect-*.zip
