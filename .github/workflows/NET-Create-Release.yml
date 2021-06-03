@@ -28,9 +28,10 @@ jobs:
       run: dotnet publish -c Release -r linux-musl-x64 /p:PublishCli=true /p:Version=${{ github.event.inputs.version }} ./src/Aspect/Aspect.csproj
     - name: Zip releases
       run: |
-        zip ./artifacts/release/aspect-${{ github.event.inputs.version }}-win-x64.zip ./artifacts/app/win-x64/aspect.exe
-        zip ./artifacts/release/aspect-${{ github.event.inputs.version }}-linux-x64.zip ./artifacts/app/linux-x64/aspect
-        zip ./artifacts/release/aspect-${{ github.event.inputs.version }}-linux-musl-x64.zip ./artifacts/app/linux-musl-x64/aspect
+        mkdir artifacts/release
+        zip artifacts/release/aspect-${{ github.event.inputs.version }}-win-x64.zip artifacts/app/win-x64/aspect.exe
+        zip artifacts/release/aspect-${{ github.event.inputs.version }}-linux-x64.zip artifacts/app/linux-x64/aspect
+        zip artifacts/release/aspect-${{ github.event.inputs.version }}-linux-musl-x64.zip artifacts/app/linux-musl-x64/aspect
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
     - name: Login to DockerHub
