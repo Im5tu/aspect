@@ -8,5 +8,6 @@ namespace Aspect.Policies.Suite
         public string? Name { get; init; }
         public IEnumerable<string>? Regions { get; init; }
         public IEnumerable<string>? Policies { get; init; }
+        public string? Description { get; init; }
     }
 }
