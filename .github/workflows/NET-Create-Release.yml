@@ -1,6 +1,7 @@
 name: Create Release
 on:
   workflow_dispatch:
+    inputs:
       version:
         description: 'The version number to use'     
         required: true
