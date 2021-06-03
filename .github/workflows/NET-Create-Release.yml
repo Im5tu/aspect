@@ -51,6 +51,7 @@ jobs:
         build-arg: |
           app=Aspect
           Version=${{ github.event.inputs.version }}
+          
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
