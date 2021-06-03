@@ -5,7 +5,7 @@ resource "AwsSecurityGroup" # Resource type that the policy is for
 # Only include resources that match the following criteria
 # Without this block, all available resources from the role are available
 # Example: Include security groups that have egress ip's defined
-include {                                
+include {
     #input.Type == "AWS.SecurityGroup"       # string supported operators: ==, !=
                                             # numeric supported operators: >, >=, <=, <, ==, !=
     #contains(input.Tags, 5)                # sample function call
@@ -24,5 +24,5 @@ exclude {
 validate {
     #input.EgressRules[_].IPV4Ranges[_].CIDR == "0.0.0.0/0"
     #input.Type == "AWS.SecurityGroup"
-    input.Account.Id.Id == "123"
+    input.Name == "default"
 }
