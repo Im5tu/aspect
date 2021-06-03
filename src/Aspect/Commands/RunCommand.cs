@@ -18,14 +18,16 @@ namespace Aspect.Commands
     {
         private readonly IPolicySuiteRunner _policySuiteRunner;
         private readonly IReadOnlyDictionary<string,ICloudProvider> _cloudProviders;
+        private readonly IPolicySuiteValidator _policySuiteValidator;
         private bool _isDirectory = false;
         private bool _isPolicySuite = false;
         private bool _isBuiltIn = false;
 
-        public RunCommand(IPolicySuiteRunner policySuiteRunner, IReadOnlyDictionary<string, ICloudProvider> cloudProviders)
+        public RunCommand(IPolicySuiteRunner policySuiteRunner, IReadOnlyDictionary<string, ICloudProvider> cloudProviders, IPolicySuiteValidator policySuiteValidator)
         {
             _policySuiteRunner = policySuiteRunner;
             _cloudProviders = cloudProviders;
+            _policySuiteValidator = policySuiteValidator;
         }
 
         public override ValidationResult Validate(CommandContext context, RunCommandSettings settings)
@@ -69,7 +71,15 @@ namespace Aspect.Commands
                 return -1;
 
             var policy = LoadPolicySuite(settings.FileOrDirectory);
-            // TODO :: TASK :: Validate policy suite
+            var validationResult = _policySuiteValidator.Validate(policy);
+            if (!validationResult.IsValid)
+            {
+                var table = new Table();
+                table.AddColumns("Policy", "IsValid", "Errors");
+                table.AddRow(settings.FileOrDirectory, validationResult.IsValid ? "[green]Valid[/]" : "[red]Invalid[/]", string.Join(Environment.NewLine, validationResult.Errors.Select(x => $"- {x}")));
+                AnsiConsole.Render(table);
+            }
+
             var results = (await _policySuiteRunner.RunPoliciesAsync(policy, default)).ToList();
             var formattedResult = new Result
             {
@@ -147,6 +157,7 @@ namespace Aspect.Commands
             PolicySuite LoadFromString(string policy)
             {
                 var deserializer = new DeserializerBuilder()
+                    .IgnoreUnmatchedProperties()
                     .WithNamingConvention(UnderscoredNamingConvention.Instance)
                     .Build();
 

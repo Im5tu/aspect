@@ -12,6 +12,7 @@ namespace Aspect.Policies
             services.TryAddSingleton<IParser, Parser>();
             services.TryAddSingleton<ILexer, Lexer>();
             services.TryAddSingleton<IPolicyCompiler, PolicyCompiler>();
+            services.TryAddSingleton<IPolicySuiteValidator, PolicySuiteValidator>();
             return services.TryAddCoreServices();
         }
     }
