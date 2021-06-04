@@ -91,8 +91,7 @@ namespace Aspect.Commands
             return $@"resource ""{resource}""
 
 validate {{
-    # Enter one or more statements like the following that should be validated
-    input.Property == ""something""
+    # Enter one or more statements like the following that should be validated, eg: input.Property == ""something""
 }}";
         }
     }
