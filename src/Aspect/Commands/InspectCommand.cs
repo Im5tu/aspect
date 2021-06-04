@@ -30,19 +30,19 @@ namespace Aspect.Commands
         public override async Task<int> ExecuteAsync(CommandContext context, InspectCommandSettings settings)
         {
             var provider = _cloudProviders[ConsoleExtensions.PromptOrDefault("Select cloud provider:", _cloudProviders.Keys, "AWS")];
-            var region = ConsoleExtensions.PromptOrDefault("Select region:", provider.GetAllRegions().OrderBy(x => x));
+            var regions = ConsoleExtensions.MultiSelect("Select region:", provider.GetAllRegions()).ToList();
 
             var (resourceName, resourceType) = GetResources(provider);
-            var result = await LoadResources(provider, resourceType, region);
+            var result = await LoadResources(provider, resourceType, regions);
 
             if (!result)
                 return 1;
 
-            await HandleCommands(resourceName, resourceType, provider, region);
+            await HandleCommands(resourceName, resourceType, provider, regions);
             return 0;
         }
 
-        private async Task<bool> LoadResources(ICloudProvider provider, Type resourceType, string region)
+        private async Task<bool> LoadResources(ICloudProvider provider, Type resourceType, List<string> regions)
         {
             try
             {
@@ -60,7 +60,8 @@ namespace Aspect.Commands
                             statusContext.Status(str);
                         };
 
-                        _resources.AddRange(await provider.DiscoverResourcesAsync(region, resourceType, updater, default));
+                        foreach (var region in regions)
+                            _resources.AddRange(await provider.DiscoverResourcesAsync(region, resourceType, updater, default));
                     });
                 return true;
             }
@@ -78,12 +79,16 @@ namespace Aspect.Commands
             return (answer, resources[answer]);
         }
 
-        private async Task HandleCommands(string resourceName, Type resourceType, ICloudProvider provider, string region)
+        private async Task HandleCommands(string resourceName, Type resourceType, ICloudProvider provider, List<string> regions)
         {
             do
             {
                 AnsiConsole.MarkupLine("Available commands: help, refresh, exit");
-                var answer = AnsiConsole.Prompt(new TextPrompt<string>("Enter statement:"));
+                string answer;
+                do
+                {
+                    answer = AnsiConsole.Prompt(new TextPrompt<string>("Enter statement:"));
+                } while (string.IsNullOrWhiteSpace(answer));
 
                 if ("exit".Equals(answer, StringComparison.OrdinalIgnoreCase))
                     break;
@@ -97,15 +102,25 @@ namespace Aspect.Commands
                     continue;
                 }
 
-                if ("list".Equals(answer, StringComparison.OrdinalIgnoreCase))
+                if (answer.StartsWith("list", StringComparison.OrdinalIgnoreCase))
                 {
-                    await FormatResourceTable(_resources);
+                    // This command is purposely undocumented as the rendering is slow AF
+                    int? count = null;
+                    var index = answer.IndexOf(' ', StringComparison.Ordinal);
+                    if (index > 0)
+                        count = int.Parse(answer.Substring(index + 1));
+
+                    if (count.HasValue)
+                        await FormatResourceTable(_resources.Take(count.Value));
+                    else
+                        await FormatResourceTable(_resources);
+
                     continue;
                 }
 
                 if ("refresh".Equals(answer, StringComparison.OrdinalIgnoreCase))
                 {
-                    await LoadResources(provider, resourceType, region);
+                    await LoadResources(provider, resourceType, regions);
                     continue;
                 }
 

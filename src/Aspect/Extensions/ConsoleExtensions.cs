@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Spectre.Console;
 
 namespace Aspect.Extensions
@@ -15,6 +16,17 @@ namespace Aspect.Extensions
 
             if (prompt.Choices.Count == 1)
                 return prompt.Choices[0];
+
+            return AnsiConsole.Prompt(prompt);
+        }
+
+        internal static IEnumerable<string> MultiSelect(string message, IEnumerable<string> choices)
+        {
+            var prompt = new MultiSelectionPrompt<string> {Title = message};
+            prompt.AddChoices(choices.OrderBy(x => x));
+
+            if (prompt.Choices.Count <= 1)
+                return prompt.Choices;
 
             return AnsiConsole.Prompt(prompt);
         }
