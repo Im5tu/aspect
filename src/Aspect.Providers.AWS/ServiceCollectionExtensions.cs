@@ -10,16 +10,16 @@ namespace Aspect.Providers.AWS
     {
         public static IServiceCollection AddAWSCloudProvider(this IServiceCollection services)
         {
-            services.TryAddSingleton<IAccountIdentityProvider<AwsAccount, AwsAccountIdentifier>, AWSAccountIdentityProvider>();
+            services.TryAddSingleton<IAccountIdentityProvider<AwsAccount, AwsAccount.AwsAccountIdentifier>, AWSAccountIdentityProvider>();
 
             return services.AddResourceExplorer<SecurityGroupResourceExplorer>()
                 .AddCloudProvider<AWSCloudProvider>();
         }
 
         private static IServiceCollection AddResourceExplorer<T>(this IServiceCollection services)
-            where T : class, IResourceExplorer<AwsAccount, AwsAccountIdentifier>
+            where T : class, IResourceExplorer<AwsAccount, AwsAccount.AwsAccountIdentifier>
         {
-            services.TryAddSingleton<IResourceExplorer<AwsAccount, AwsAccountIdentifier>, T>();
+            services.TryAddSingleton<IResourceExplorer<AwsAccount, AwsAccount.AwsAccountIdentifier>, T>();
             return services;
         }
     }

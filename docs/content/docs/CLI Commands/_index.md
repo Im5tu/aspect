@@ -1,7 +1,7 @@
 +++
-title = "Contributing"
+title = "Cli Commands"
 description = ""
-weight = 99
+weight = 2
 +++
 
 {{< childpages >}}

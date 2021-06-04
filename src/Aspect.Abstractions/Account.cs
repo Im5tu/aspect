@@ -1,26 +1,19 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace Aspect.Abstractions
 {
-    /// <summary>
-    ///     The basis for all cloud provider accounts
-    /// </summary>
     [DebuggerDisplay("{ToString(),nq}")]
     public abstract class Account<T> : IFormatProperties
         where T : AccountIdentifier
     {
-        /// <summary>
-        ///     The account identifier
-        /// </summary>
+        [Description("The account identifier specific to the cloud provider")]
         public T Id { get; }
-        /// <summary>
-        ///     The type of the account, eg: AWS/Azure/GCP
-        /// </summary>
+
+        [Description("The type of the account, eg: AWS/Azure/GCP")]
         public string Type { get; }
 
-        /// <param name="id">The account identifier for the specified account</param>
-        /// <param name="type">The type of the account, eg: AWS/Azure/GCP</param>
         protected Account(T id, string type)
         {
             if (string.IsNullOrWhiteSpace(type))
@@ -30,7 +23,6 @@ namespace Aspect.Abstractions
             Type = type;
         }
 
-        /// <inheritdoc />
         public override string ToString() => $"{Type} Account: {Id}";
 
         public virtual string Format(string propertyName)

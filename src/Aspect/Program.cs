@@ -1,4 +1,6 @@
-﻿using Aspect.Commands;
+﻿using System;
+using System.IO;
+using Aspect.Commands;
 using Aspect.Dependencies;
 using Aspect.Policies;
 using Aspect.Providers.AWS;
@@ -22,6 +24,12 @@ namespace Aspect
                 config.AddCommand<AutoCompleteCommand>("autocomplete")
                     .WithDescription("Generate an autocomplete script for either powershell or bash.")
                     .IsHidden();
+
+#if DEBUG
+                config.AddCommand<DocGenCommand>("docgen")
+                    .WithDescription("Generate documents for the models for each cloud provider")
+                    .IsHidden();
+#endif
 
                 config.AddCommand<LanguageServerCommand>("langserver")
                     .WithDescription("Starts the language server.")
@@ -50,6 +58,11 @@ namespace Aspect
                     .WithDescription("Run a one or more policies against your cloud infrastructure.")
                     .WithExample(new[] {"run", "D:\\policies"})
                     .IsHidden();
+
+                config.AddCommand<ResourcesCommand>("resources")
+                    .WithDescription("View the available types for all cloud providers")
+                    .WithExample(new[] {"resources"})
+                    .WithExample(new[] {"resources", "aws"});
 
                 config.AddCommand<WatchCommand>("watch")
                     .WithDescription("Watch a specific directory for changes and validate them.")

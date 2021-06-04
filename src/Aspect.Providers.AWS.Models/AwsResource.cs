@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using Aspect.Abstractions;
 
 namespace Aspect.Providers.AWS.Models
 {
-    /// <summary>
-    ///     Represents an AWS Resource
-    /// </summary>
     [DebuggerDisplay("{Arn,nq}")]
-    public abstract class AwsResource : Resource<AwsAccount, AwsAccountIdentifier>
+    public abstract class AwsResource : Resource<AwsAccount, AwsAccount.AwsAccountIdentifier>
     {
-        /// <summary>
-        ///     The AWS ARN identifying this resource
-        /// </summary>
+        [Description("The Amazon Resource Names (ARN) uniquely identifying an AWS resource.")]
         public string Arn { get; }
 
-        /// <inheritDoc />
         protected AwsResource(AwsAccount account, string arn, string name, IReadOnlyList<KeyValuePair<string, string>> tags, string type, string region)
             : base(account, name, tags, type, region)
         {

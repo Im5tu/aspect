@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Aspect.Abstractions;
+using Aspect.Providers.Azure.Models;
 
 namespace Aspect.Providers.Azure
 {
@@ -11,6 +12,7 @@ namespace Aspect.Providers.Azure
     {
         private readonly Dictionary<string,Type> _resources = new();
 
+        public Type AccountType { get; } = typeof(AzureAccount);
         public string Name { get; } = "Azure";
 
         public IReadOnlyDictionary<string, Type> GetResources() => _resources;

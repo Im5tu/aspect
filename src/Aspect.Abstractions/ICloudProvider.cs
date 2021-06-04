@@ -7,6 +7,7 @@ namespace Aspect.Abstractions
 {
     public interface ICloudProvider
     {
+        Type AccountType { get; }
         string Name { get; }
 
         IReadOnlyDictionary<string, Type> GetResources();

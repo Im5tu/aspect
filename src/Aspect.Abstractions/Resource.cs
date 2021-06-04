@@ -1,32 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Aspect.Abstractions
 {
-    /// <summary>
-    ///     Represents a resource in a cloud provider
-    /// </summary>
     public abstract class Resource<TAccount, TAccountIdentifier> : IResource<TAccount, TAccountIdentifier>, IFormatProperties
         where TAccount : Account<TAccountIdentifier>
         where TAccountIdentifier : AccountIdentifier
     {
-        /// <inheritdoc />
+        [Description("The account that is associated with the resource.")]
         public TAccount Account { get; }
-        /// <inheritdoc />
+        [Description("The name of the resource.")]
         public string Name { get; }
-        /// <inheritdoc />
+        [Description("The type of the resource. This is what is used in policy evaluation.")]
         public string Type { get; }
-        /// <inheritdoc />
+        [Description("The region in which this resource is located.")]
         public string Region { get; }
-        /// <inheritdoc />
+        [Description("The tags that are associated with the resource. Each entry has two properties: Key/Value.")]
         public IReadOnlyList<KeyValuePair<string, string>> Tags { get; }
 
-        /// <param name="account">The account that the resource is located in</param>
-        /// <param name="name">The name of the resource</param>
-        /// <param name="tags">The tags associated with the resource</param>
-        /// <param name="type">The type of the resource to be referenced in policies</param>
-        /// <param name="region">The region that the resource is located in</param>
         protected Resource(TAccount account, string name, IReadOnlyList<KeyValuePair<string, string>> tags, string type, string region)
         {
             Account = account ?? throw new ArgumentNullException(nameof(account));

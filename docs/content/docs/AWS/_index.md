@@ -1,7 +1,7 @@
 +++
 title = "AWS"
-description = ""
+description = "Homepage for AWS on Aspect"
 weight = 3
 +++
 
-Coming soon!!
+{{< childpages >}}

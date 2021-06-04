@@ -1,7 +1,11 @@
 +++
 title = "Resources"
-description = ""
-weight = 2
+description = "Available resources for Azure:"
+weight = 10
 +++
 
-{{< childpages >}}
+
+
+|Name|Description|Docs|
+|----------|----------|----------|
+|[AzureAccount](/docs/azure/resources/azureaccount/)|Coming soon!|[Goto Docs](/docs/azure/resources/azureaccount/)|
