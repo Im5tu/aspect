@@ -4,20 +4,21 @@ description = ""
 weight = 11
 +++
 
-Watch a specific directory for changes and validate them as the files change.
+`aspect watch [ARGUMENTS] [OPTIONS]` allows you to watch a specific directory or policy for changes and validate them as the files change. This decreases the total time required to validate policy changes during the development phase.
 
-```bash
-aspect watch <directory>
-```
 
-### Arguments
+## Arguments
 
+{{< table style="table-striped" >}}
 |Option|Position|Description|Default|Required?|
 |---|---|---|---|---|
-|directory|0|The directory to watch for changes|Current directory|true|
+|source|0|Lists the policies and policy suites that can be found in the specified location|current working directory|No|
+{{< /table >}}
 
-### Options
+## Options
 
+{{< table style="table-striped" >}}
 |Option|Alias|Description|Default|
 |---|---|---|---|
-|--delay|-r|The period of time in milliseconds that needs to elapse between changes to a file.|500|
+|--delay||The period of time in milliseconds that needs to elapse between changes to a file before the change is validated. This exists to work around underlying bugs in the .NET SDK. It's unlikely that you'll ever need to set this.|500|
+{{< /table >}}

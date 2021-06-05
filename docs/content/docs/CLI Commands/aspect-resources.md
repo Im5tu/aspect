@@ -4,9 +4,9 @@ description = ""
 weight = 9
 +++
 
-`aspect resources` provides you an easy way of looking at the currently available resources for all the cloud providers registered in the system. If you are only interested in a specific provider, the follow the format `aspect resources <provider>` to limit the results to just that provider.
+`aspect resources [ARGUMENTS]` provides you an easy way of looking at the currently available resources for all the cloud providers registered in the system. If you are only interested in a specific provider, the follow the format `aspect resources <provider>` to limit the results to just that provider.
 
-### Example output
+## Example output
 
 {{< code lang="md" >}}
 > aspect resources aws
@@ -19,7 +19,7 @@ weight = 9
 
 {{< /code >}}
 
-### Arguments
+## Arguments
 {{< table style="table-striped" >}}
 |Option|Position|Description|Default|Required?|
 |---|---|---|---|---|

@@ -6,14 +6,14 @@ weight = 6
 
 `aspect policy init [ARGUMENTS] [OPTIONS]` creates either a new policy file or policy suite with default contents ready for you to edit. If you do not specify the `-r|--resource` option, the UI will guide you through selecting a resource to get you started quicker.
 
-### Arguments
+## Arguments
 {{< table style="table-striped" >}}
 |Option|Position|Description|Default|Required?|
 |---|---|---|---|---|
 |filname|0|The filename where the template policy will be created||true|
 {{< /table >}}
 
-### Options
+## Options
 
 {{< table style="table-striped" >}}
 |Option|Alias|Description|

@@ -17,7 +17,7 @@ As you enter each statement, it is validated immediately giving you the chance t
 
 Once you have completed all of the policy fragments, the policy is displayed on screen for you, and, if selected, written to the file destination of your choice.
 
-### Options
+## Options
 
 {{< table style="table-striped" >}}
 |Option|Alias|Description|
