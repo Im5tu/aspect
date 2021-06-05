@@ -16,5 +16,7 @@ namespace Aspect.Policies.CompilerServices
         bool IsPolicyFileValid(string filename, out CompilationContext context);
         bool IsPolicyValid(string policy);
         bool IsPolicyValid(string policy, out CompilationContext context);
+        bool IsPolicyValid(CompilationUnit source);
+        bool IsPolicyValid(CompilationUnit source, out CompilationContext context);
     }
 }

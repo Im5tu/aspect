@@ -24,7 +24,7 @@ namespace Aspect.Commands
 
         public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] PolicyListCommandSettings commandSettings)
         {
-            if (!string.IsNullOrWhiteSpace(commandSettings.Directory) && !commandSettings.Directory.Equals("builtin", StringComparison.OrdinalIgnoreCase) && !Directory.Exists(commandSettings.Directory))
+            if (!string.IsNullOrWhiteSpace(commandSettings.Directory) && !commandSettings.Directory.StartsWith("builtin", StringComparison.OrdinalIgnoreCase) && !Directory.Exists(commandSettings.Directory))
                 return ValidationResult.Error($"The directory {commandSettings.Directory} does not exist.");
 
             return base.Validate(context, commandSettings);
@@ -35,13 +35,13 @@ namespace Aspect.Commands
             var directory = commandSettings.Directory;
 
             if (string.IsNullOrWhiteSpace(directory))
-                directory = Environment.CurrentDirectory;
+                directory = "builtin";
 
-            if (!directory.Equals("builtin", StringComparison.OrdinalIgnoreCase) && !directory.EndsWith(Path.DirectorySeparatorChar))
+            if (!directory.StartsWith("builtin", StringComparison.OrdinalIgnoreCase) && !directory.EndsWith(Path.DirectorySeparatorChar))
                 directory += Path.DirectorySeparatorChar;
 
-            var rows = directory.Equals("builtin", StringComparison.OrdinalIgnoreCase)
-                ? GetBuiltInPolicies()
+            var rows = directory.StartsWith("builtin", StringComparison.OrdinalIgnoreCase)
+                ? GetBuiltInPolicies(directory)
                 : GetPoliciesFromDirectory(directory, commandSettings.Recursive.GetValueOrDefault(false) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
 
             var table = new Table();
@@ -52,16 +52,21 @@ namespace Aspect.Commands
             foreach (var row in rows.OrderBy(x => x.policy))
                 table.AddRow(row.policy, row.resource, row.creationDate, row.lastUpdated);
 
-            if (table.Rows.Count > 0)
-                AnsiConsole.Render(table);
+            if (table.Rows.Count == 0)
+                table.AddRow("", "", "", "");
+
+            AnsiConsole.Render(table);
 
             return 0;
         }
 
-        private IEnumerable<(string policy, string resource, string creationDate, string lastUpdated)> GetBuiltInPolicies()
+        private IEnumerable<(string policy, string resource, string creationDate, string lastUpdated)> GetBuiltInPolicies(string partial)
         {
             foreach (var resource in _builtInPolicyProvider.GetAllResources())
             {
+                if (!resource.Name.StartsWith(partial, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
                 if (resource.Name.EndsWith(FileExtensions.PolicyFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     var r = _policyCompiler.GetResourceForPolicy(resource) ?? "[italic red]Invalid Resource[/]";

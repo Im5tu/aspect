@@ -40,23 +40,23 @@ namespace Aspect.Commands
 
         public override ValidationResult Validate(CommandContext context, RunCommandSettings settings)
         {
-            if (string.IsNullOrWhiteSpace(settings.FileOrDirectory))
+            if (string.IsNullOrWhiteSpace(settings.Source))
                 return ValidationResult.Error("Please specify a path of a policy file, policy suite or directory.");
 
-            if (settings.FileOrDirectory.StartsWith("builtin\\", StringComparison.OrdinalIgnoreCase))
+            if (settings.Source.StartsWith("builtin\\", StringComparison.OrdinalIgnoreCase))
             {
                 _isBuiltIn = true;
             }
             else
             {
-                _isDirectory = File.GetAttributes(settings.FileOrDirectory).HasFlag(FileAttributes.Directory);
+                _isDirectory = File.GetAttributes(settings.Source).HasFlag(FileAttributes.Directory);
 
-                if (_isDirectory && !Directory.Exists(settings.FileOrDirectory))
-                    return ValidationResult.Error($"Specified directory '{settings.FileOrDirectory}' does not exist.");
-                if (!File.Exists(settings.FileOrDirectory))
-                    return ValidationResult.Error($"Specified file '{settings.FileOrDirectory}' does not exist.");
+                if (_isDirectory && !Directory.Exists(settings.Source))
+                    return ValidationResult.Error($"Specified directory '{settings.Source}' does not exist.");
+                if (!File.Exists(settings.Source))
+                    return ValidationResult.Error($"Specified file '{settings.Source}' does not exist.");
 
-                var fi = new FileInfo(settings.FileOrDirectory);
+                var fi = new FileInfo(settings.Source);
 
                 if (fi.Extension.Equals(FileExtensions.PolicySuiteExtension, StringComparison.OrdinalIgnoreCase))
                     _isPolicySuite = true;
@@ -69,16 +69,16 @@ namespace Aspect.Commands
 
         public override async Task<int> ExecuteAsync(CommandContext context, RunCommandSettings settings)
         {
-            if (string.IsNullOrWhiteSpace(settings.FileOrDirectory))
+            if (string.IsNullOrWhiteSpace(settings.Source))
                 return -1;
 
-            var policy = LoadPolicySuite(settings.FileOrDirectory);
+            var policy = LoadPolicySuite(settings.Source);
             var validationResult = _policySuiteValidator.Validate(policy);
             if (!validationResult.IsValid)
             {
                 var table = new Table();
                 table.AddColumns("Policy", "IsValid", "Errors");
-                table.AddRow(settings.FileOrDirectory, validationResult.IsValid ? "[green]Valid[/]" : "[red]Invalid[/]", string.Join(Environment.NewLine, validationResult.Errors.Select(x => $"- {x}")));
+                table.AddRow(settings.Source, validationResult.IsValid ? "[green]Valid[/]" : "[red]Invalid[/]", string.Join(Environment.NewLine, validationResult.Errors.Select(x => $"- {x}")));
                 AnsiConsole.Render(table);
                 return 1;
             }

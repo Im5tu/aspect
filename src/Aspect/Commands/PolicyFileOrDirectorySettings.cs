@@ -4,7 +4,7 @@ namespace Aspect.Commands
 {
     internal class PolicyFileOrDirectorySettings : CommandSettings
     {
-        [CommandArgument(0, "[file or directory]")]
-        public string? FileOrDirectory { get; init; }
+        [CommandArgument(0, "[source]")]
+        public string? Source { get; init; }
     }
 }

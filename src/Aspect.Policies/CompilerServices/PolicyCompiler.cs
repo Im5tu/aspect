@@ -41,7 +41,8 @@ namespace Aspect.Policies.CompilerServices
         public bool IsPolicyFileValid(string filename, out CompilationContext context) => IsPolicyValid(new FileCompilationUnit(filename), out context);
         public bool IsPolicyValid(string policy) => IsPolicyValid(new SourceTextCompilationUnit(policy), out _);
         public bool IsPolicyValid(string policy, out CompilationContext context) => IsPolicyValid(new SourceTextCompilationUnit(policy), out context);
-        private bool IsPolicyValid(CompilationUnit source, out CompilationContext context)
+        public bool IsPolicyValid(CompilationUnit source) => IsPolicyValid(source, out _);
+        public bool IsPolicyValid(CompilationUnit source, out CompilationContext context)
         {
             context = new CompilationContext(source);
             var policy = BuildPolicy(context);

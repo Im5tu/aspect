@@ -36,8 +36,6 @@ namespace Aspect.Commands
 
             GenerateResourceDocumentation(directory);
 
-            //GenerateCommandDocumentation(directory);
-
             GenerateBuiltinPolicyDocumentation(directory);
 
             return 0;
@@ -47,14 +45,6 @@ namespace Aspect.Commands
         {
             foreach (var provider in _cloudProviders.Values.OrderBy(x => x.Name))
                 DocumentProvider(provider, baseDirectory);
-        }
-
-        private void GenerateCommandDocumentation(string baseDirectory)
-        {
-            foreach (var commandType in typeof(DocGenCommand).Assembly.GetTypes().Where(x => x.IsAssignableTo(typeof(ICommand))))
-            {
-                ;
-            }
         }
 
         private void GenerateBuiltinPolicyDocumentation(string directory)
