@@ -10,7 +10,6 @@ using StatementBlock = System.Collections.Generic.IReadOnlyCollection<System.Col
 
 namespace Aspect.Policies.CompilerServices
 {
-    // TODO :: TASK :: type checking for all the expression generation, we need to know whether the policy is assignable to the property type
     internal sealed class Parser : AbstractParser, IParser
     {
         private readonly IResourceTypeLocator _resourceTypeLocator;
@@ -170,6 +169,24 @@ namespace Aspect.Policies.CompilerServices
 
                 if (accessorExp is null || method is null)
                     return null;
+
+                var methodParams = method.GetParameters();
+                if (!accessorExp.Property.PropertyType.IsAssignableTo(methodParams[0].ParameterType))
+                {
+                    context.RaiseError("CA-PAR-008", enumerator.Current);
+                    return null;
+                }
+
+                for (var i = 1; i < methodParams.Length; i++)
+                {
+                    var param = methodParams[i];
+                    var constParam = constExp[i - 1];
+                    if (!param.ParameterType.IsAssignableFrom(constParam.Type))
+                    {
+                        context.RaiseError("CA-PAR-008", enumerator.Current);
+                        return null;
+                    }
+                }
 
                 return new FunctionCallExpression(method.Name, accessorExp, constExp);
             }

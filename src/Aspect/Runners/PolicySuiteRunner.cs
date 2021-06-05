@@ -9,6 +9,7 @@ using Aspect.Extensions;
 using Aspect.Policies;
 using Aspect.Policies.BuiltIn;
 using Aspect.Policies.CompilerServices;
+using Aspect.Policies.CompilerServices.CompilationUnits;
 using Aspect.Policies.CompilerServices.Generator;
 using Aspect.Policies.Suite;
 

@@ -50,5 +50,33 @@ namespace Aspect.Policies
             var comparer = caseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
             return input.EndsWith(value, comparer);
         }
+
+        internal static bool Matches(IEnumerable<KeyValuePair<string, string>> input, string key, string value)
+            => Matches(input, key, value, false);
+        internal static bool Matches(IEnumerable<KeyValuePair<string, string>> input, string key, string value, bool caseSensitive)
+        {
+            var comparer = caseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+            foreach (var el in input)
+            {
+                if (string.Equals(key, el.Key, comparer) && string.Equals(value, el.Value, comparer))
+                    return true;
+            }
+
+            return false;
+        }
+
+        internal static bool HasKey(IEnumerable<KeyValuePair<string, string>> input, string key)
+            => HasKey(input, key, false);
+        internal static bool HasKey(IEnumerable<KeyValuePair<string, string>> input, string key, bool caseSensitive)
+        {
+            var comparer = caseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+            foreach (var el in input)
+            {
+                if (string.Equals(key, el.Key, comparer))
+                    return true;
+            }
+
+            return false;
+        }
     }
 }

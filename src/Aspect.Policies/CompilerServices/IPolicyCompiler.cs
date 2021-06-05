@@ -1,5 +1,6 @@
 ﻿using System;
 using Aspect.Abstractions;
+using Aspect.Policies.CompilerServices.CompilationUnits;
 using Aspect.Policies.CompilerServices.Generator;
 
 namespace Aspect.Policies.CompilerServices

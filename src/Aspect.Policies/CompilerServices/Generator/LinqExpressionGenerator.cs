@@ -80,27 +80,25 @@ namespace Aspect.Policies.CompilerServices.Generator
             foreach (var statement in expression.Expressions)
             {
                 if (statement is FunctionCallExpression fce)
-                    Visit(fce, expressions, input, returnFailed, returnPassed, shouldNegate);
+                    Visit(fce, expressions, input, returnPassed, shouldNegate);
                 else if (statement is BinaryExpression be)
                     Visit(be, expressions, input, returnFailed, returnPassed, shouldNegate);
             }
         }
 
-        private void Visit(FunctionCallExpression expression, List<Expression> expressions, LParameterExpression input, Expression returnFailed, Expression returnPassed, bool shouldNegate)
+        private void Visit(FunctionCallExpression expression, List<Expression> expressions, LParameterExpression input, Expression returnPassed, bool shouldNegate)
         {
             var arguments = expression.Arguments.Select(x => VisitExpression(x, input, shouldNegate)).ToArray();
             var method = typeof(BuiltInFunctions).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
                 .First(x => x.Name == expression.FunctionName && x.GetParameters().Length == expression.Arguments.Length + 1); // + 1 is for the input variable
             var accessor = VisitExpression(expression.Accessor, input, shouldNegate);
 
-            Expression exp = arguments.Length == 2 ?
-                Expression.Call(method, accessor, arguments[0], arguments[1]) :
-                Expression.Call(method, accessor, arguments[0]);
+            Expression functionCallExpression = Expression.Call(method, new[] {accessor}.Concat(arguments));
 
             if (shouldNegate)
-                expressions.Add(Expression.IfThen(exp, returnPassed));
+                expressions.Add(Expression.IfThen(functionCallExpression, returnPassed));
             else
-                expressions.Add(Expression.IfThen(exp, returnPassed));
+                expressions.Add(Expression.IfThen(functionCallExpression, returnPassed));
         }
 
         private void Visit(BinaryExpression expression, List<Expression> expressions, LParameterExpression input, Expression returnFailed, Expression returnPassed, bool shouldNegate)

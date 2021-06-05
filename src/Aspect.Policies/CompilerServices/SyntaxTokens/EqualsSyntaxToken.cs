@@ -1,4 +1,6 @@
-﻿namespace Aspect.Policies.CompilerServices.SyntaxTokens
+﻿using Aspect.Policies.CompilerServices.CompilationUnits;
+
+namespace Aspect.Policies.CompilerServices.SyntaxTokens
 {
     internal sealed class EqualsSyntaxToken : SyntaxToken
     {

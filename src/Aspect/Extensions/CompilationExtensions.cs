@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Aspect.Policies;
 using Aspect.Policies.CompilerServices;
+using Aspect.Policies.CompilerServices.CompilationUnits;
 using Spectre.Console;
 
 namespace Aspect.Extensions

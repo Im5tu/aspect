@@ -1,6 +1,4 @@
-﻿using Aspect.Policies.CompilerServices;
-
-namespace Aspect.Policies
+﻿namespace Aspect.Policies.CompilerServices.CompilationUnits
 {
     public class BuiltInResourceCompilationUnit : CompilationUnit
     {

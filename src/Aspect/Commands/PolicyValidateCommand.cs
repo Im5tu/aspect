@@ -7,6 +7,7 @@ using Aspect.Extensions;
 using Aspect.Policies;
 using Aspect.Policies.BuiltIn;
 using Aspect.Policies.CompilerServices;
+using Aspect.Policies.CompilerServices.CompilationUnits;
 using Aspect.Policies.Suite;
 using Spectre.Console;
 using Spectre.Console.Cli;

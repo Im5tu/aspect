@@ -1,4 +1,4 @@
-﻿namespace Aspect.Policies.CompilerServices
+﻿namespace Aspect.Policies.CompilerServices.CompilationUnits
 {
     internal class SourceTextCompilationUnit : CompilationUnit
     {

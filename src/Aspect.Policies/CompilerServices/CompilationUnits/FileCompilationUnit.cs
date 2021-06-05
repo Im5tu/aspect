@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Aspect.Policies.CompilerServices
+namespace Aspect.Policies.CompilerServices.CompilationUnits
 {
     internal class FileCompilationUnit : CompilationUnit
     {

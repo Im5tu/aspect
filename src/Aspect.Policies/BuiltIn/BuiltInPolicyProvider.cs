@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using Aspect.Policies.CompilerServices.CompilationUnits;
 using Aspect.Policies.Suite;
 
 namespace Aspect.Policies.BuiltIn
