@@ -1,8 +1,8 @@
 +++
 title = "aspect autocomplete"
 description = ""
-weight = 1
 draft = true
+weight = 1
 +++
 
-This command is not yet available!
+{{< alert style="warning" >}} This is preview documentation for a future command. This command is not available in the released images. {{< /alert >}}

@@ -4,21 +4,34 @@ description = ""
 weight = 8
 +++
 
-Validate a specific file or directory to ensure that the policy is valid before running it using `aspect run`. If specifying a directory, the options listed below will also be available.
+`aspect policy validate [ARGUMENTS] [OPTIONS]` enables you to validate a specific file or directory to ensure that the policy is valid before running it using `aspect run`. If specifying a directory, the options listed below will also be available. The command will validate any policy file, policy suite or one of the built in policies.
 
-```bash
-aspect policy validate <path> [-r|--recursive] [--failed-only]
-```
+
+### Example output
+
+{{< code lang="md" >}}
+> aspect policy validate D:\dev\personal\im5tu\Aspect\examples
+
+┌───────────────────────────────────────────────────┬───────────┬────────┐
+│ Source                                            │ Is Valid? │ Errors │
+├───────────────────────────────────────────────────┼───────────┼────────┤
+│ D:\dev\personal\im5tu\Aspect\examples\test.policy │ Valid     │        │
+│ D:\dev\personal\im5tu\Aspect\examples\test.suite  │ Valid     │        │
+└───────────────────────────────────────────────────┴───────────┴────────┘
+
+{{< /code >}}
 
 ### Arguments
-
+{{< table style="table-striped" >}}
 |Option|Position|Description|Default|Required?|
 |---|---|---|---|---|
-|path|0|The filename or directory to validate|Current directory|true|
+|source|0|Lists the policies and policy suites that can be found in the specified location|builtin|No|
+{{< /table >}}
 
 ### Options
 
-|Option|Alias|Description|Default|
-|---|---|---|---|
-|--recursive|-r|Whether or not to recurse through child directories|false|
-|--failed-only||Displays only invalid policies. No output is shown is all policies are valid|false|
+{{< table style="table-striped" >}}
+|Option|Alias|Description|
+|---|---|---|
+|-r|--recursive|Instructs the CLI to enumerate all child directories, not just the top level directory. Works for physical file systems only, ie: not `builtin`|
+{{< /table >}}

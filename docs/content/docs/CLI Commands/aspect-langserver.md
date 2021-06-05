@@ -1,8 +1,8 @@
 +++
 title = "aspect langserver"
 description = ""
-weight = 3
 draft = true
+weight = 3
 +++
 
-This command is not yet available!
+{{< alert style="warning" >}} This is preview documentation for a future command. This command is not available in the released images. {{< /alert >}}
