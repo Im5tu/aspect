@@ -18,6 +18,8 @@ namespace Aspect.Providers.Azure
         public IReadOnlyDictionary<string, Type> GetResources() => _resources;
 
         public IEnumerable<string> GetAllRegions() => Enumerable.Empty<string>();
+        public IEnumerable<string> GetDefaultRegions() => Enumerable.Empty<string>();
+
         public Task<IEnumerable<IResource>> DiscoverResourcesAsync(string region, Type resourceType, Action<string> updater, CancellationToken cancellationToken)
         {
             return Task.FromResult(Enumerable.Empty<IResource>());

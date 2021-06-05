@@ -41,7 +41,7 @@ namespace Aspect.Commands
         public override ValidationResult Validate(CommandContext context, RunCommandSettings settings)
         {
             if (string.IsNullOrWhiteSpace(settings.Source))
-                return ValidationResult.Error("Please specify a path of a policy file, policy suite or directory.");
+                settings.Source = Environment.CurrentDirectory;
 
             if (settings.Source.StartsWith("builtin\\", StringComparison.OrdinalIgnoreCase))
             {
@@ -92,6 +92,12 @@ namespace Aspect.Commands
 
             await new JsonFormatter().FormatAsync(formattedResult);
 
+            if (formattedResult.Errors.Count > 0)
+                return 2;
+
+            if (formattedResult.FailedResources.Count > 0)
+                return -1;
+
             return 0;
         }
 
@@ -105,7 +111,8 @@ namespace Aspect.Commands
             {
                 result = new PolicySuite
                 {
-                    Policies = _cloudProviders.Select(x => new PolicyElement { Type = x.Key, Name = x.Key, Regions = x.Value.GetAllRegions(), Policies = new [] { name }}).ToList()
+                    Name = "Policy: " + name,
+                    Policies = _cloudProviders.Select(x => new PolicyElement { Type = x.Key, Name = x.Key, Regions = x.Value.GetDefaultRegions(), Policies = new [] { name }}).ToList()
                 };
             }
 
@@ -130,8 +137,8 @@ namespace Aspect.Commands
 
         private class Result
         {
-            public IEnumerable<string>? Errors { get; set; }
-            public IEnumerable<PolicySuiteRunResult.FailedResource>? FailedResources { get; set; }
+            public List<string>? Errors { get; set; }
+            public List<PolicySuiteRunResult.FailedResource>? FailedResources { get; set; }
         }
     }
 }

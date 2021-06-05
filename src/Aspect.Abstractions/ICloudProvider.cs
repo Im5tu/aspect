@@ -12,6 +12,7 @@ namespace Aspect.Abstractions
 
         IReadOnlyDictionary<string, Type> GetResources();
         IEnumerable<string> GetAllRegions();
+        IEnumerable<string> GetDefaultRegions();
         Task<IEnumerable<IResource>> DiscoverResourcesAsync(string region, Type resourceType, Action<string> updater, CancellationToken cancellationToken);
     }
 }

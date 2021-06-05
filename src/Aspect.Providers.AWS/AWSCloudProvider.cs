@@ -34,6 +34,14 @@ namespace Aspect.Providers.AWS
 
         public IReadOnlyDictionary<string, Type> GetResources() => _resources;
         public IEnumerable<string> GetAllRegions() => All.ToList();
+        public IEnumerable<string> GetDefaultRegions()
+        {
+            var defaultRegion = Environment.GetEnvironmentVariable("AWS_DEFAULT_REGION");
+            if (!string.IsNullOrWhiteSpace(defaultRegion) && All.Contains(defaultRegion, StringComparer.OrdinalIgnoreCase))
+                return new[] {defaultRegion};
+
+            return All.ToList();
+        }
 
         public async Task<IEnumerable<IResource>> DiscoverResourcesAsync(string region, Type resourceType, Action<string> updater, CancellationToken cancellationToken)
         {

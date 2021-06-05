@@ -51,7 +51,7 @@ namespace Aspect.Runners
             var (evaluators, types) = GetCompiledPolicies(policies);
 
             // Load all of the resources
-            var resources = await LoadAWSResourcesAsync(scope.Regions!, types, provider, cancellationToken);
+            var resources = await LoadResourcesAsync(scope.Regions!, types, provider, cancellationToken);
 
             // Validation
             var failedResources = new List<PolicySuiteRunResult.FailedResource>();
@@ -67,7 +67,7 @@ namespace Aspect.Runners
             return new PolicySuiteRunResult { FailedResources = failedResources };
         }
 
-        private async Task<List<IResource>> LoadAWSResourcesAsync(IEnumerable<string> regions, List<Type> types, ICloudProvider provider, CancellationToken cancellationToken)
+        private async Task<List<IResource>> LoadResourcesAsync(IEnumerable<string> regions, List<Type> types, ICloudProvider provider, CancellationToken cancellationToken)
         {
             var resources = new List<IResource>();
             foreach (var region in regions)
@@ -112,24 +112,23 @@ namespace Aspect.Runners
             if (policyName.EndsWith(FileExtensions.PolicySuiteExtension, StringComparison.OrdinalIgnoreCase))
                 yield break;
 
-            if (policyName.StartsWith("builtin\\", StringComparison.OrdinalIgnoreCase) && _builtInPolicyProvider.TryGetPolicy(policyName, out var compilationUnit))
+            if (policyName.StartsWith("builtin\\", StringComparison.OrdinalIgnoreCase))
             {
-                yield return compilationUnit;
-                yield break;
+                if (_builtInPolicyProvider.TryGetPolicy(policyName, out var compilationUnit))
+                    yield return compilationUnit;
+                else
+                    foreach (var resource in _builtInPolicyProvider.GetAllResources())
+                        if (resource.Name.StartsWith(policyName, StringComparison.OrdinalIgnoreCase))
+                            yield return resource;
             }
-
-            if (File.GetAttributes(policyName).HasFlag(FileAttributes.Directory))
+            else if (File.GetAttributes(policyName).HasFlag(FileAttributes.Directory))
             {
                 foreach (var file in Directory.EnumerateFiles(policyName, $"*{FileExtensions.PolicyFileExtension}", SearchOption.AllDirectories))
                     yield return new FileCompilationUnit(file);
-
-                yield break;
             }
-
-            if (File.Exists(policyName))
+            else if (File.Exists(policyName))
             {
                 yield return new FileCompilationUnit(policyName);
-                yield break;
             }
         }
 
