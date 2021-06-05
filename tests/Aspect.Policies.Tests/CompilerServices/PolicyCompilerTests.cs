@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Aspect.Abstractions;
 using Aspect.Policies.CompilerServices;
+using Aspect.Policies.CompilerServices.CompilationUnits;
 using Aspect.Policies.CompilerServices.Generator;
 using FluentAssertions;
 using Xunit;
@@ -57,6 +59,21 @@ validate {{
         [InlineData("contains(input.Name, \"es\")", ResourcePolicyExecution.Passed)]
         [InlineData("contains(input.Nested.Name, \"este\", false)", ResourcePolicyExecution.Passed)]
         [InlineData("contains(input.Nested.Name, \"ESTE\", true)", ResourcePolicyExecution.Failed)]
+        [InlineData("contains(input.Tags, \"product-group\", \"Test\", false)", ResourcePolicyExecution.Passed)]
+        [InlineData("contains(input.Tags, \"Product-Group\", \"Test\", true)", ResourcePolicyExecution.Passed)]
+        [InlineData("contains(input.Tags, \"Product-Group\", \"Test2\", true)", ResourcePolicyExecution.Failed)]
+        [InlineData("contains(input.Tags, \"product-group\", \"Test\")", ResourcePolicyExecution.Passed)]
+        [InlineData("contains(input.Tags, \"Product-Group\", \"Test\")", ResourcePolicyExecution.Passed)]
+        [InlineData("contains(input.Tags, \"Product-Group\", \"Test2\")", ResourcePolicyExecution.Failed)]
+        [InlineData("hasKey(input.Tags, \"product-group\")", ResourcePolicyExecution.Passed)]
+        [InlineData("hasKey(input.Tags, \"Product-Group\")", ResourcePolicyExecution.Passed)]
+        [InlineData("hasKey(input.Tags, \"Product-Group2\")", ResourcePolicyExecution.Failed)]
+        [InlineData("hasKey(input.Tags, \"product-group\", false)", ResourcePolicyExecution.Passed)]
+        [InlineData("hasKey(input.Tags, \"Product-Group\", true)", ResourcePolicyExecution.Passed)]
+        [InlineData("hasKey(input.Tags, \"Product-Group2\", true)", ResourcePolicyExecution.Failed)]
+        [InlineData("matches(input.Name, \"^Test\")", ResourcePolicyExecution.Passed)]
+        [InlineData("matches(input.Name, \"^Testing$\")", ResourcePolicyExecution.Passed)]
+        [InlineData("matches(input.Name, \"^Test$\")", ResourcePolicyExecution.Failed)]
         public async Task UsingFunctionsWorksAsExpected(string policyPart, ResourcePolicyExecution expected)
         {
             var policy = $@"resource ""TestResource""
@@ -69,10 +86,15 @@ validate {{
                 Int16 = 16,
                 Int32 = 32,
                 Int64 = 64,
-                Name = "Testing"
+                Name = "Testing",
+                Tags = new Dictionary<string, string>
+                {
+                    ["Product-Group"] = "Test"
+                }.ToList()
             };
             var executor = await GetPolicyValidatorForPolicy(policy);
 
+            executor.Should().NotBeNull();
             executor?.Invoke(testObject).Should().Be(expected);
         }
 

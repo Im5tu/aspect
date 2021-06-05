@@ -157,5 +157,18 @@ validate {{
             var ast = await GetPolicyAstForDocument(policy, out var context);
             context.Errors.Any(x => x.Code == "CA-PAR-014").Should().BeTrue();
         }
+
+        [Theory(Timeout = TestTimeoutMs)]
+        [InlineData("hasKey(input.List, \"Product-Group2\", true)", "CA-PAR-008")]
+        [InlineData("hasKey(input.Tags, 123, 465)", "CA-PAR-014")]
+        public async Task EnsureThatFunctionIsTypeChecked(string func, string expectedError)
+        {
+            var policy = @$"resource ""TestResource""
+validate {{
+    {func}
+}}";
+            var ast = await GetPolicyAstForDocument(policy, out var context);
+            context.Errors.Any(x => x.Code == expectedError).Should().BeTrue();
+        }
     }
 }

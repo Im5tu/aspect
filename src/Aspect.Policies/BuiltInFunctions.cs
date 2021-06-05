@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Aspect.Policies
 {
@@ -11,12 +14,33 @@ namespace Aspect.Policies
 
         static BuiltInFunctions()
         {
+            var notAccessibleFunctions = new[] {nameof(TryLookupBuiltInFunction), nameof(ConvertToFriendlyMethodName)};
             _functions = typeof(BuiltInFunctions).GetTypeInfo().DeclaredMethods
-                .Where(x => x.Name != nameof(TryLookupBuiltInFunction))
-                .ToDictionary(x => x.Name.LowerFirstLetter() + x.GetParameters().Length, x => x);
+                .Where(x => !notAccessibleFunctions.Contains(x.Name))
+                .ToDictionary(x => ConvertToFriendlyMethodName(x.Name, x.GetParameters().Select(x => x.ParameterType)), x => x);
         }
 
-        internal static bool TryLookupBuiltInFunction(string name, out MethodInfo? method) => _functions.TryGetValue(name, out method);
+        internal static bool TryLookupBuiltInFunction(string name, [NotNullWhen(true)] out MethodInfo? method) => _functions.TryGetValue(name, out method);
+        internal static bool TryLookupBuiltInFunction(string name, IEnumerable<Type> parameters, [NotNullWhen(true)] out MethodInfo? method) => _functions.TryGetValue(ConvertToFriendlyMethodName(name, parameters), out method);
+
+        internal static string ConvertToFriendlyMethodName(string function, IEnumerable<Type> parameters)
+        {
+            var names = new List<string?>();
+
+            foreach (var param in parameters)
+            {
+                if (param.IsAssignableTo(typeof(string)))
+                    names.Add("string");
+                else if (param.IsAssignableTo(typeof(IEnumerable)))
+                    names.Add("collection");
+                else if (param.IsAssignableTo(typeof(Int16)) || param.IsAssignableTo(typeof(Int32)) || param.IsAssignableTo(typeof(Int64)) || param.IsAssignableTo(typeof(Decimal)))
+                    names.Add("number");
+                else
+                    names.Add(param.Name);
+            }
+
+            return $"{function.LowerFirstLetter()}[{string.Join(",", names)}]";
+        }
 
         internal static bool Contains(string input, string value)
             => Contains(input, value, false);
@@ -51,9 +75,9 @@ namespace Aspect.Policies
             return input.EndsWith(value, comparer);
         }
 
-        internal static bool Matches(IEnumerable<KeyValuePair<string, string>> input, string key, string value)
-            => Matches(input, key, value, false);
-        internal static bool Matches(IEnumerable<KeyValuePair<string, string>> input, string key, string value, bool caseSensitive)
+        internal static bool Contains(IEnumerable<KeyValuePair<string, string>> input, string key, string value)
+            => Contains(input, key, value, false);
+        internal static bool Contains(IEnumerable<KeyValuePair<string, string>> input, string key, string value, bool caseSensitive)
         {
             var comparer = caseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
             foreach (var el in input)
@@ -78,5 +102,7 @@ namespace Aspect.Policies
 
             return false;
         }
+
+        internal static bool Matches(string input, string regex) => new Regex(regex).IsMatch(input);
     }
 }

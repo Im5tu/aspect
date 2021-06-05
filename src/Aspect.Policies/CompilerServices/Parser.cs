@@ -158,17 +158,27 @@ namespace Aspect.Policies.CompilerServices
             if (enumerator.MoveNext() && enumerator.Current is IdentifierSyntaxToken ist)
             {
                 var parameters = SplitOn<SeparatorSyntaxToken>(FindTokensBetween<ParenthesisSyntaxToken>(context, enumerator)).ToList();
-                if (!BuiltInFunctions.TryLookupBuiltInFunction(ist.Identifier + parameters.Count, out var method))
+                var constExp = parameters.Skip(1).Select(x => BuildConstantExpression(context, x.ToList()) ?? throw new Exception("No expression built")).ToArray();
+
+                if (parameters.Count == 0)
                 {
                     context.RaiseError("CA-PAR-014", ist);
                     return null;
                 }
 
-                var constExp = parameters.Skip(1).Select(x => BuildConstantExpression(context, x.ToList()) ?? throw new Exception("No expression built")).ToArray();
                 var accessorExp = BuildInputExpression(context, resourceType, parameters[0].ToList(), type);
-
-                if (accessorExp is null || method is null)
+                if (accessorExp is null)
+                {
+                    context.RaiseError("CA-PAR-014", ist);
                     return null;
+                }
+
+                var types = new[] {accessorExp.Property.PropertyType}.Concat(constExp.Select(x => x.Type));
+                if (!BuiltInFunctions.TryLookupBuiltInFunction(ist.Identifier, types, out var method))
+                {
+                    context.RaiseError("CA-PAR-014", ist);
+                    return null;
+                }
 
                 var methodParams = method.GetParameters();
                 if (!accessorExp.Property.PropertyType.IsAssignableTo(methodParams[0].ParameterType))
@@ -188,7 +198,7 @@ namespace Aspect.Policies.CompilerServices
                     }
                 }
 
-                return new FunctionCallExpression(method.Name, accessorExp, constExp);
+                return new FunctionCallExpression(method, accessorExp, constExp);
             }
 
             context.RaiseError("CA-PAR-014", enumerator.Current);

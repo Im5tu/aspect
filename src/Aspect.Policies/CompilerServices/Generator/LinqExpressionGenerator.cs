@@ -89,8 +89,7 @@ namespace Aspect.Policies.CompilerServices.Generator
         private void Visit(FunctionCallExpression expression, List<Expression> expressions, LParameterExpression input, Expression returnPassed, bool shouldNegate)
         {
             var arguments = expression.Arguments.Select(x => VisitExpression(x, input, shouldNegate)).ToArray();
-            var method = typeof(BuiltInFunctions).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
-                .First(x => x.Name == expression.FunctionName && x.GetParameters().Length == expression.Arguments.Length + 1); // + 1 is for the input variable
+            var method = expression.Method;
             var accessor = VisitExpression(expression.Accessor, input, shouldNegate);
 
             Expression functionCallExpression = Expression.Call(method, new[] {accessor}.Concat(arguments));

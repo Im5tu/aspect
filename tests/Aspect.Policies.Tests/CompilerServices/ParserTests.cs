@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Aspect.Policies.CompilerServices;
+using Aspect.Policies.CompilerServices.CompilationUnits;
 
 namespace Aspect.Policies.Tests.CompilerServices
 {

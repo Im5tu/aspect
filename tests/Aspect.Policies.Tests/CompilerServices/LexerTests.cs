@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Aspect.Policies.CompilerServices;
+using Aspect.Policies.CompilerServices.CompilationUnits;
 using Aspect.Policies.CompilerServices.SyntaxTokens;
 using FluentAssertions;
 using Xunit;
