@@ -8,9 +8,9 @@ When building your policies, you may which to perform certain operations like se
 
 All of the functions follow this format:
 
-```
+{{< code lang=\"tf\" >}}
 functionName(input.<property>, <arg1> [, arg2..])
-```
+{{< /code >}}
 
 The first argument to each function must be an accessor to a property on the input. This is followed by the function arguments specified in one of the functions below.
 
@@ -22,13 +22,13 @@ Returns a true when the specified value string occurs within the input string, u
 
 **Example**
 
-```
+{{< code lang=\"tf\" >}}
 resource "AwsSecurityGroup"
 
 validate {
     contains(input.Name, "contoso")
 }
-```
+{{< /code >}}
 
 ## contains(string input, string value, bool caseSensitive)
 
@@ -36,13 +36,13 @@ Returns a true when the specified value string occurs within the input string. W
 
 **Example**
 
-```
+{{< code lang=\"tf\" >}}
 resource "AwsSecurityGroup"
 
 validate {
     contains(input.Name, "contoso", true)
 }
-```
+{{< /code >}}
 
 ## startsWith(string input, string value)
 
@@ -50,13 +50,13 @@ Returns a true when the specified value string starts with the input string, usi
 
 **Example**
 
-```
+{{< code lang=\"tf\" >}}
 resource "AwsSecurityGroup"
 
 validate {
     startsWith(input.Name, "contoso")
 }
-```
+{{< /code >}}
 
 ## startsWith(string input, string value, bool caseSensitive)
 
@@ -64,13 +64,13 @@ Returns a true when the specified value string starts with the input string. Whe
 
 **Example**
 
-```
+{{< code lang=\"tf\" >}}
 resource "AwsSecurityGroup"
 
 validate {
     startsWith(input.Name, "contoso", true)
 }
-```
+{{< /code >}}
 
 ## endsWith(string input, string value)
 
@@ -78,13 +78,13 @@ Returns a true when the specified value string ends with the input string, using
 
 **Example**
 
-```
+{{< code lang=\"tf\" >}}
 resource "AwsSecurityGroup"
 
 validate {
     endsWith(input.Name, "contoso")
 }
-```
+{{< /code >}}
 
 ## endsWith(string input, string value, bool caseSensitive)
 
@@ -92,10 +92,10 @@ Returns a true when the specified value string ends with the input string. When 
 
 **Example**
 
-```
+{{< code lang=\"tf\" >}}
 resource "AwsSecurityGroup"
 
 validate {
     endsWith(input.Name, "contoso", true)
 }
-```
+{{< /code >}}

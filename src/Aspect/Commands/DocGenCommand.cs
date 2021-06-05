@@ -9,6 +9,8 @@ using System.Reflection;
 using System.Threading;
 using Aspect.Abstractions;
 using Aspect.Extensions;
+using Aspect.Policies;
+using Aspect.Policies.BuiltIn;
 using Spectre.Console.Cli;
 
 namespace Aspect.Commands
@@ -16,10 +18,12 @@ namespace Aspect.Commands
     internal sealed class DocGenCommand : Command<DocGenCommandSettings>
     {
         private readonly IReadOnlyDictionary<string, ICloudProvider> _cloudProviders;
+        private readonly IBuiltInPolicyProvider _builtInPolicyProvider;
 
-        public DocGenCommand(IReadOnlyDictionary<string, ICloudProvider> cloudProviders)
+        public DocGenCommand(IReadOnlyDictionary<string, ICloudProvider> cloudProviders, IBuiltInPolicyProvider builtInPolicyProvider)
         {
             _cloudProviders = cloudProviders;
+            _builtInPolicyProvider = builtInPolicyProvider;
         }
 
         public override int Execute([NotNull] CommandContext context, [NotNull] DocGenCommandSettings settings)
@@ -28,15 +32,111 @@ namespace Aspect.Commands
             if (!string.IsNullOrWhiteSpace(settings.Directory))
                 directory = settings.Directory;
 
-            foreach (var provider in _cloudProviders.Values.OrderBy(x => x.Name))
-                DocumentProvider(provider, directory);
+            directory = Path.Combine(directory, "docs\\content\\docs\\");
+
+            GenerateResourceDocumentation(directory);
+
+            //GenerateCommandDocumentation(directory);
+
+            GenerateBuiltinPolicyDocumentation(directory);
 
             return 0;
         }
 
-        private void DocumentProvider(ICloudProvider provider, string directory)
+        private void GenerateResourceDocumentation(string baseDirectory)
         {
-            var basePath = Path.Combine(directory, $"docs\\content\\docs\\{provider.Name}\\Resources\\");
+            foreach (var provider in _cloudProviders.Values.OrderBy(x => x.Name))
+                DocumentProvider(provider, baseDirectory);
+        }
+
+        private void GenerateCommandDocumentation(string baseDirectory)
+        {
+            foreach (var commandType in typeof(DocGenCommand).Assembly.GetTypes().Where(x => x.IsAssignableTo(typeof(ICommand))))
+            {
+                ;
+            }
+        }
+
+        private void GenerateBuiltinPolicyDocumentation(string directory)
+        {
+            var baseDirectory = Path.Combine(directory, "builtin");
+            if (Directory.Exists(baseDirectory))
+                Directory.Delete(baseDirectory, true);
+
+            Directory.CreateDirectory(baseDirectory);
+            Thread.Sleep(250);
+
+            // Index document for the root page
+            using var basefs = File.CreateText(Path.Combine(baseDirectory, "_index.md"));
+            basefs.WriteLine("+++");
+            basefs.WriteLine($"title = \"BuiltIn Policies\"");
+            basefs.WriteLine("weight = 5");
+            basefs.WriteLine("+++");
+            basefs.WriteLine();
+            basefs.WriteLine("{{< childpages >}}");
+            basefs.WriteLine();
+            basefs.Flush();
+            basefs.Close();
+
+            var index = 1;
+            var directoryIndex = 1;
+            foreach (var resource in _builtInPolicyProvider.GetAllResources().OrderBy(x => x.Name))
+            {
+                var lastIndexOfEscape = resource.Name.IndexOf('\\', 9);
+                var dir = Path.Combine(directory, resource.Name.Substring(0, lastIndexOfEscape));
+
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+
+                    using var providerFS = File.CreateText(Path.Combine(dir, "_index.md"));
+                    providerFS.WriteLine("+++");
+                    providerFS.WriteLine($"title = \"{resource.Name.Substring(8, lastIndexOfEscape - 8)}\"");
+                    providerFS.WriteLine($"weight = {directoryIndex++}");
+                    providerFS.WriteLine("+++");
+                    providerFS.WriteLine();
+                    providerFS.WriteLine("{{< childpages >}}");
+                    providerFS.WriteLine();
+                    providerFS.Flush();
+                    providerFS.Close();
+                }
+
+
+                var filename = resource.Name.Replace(FileExtensions.PolicyFileExtension, ".md", StringComparison.OrdinalIgnoreCase).Replace(FileExtensions.PolicySuiteExtension, ".md", StringComparison.OrdinalIgnoreCase);
+                using var fs = File.CreateText(Path.Combine(directory, filename));
+                fs.WriteLine("+++");
+                fs.WriteLine($"title = \"{resource.Name.Substring(lastIndexOfEscape + 1)}\"");
+                fs.WriteLine($"weight = {index++}");
+                fs.WriteLine("+++");
+                fs.WriteLine();
+                fs.WriteLine("## Commands");
+                fs.WriteLine();
+                fs.WriteLine("{{< table style=\"table-striped\" >}}");
+                fs.WriteLine("|Command|Description|");
+                fs.WriteLine("|------|------|");
+                fs.WriteLine($"|`aspect policy view {resource.Name}`|View the contents of the policy|");
+                fs.WriteLine($"|`aspect policy validate {resource.Name}`|Validate the policy|");
+                fs.WriteLine($"|`aspect run {resource.Name}`|Validate the policy|");
+                fs.WriteLine("{{< /table >}}");
+                fs.WriteLine();
+                fs.WriteLine("## Policy Definition");
+
+                if (resource.Name.EndsWith(FileExtensions.PolicyFileExtension, StringComparison.OrdinalIgnoreCase))
+                    fs.WriteLine("{{< code lang=\"tf\" >}}");
+                else
+                    fs.WriteLine("{{< code lang=\"yml\" >}}");
+
+                fs.WriteLine(resource.GetAllText());
+                fs.WriteLine("{{< /code >}}");
+                fs.WriteLine();
+                fs.Flush();
+                fs.Close();
+            }
+        }
+
+        private static void DocumentProvider(ICloudProvider provider, string directory)
+        {
+            var basePath = Path.Combine(directory, $"{provider.Name}\\Resources\\");
             if (Directory.Exists(basePath))
                 Directory.Delete(basePath, true);
 
@@ -70,13 +170,13 @@ namespace Aspect.Commands
                 fs.WriteLine("## Policy Template");
                 fs.WriteLine($"This template will give you a quick head start on generating a policy for an {type.Name}:");
                 fs.WriteLine();
-                fs.WriteLine("```");
+                fs.WriteLine("{{< code lang=\"tf\" >}}");
                 fs.WriteLine($"resource \"{type.Name}\"");
                 fs.WriteLine();
                 fs.WriteLine("validate {");
                 fs.WriteLine();
                 fs.WriteLine("}");
-                fs.WriteLine("```");
+                fs.WriteLine("{{< /code >}}");
 
 
                 var nestedTypes = GetNestedTypes(type).Distinct().ToList();
@@ -105,11 +205,12 @@ namespace Aspect.Commands
             ifs.WriteLine();
             ifs.WriteLine();
             ifs.WriteLine();
+            ifs.WriteLine("{{< table style=\"table-striped\" >}}");
             ifs.WriteLine("|Name|Description|Docs|");
             ifs.WriteLine("|----------|----------|----------|");
             foreach (var row in indexRows)
                 ifs.WriteLine(row);
-
+            ifs.WriteLine("{{< /table >}}");
             ifs.Flush();
             ifs.Close();
         }
@@ -121,11 +222,12 @@ namespace Aspect.Commands
 
             if (!type.IsAssignableTo(typeof(IResource)) && !type.IsNested)
             {
-                fs.WriteLine("**Note:** _You will not be able to write a policy directly against this type._");
+                fs.WriteLine("{{< alert style=\"warning\" >}} **Note:** _You will not be able to write a policy directly against this type._ {{< /alert >}}");
                 fs.WriteLine();
             }
 
             fs.WriteLine($"{new string('#', indentLevel)} Properties");
+            fs.WriteLine("{{< table style=\"table-striped\" >}}");
             fs.WriteLine("|Name|Description|Type|");
             fs.WriteLine("|----------|----------|----------|");
             foreach (var property in type.GetProperties().OrderBy(x => x.Name))
@@ -147,6 +249,7 @@ namespace Aspect.Commands
 
                 fs.WriteLine($"|{property.Name}|{propertyDescription}|{pt}|");
             }
+            fs.WriteLine("{{< /table >}}");
             fs.WriteLine();
         }
 
@@ -181,7 +284,7 @@ namespace Aspect.Commands
             return type.GetFriendlyName();
         }
 
-        private IEnumerable<Type> GetNestedTypes(Type type)
+        private static IEnumerable<Type> GetNestedTypes(Type type)
         {
             var types = type.GetNestedTypes();
             foreach (var nt in types)

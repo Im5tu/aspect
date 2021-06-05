@@ -1,12 +1,17 @@
-# Aspect
++++
+title = "Aspect"
+description = "Welcome to Aspect"
+weight = 1
++++
 
-<!-- Badges -->
 ![GitHub license](https://img.shields.io/github/license/im5tu/aspect.svg?style=flat-square)
 ![GitHub release](https://img.shields.io/github/release/im5tu/aspect.svg?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/im5tu/aspect?style=flat-square)
 ![GitHub contributors](https://img.shields.io/github/contributors/im5tu/aspect?style=flat-square)
 
 Aspect is a simple rule based engine to ensure that cloud resources meet organisational requirements across multiple clouds and regions at the same time. The same rules based engine is available as a REPL to support arbitary sub-second evaulation of cloud resources.
+
+{{< button style="success" link="/docs/getting-started" >}} Read the documentation {{< /button >}}
 
 ## Features
 
@@ -28,20 +33,19 @@ The quickest way to get started is to use the prebuilt docker image:
 docker run --rm -it im5tu/aspect:latest
 ```
 
+From here you have full access to the `aspect` command line interface. Here are some commands that you may wish to execute:
+
+- `aspect policy init myfirst.policy` - Creates an empty policy for a specified resource
 - `aspect policy list builtin` - Lists all of the built in policies
-- `aspect policy list view <policy name>.policy` - Views the contents of a policy
-- `aspect policy init <policy name>.policy` - Creates an empty policy for a specified resource
-- `aspect policy validate <policy name>.policy` - Ensures that the policy is valid
-- `aspect run <policy name>.policy` - Runs the policy against your cloud infrastructure reporting its compliance
+- `aspect policy validate myfirst.policy` - Ensures that the policy is valid
+- `aspect run myfirst.policy` - Runs the policy against your cloud infrastructure reporting its compliance
 
-In order to construct a policy, checkout the [Policy Syntax documentation](https://cloudaspect.app/docs/getting-started/policy-syntax) to see how to construct a policy document and how to verify resources. 
-
-For a full list of the commands and their available options, visit the [CLI Commands Documentation](https://cloudaspect.app/docs/getting-started/commands/). Please note, you may also need to configure cloud specific credentials. See the instructions for [AWS](https://cloudaspect.app/docs/aws/configuration/) and [Azure](https://cloudaspect.app/docs/azure/configuration/).
+For a full list of the commands and their available options, visit the [CLI Commands Documentation](/docs/getting-started/commands/). Please note, you may also need to configure cloud specific credentials. See the instructions for [AWS](/docs/aws/configuration/) and [Azure](/docs/azure/configuration/).
 
 ## Supported Resources
 
-- AWS
-    - Security Groups
+- [AWS](/docs/aws)
+    - [Security Groups](/docs/aws/resources/awssecuritygroup/)
 
 ## Roadmap
 
@@ -61,4 +65,4 @@ Here are some of the awesome community projects that make this project possible:
 
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-Take a look at our [contribution guide](https://cloudaspect.app/docs/contributing/) for more details.
+Take a look at our [contribution guide](/docs/contributing/) for more details.
