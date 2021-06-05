@@ -18,8 +18,6 @@ namespace Aspect.Providers.AWS
         public AWSAccountIdentityProvider()
             : this (new AmazonSecurityTokenServiceClient(), new AmazonIdentityManagementServiceClient())
         {
-            _stsClient = new AmazonSecurityTokenServiceClient();
-            _iamClient = new AmazonIdentityManagementServiceClient();
         }
 
         public AWSAccountIdentityProvider(IAmazonSecurityTokenService stsClient, IAmazonIdentityManagementService iamClient)
