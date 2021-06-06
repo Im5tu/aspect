@@ -64,14 +64,6 @@ ProjectSection(SolutionItems) = preProject
 	src\docker\windows.dockerfile = src\docker\windows.dockerfile
 EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{1450B80C-FE44-435F-BF55-C81D15AA9614}"
-ProjectSection(SolutionItems) = preProject
-	examples\test.policy = examples\test.policy
-	examples\test.suite = examples\test.suite
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{09E0832E-41B4-45E4-8528-6CC27B1C8A6E}"
-ProjectSection(SolutionItems) = preProject
-EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "aws", "aws", "{60F0F46F-2A10-47A1-B091-FB6DF2FF3E64}"
 ProjectSection(SolutionItems) = preProject
 	docs\content\docs\AWS\_index.md = docs\content\docs\AWS\_index.md
@@ -104,6 +96,12 @@ ProjectSection(SolutionItems) = preProject
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aspect.Providers.Azure.Models", "src\Aspect.Providers.Azure.Models\Aspect.Providers.Azure.Models.csproj", "{874D3494-EB61-434F-BC0C-94F68E30815F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{CDB75FD6-75DC-415A-AD27-83591EE697AF}"
+ProjectSection(SolutionItems) = preProject
+	examples\test.policy = examples\test.policy
+	examples\test.suite = examples\test.suite
+EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
