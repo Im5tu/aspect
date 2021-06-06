@@ -31,8 +31,8 @@ namespace Aspect.Commands
 
         public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
         {
-            var provider = _cloudProviders[ConsoleExtensions.PromptOrDefault("Select cloud provider:", _cloudProviders.Keys, "AWS")];
-            var regions = ConsoleExtensions.MultiSelect("Select region:", provider.GetAllRegions()).ToList();
+            var provider = _cloudProviders[this.PromptOrDefault("Select cloud provider:", _cloudProviders.Keys, "AWS")];
+            var regions = this.MultiSelect("Select region:", provider.GetAllRegions()).ToList();
 
             var (resourceName, resourceType) = GetResources(provider);
             var result = await LoadResources(provider, resourceType, regions);
@@ -77,7 +77,7 @@ namespace Aspect.Commands
         private (string resourceName, Type resourceType) GetResources(ICloudProvider provider)
         {
             var resources = provider.GetResources();
-            var answer = ConsoleExtensions.PromptOrDefault("Select resource:", resources.Keys);
+            var answer = this.PromptOrDefault("Select resource:", resources.Keys);
             return (answer, resources[answer]);
         }
 

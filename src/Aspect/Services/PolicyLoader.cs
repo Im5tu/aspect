@@ -23,30 +23,37 @@ namespace Aspect.Services
 
         public ValidationResult? ValidateExists(string? path)
         {
-            if (string.IsNullOrWhiteSpace(path))
-                return ValidationResult.Error("No path has been specified.");
-
-            if (path.StartsWith("builtin\\", StringComparison.OrdinalIgnoreCase))
+            try
             {
-                if (_builtInPolicyProvider.GetAllResources().All(x => x.Name != path))
-                    return ValidationResult.Error($"The path '{path}' is not a built in resource.");
+                if (string.IsNullOrWhiteSpace(path))
+                    return ValidationResult.Error("No path has been specified.");
+
+                if (path.StartsWith("builtin\\", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (_builtInPolicyProvider.GetAllResources().All(x => x.Name != path))
+                        return ValidationResult.Error($"The path '{path}' is not a built in resource.");
+                }
+                else
+                {
+                    var isDirectory = File.GetAttributes(path).HasFlag(FileAttributes.Directory);
+
+                    if (isDirectory && !Directory.Exists(path))
+                        return ValidationResult.Error($"Specified directory '{path}' does not exist.");
+                    if (!File.Exists(path))
+                        return ValidationResult.Error($"Specified file '{path}' does not exist.");
+
+                    var fi = new FileInfo(path);
+
+                    if (!fi.Extension.Equals(FileExtensions.PolicySuiteExtension, StringComparison.OrdinalIgnoreCase) && !fi.Extension.Equals(FileExtensions.PolicyFileExtension, StringComparison.OrdinalIgnoreCase))
+                        return ValidationResult.Error($"Filename must end with either '{FileExtensions.PolicyFileExtension}' or '{FileExtensions.PolicySuiteExtension}'.");
+                }
+
+                return null;
             }
-            else
+            catch (Exception e)
             {
-                var isDirectory = File.GetAttributes(path).HasFlag(FileAttributes.Directory);
-
-                if (isDirectory && !Directory.Exists(path))
-                    return ValidationResult.Error($"Specified directory '{path}' does not exist.");
-                if (!File.Exists(path))
-                    return ValidationResult.Error($"Specified file '{path}' does not exist.");
-
-                var fi = new FileInfo(path);
-
-                if (!fi.Extension.Equals(FileExtensions.PolicySuiteExtension, StringComparison.OrdinalIgnoreCase) && !fi.Extension.Equals(FileExtensions.PolicyFileExtension, StringComparison.OrdinalIgnoreCase))
-                    return ValidationResult.Error($"Filename must end with either '{FileExtensions.PolicyFileExtension}' or '{FileExtensions.PolicySuiteExtension}'.");
+                return ValidationResult.Error(e.Message);
             }
-
-            return null;
         }
 
         public PolicySuite? LoadPolicySuite(string path)

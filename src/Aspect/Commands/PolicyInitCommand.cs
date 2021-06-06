@@ -98,9 +98,9 @@ namespace Aspect.Commands
         {
             if (string.IsNullOrWhiteSpace(resource))
             {
-                var provider = _cloudProviders[ConsoleExtensions.PromptOrDefault("Select cloud provider:", _cloudProviders.Keys, "AWS")];
+                var provider = _cloudProviders[this.PromptOrDefault("Select cloud provider:", _cloudProviders.Keys, "AWS")];
                 var resources = provider.GetResources();
-                resource = ConsoleExtensions.PromptOrDefault("Select resource:", resources.Keys);
+                resource = this.PromptOrDefault("Select resource:", resources.Keys);
             }
 
             return $@"resource ""{resource}""
