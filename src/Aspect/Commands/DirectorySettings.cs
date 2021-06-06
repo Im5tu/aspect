@@ -3,7 +3,7 @@ using Spectre.Console.Cli;
 
 namespace Aspect.Commands
 {
-    internal class PolicyDirectorySettings : CommandSettings
+    internal class DirectorySettings : CommandSettings
     {
         [Description("The directory to use")]
         [CommandArgument(0, "[directory]")]

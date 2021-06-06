@@ -10,8 +10,14 @@ using Spectre.Console.Cli;
 
 namespace Aspect.Commands
 {
-    internal sealed class ResourcesCommand : Command<ResourcesCommandSettings>
+    internal sealed class ResourcesCommand : Command<ResourcesCommand.Settings>
     {
+        internal sealed class Settings : CommandSettings
+        {
+            [CommandArgument(0, "[provider]")]
+            public string? provider { get; init; }
+        }
+
         private readonly IReadOnlyDictionary<string, ICloudProvider> _cloudProviders;
 
         public ResourcesCommand(IReadOnlyDictionary<string, ICloudProvider> cloudProviders)
@@ -19,7 +25,7 @@ namespace Aspect.Commands
             _cloudProviders = cloudProviders;
         }
 
-        public override int Execute([NotNull] CommandContext context, [NotNull] ResourcesCommandSettings settings)
+        public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
         {
             if (_cloudProviders.TryGetValue(settings.provider ?? string.Empty, out var provider))
             {

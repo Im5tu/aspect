@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -15,8 +16,15 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace Aspect.Commands
 {
-    internal class WatchCommand : WaitableCommand<WatchCommandSettings>
+    internal class WatchCommand : WaitableCommand<WatchCommand.Settings>
     {
+        internal class Settings : DirectorySettings
+        {
+            [CommandOption("--delay")]
+            [Description("The period of time in milliseconds that needs to elapse between changes to a file.")]
+            public int? DelayInterval { get; init; }
+        }
+
         private readonly IPolicyCompiler _policyCompiler;
         private readonly IPolicySuiteValidator _policySuiteValidator;
 
@@ -26,7 +34,7 @@ namespace Aspect.Commands
             _policySuiteValidator = policySuiteValidator;
         }
 
-        public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] WatchCommandSettings settings)
+        public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] Settings settings)
         {
             if (string.IsNullOrWhiteSpace(settings.Directory))
                 return ValidationResult.Error("Please specify a directory to watch");
@@ -34,7 +42,7 @@ namespace Aspect.Commands
             return base.Validate(context, settings);
         }
 
-        protected override int ExecuteCommand(CommandContext context, WatchCommandSettings settings, Action waiter)
+        protected override int ExecuteCommand(CommandContext context, Settings settings, Action waiter)
         {
             var delay = settings.DelayInterval.GetValueOrDefault(500);
 

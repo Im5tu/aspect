@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aspect.Abstractions;
@@ -10,8 +11,23 @@ using Spectre.Console.Cli;
 
 namespace Aspect.Commands
 {
-    internal class PolicyInitCommand : Command<PolicyInitCommandSettings>
+    internal class PolicyInitCommand : Command<PolicyInitCommand.Settings>
     {
+        internal class Settings : FileSettings
+        {
+            [Description("The resource to build the policy for")]
+            [CommandOption("-r|--resource")]
+            public string? Resource { get; init; }
+
+            [Description("Initialize a policy suite instead of a policy")]
+            [CommandOption("-s|--suite")]
+            public bool? InitializeSuite { get; init; }
+
+            [Description("Display the generated policy in the console")]
+            [CommandOption("-d|--display")]
+            public bool? Display { get; init; }
+        }
+
         private readonly IReadOnlyDictionary<string, ICloudProvider> _cloudProviders;
         private readonly IPolicySuiteSerializer _policySuiteSerializer;
 
@@ -21,7 +37,7 @@ namespace Aspect.Commands
             _policySuiteSerializer = policySuiteSerializer;
         }
 
-        public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] PolicyInitCommandSettings settings)
+        public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] Settings settings)
         {
             if (!string.IsNullOrWhiteSpace(settings.FileName) && File.Exists(settings.FileName))
                 return ValidationResult.Error($"The file {settings.FileName} already exists.");
@@ -29,7 +45,7 @@ namespace Aspect.Commands
             return base.Validate(context, settings);
         }
 
-        public override int Execute([NotNull] CommandContext context, [NotNull] PolicyInitCommandSettings settings)
+        public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
         {
             string policy;
             if (settings.InitializeSuite.GetValueOrDefault(false))

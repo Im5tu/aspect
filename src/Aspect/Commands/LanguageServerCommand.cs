@@ -4,9 +4,12 @@ using Spectre.Console.Cli;
 
 namespace Aspect.Commands
 {
-    internal class LanguageServerCommand : AsyncCommand<LanguageServerCommandSettings>
+    internal class LanguageServerCommand : AsyncCommand<LanguageServerCommand.Settings>
     {
-        public override Task<int> ExecuteAsync(CommandContext context, LanguageServerCommandSettings settings)
+        internal class Settings : CommandSettings
+        {}
+
+        public override Task<int> ExecuteAsync(CommandContext context, Settings settings)
         {
             // https://github.com/matarillo/LanguageServerProtocol
             // https://code.visualstudio.com/api/language-extensions/language-server-extension-guide

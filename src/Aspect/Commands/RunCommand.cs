@@ -14,8 +14,11 @@ using Spectre.Console.Cli;
 
 namespace Aspect.Commands
 {
-    internal class RunCommand : AsyncCommand<RunCommandSettings>
+    internal class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
     {
+        internal class RunCommandSettings : FileOrDirectorySettings
+        {}
+
         private readonly IPolicySuiteRunner _policySuiteRunner;
         private readonly IReadOnlyDictionary<string,ICloudProvider> _cloudProviders;
         private readonly IPolicySuiteValidator _policySuiteValidator;

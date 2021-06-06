@@ -4,9 +4,13 @@ using Spectre.Console.Cli;
 
 namespace Aspect.Commands
 {
-    internal class AutoCompleteCommand : Command<AutoCompleteCommandSettings>
+    internal class AutoCompleteCommand : Command<AutoCompleteCommand.Settings>
     {
-        public override int Execute([NotNull] CommandContext context, [NotNull] AutoCompleteCommandSettings settings)
+        internal class Settings : CommandSettings
+        {
+        }
+
+        public override int Execute([NotNull] CommandContext context, [NotNull] AutoCompleteCommand.Settings settings)
         {
             // https://iridakos.com/programming/2018/03/01/bash-programmable-completion-tutorial
             // https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/register-argumentcompleter?view=powershell-7.1

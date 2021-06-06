@@ -15,8 +15,11 @@ using Spectre.Console.Cli;
 
 namespace Aspect.Commands
 {
-    internal sealed class DocGenCommand : Command<DocGenCommandSettings>
+    internal sealed class DocGenCommand : Command<DocGenCommand.Settings>
     {
+        internal sealed class Settings : DirectorySettings
+        {}
+
         private readonly IReadOnlyDictionary<string, ICloudProvider> _cloudProviders;
         private readonly IBuiltInPolicyProvider _builtInPolicyProvider;
 
@@ -26,7 +29,7 @@ namespace Aspect.Commands
             _builtInPolicyProvider = builtInPolicyProvider;
         }
 
-        public override int Execute([NotNull] CommandContext context, [NotNull] DocGenCommandSettings settings)
+        public override int Execute([NotNull] CommandContext context, [NotNull] DocGenCommand.Settings settings)
         {
             var directory = @"D:\dev\personal\im5tu\Aspect";
             if (!string.IsNullOrWhiteSpace(settings.Directory))

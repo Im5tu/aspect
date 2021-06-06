@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -11,8 +12,15 @@ using Spectre.Console.Cli;
 
 namespace Aspect.Commands
 {
-    internal sealed class PolicyListCommand : Command<PolicyListCommandSettings>
+    internal sealed class PolicyListCommand : Command<PolicyListCommand.Settings>
     {
+        internal class Settings : DirectorySettings
+        {
+            [Description("Recurses through child directories to find policies.")]
+            [CommandOption("-r|--recursive")]
+            public bool? Recursive { get; init; }
+        }
+
         private readonly IPolicyCompiler _policyCompiler;
         private readonly IBuiltInPolicyProvider _builtInPolicyProvider;
 
@@ -22,7 +30,7 @@ namespace Aspect.Commands
             _builtInPolicyProvider = builtInPolicyProvider;
         }
 
-        public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] PolicyListCommandSettings commandSettings)
+        public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] Settings commandSettings)
         {
             if (!string.IsNullOrWhiteSpace(commandSettings.Directory) && !commandSettings.Directory.StartsWith("builtin", StringComparison.OrdinalIgnoreCase) && !Directory.Exists(commandSettings.Directory))
                 return ValidationResult.Error($"The directory {commandSettings.Directory} does not exist.");
@@ -30,7 +38,7 @@ namespace Aspect.Commands
             return base.Validate(context, commandSettings);
         }
 
-        public override int Execute([NotNull] CommandContext context, [NotNull] PolicyListCommandSettings commandSettings)
+        public override int Execute([NotNull] CommandContext context, [NotNull] Settings commandSettings)
         {
             var directory = commandSettings.Directory;
 

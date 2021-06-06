@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -14,8 +15,19 @@ using Spectre.Console.Cli;
 
 namespace Aspect.Commands
 {
-    internal class PolicyValidateCommand : Command<PolicyValidateCommandSettings>
+    internal class PolicyValidateCommand : Command<PolicyValidateCommand.Settings>
     {
+        internal class Settings : FileOrDirectorySettings
+        {
+            [Description("Recurses through child directories to find policies.")]
+            [CommandOption("-r|--recursive")]
+            public bool? Recursive { get; init; }
+
+            [Description("Only displays policies that failed to validate.")]
+            [CommandOption("--failed-only")]
+            public bool? FailedOnly { get; init; }
+        }
+
         private readonly IPolicyCompiler _policyCompiler;
         private readonly IPolicySuiteValidator _policySuiteValidator;
         private readonly IPolicySuiteSerializer _policySuiteSerializer;
@@ -29,7 +41,7 @@ namespace Aspect.Commands
             _builtInPolicyProvider = builtInPolicyProvider;
         }
 
-        public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] PolicyValidateCommandSettings settings)
+        public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] Settings settings)
         {
             if (string.IsNullOrWhiteSpace(settings.Source))
                 return ValidationResult.Error("Please specify a filename, directory name or builtin");
@@ -49,7 +61,7 @@ namespace Aspect.Commands
             return base.Validate(context, settings);
         }
 
-        public override int Execute([NotNull] CommandContext context, [NotNull] PolicyValidateCommandSettings settings)
+        public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
         {
             var validatedFiles = new List<(string source, bool isValid, List<string> errors)>();
 

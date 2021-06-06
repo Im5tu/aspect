@@ -2,7 +2,7 @@
 
 namespace Aspect.Commands
 {
-    internal class PolicyFileSettings : CommandSettings
+    internal class FileSettings : CommandSettings
     {
         [CommandArgument(0, "[filename]")]
         public string? FileName { get; init; }

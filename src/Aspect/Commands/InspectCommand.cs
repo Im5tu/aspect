@@ -16,8 +16,12 @@ using Spectre.Console.Cli;
 
 namespace Aspect.Commands
 {
-    internal class InspectCommand : AsyncCommand<InspectCommandSettings>
+    internal class InspectCommand : AsyncCommand<InspectCommand.Settings>
     {
+        internal class Settings : CommandSettings
+        {
+        }
+
         private readonly IPolicyCompiler _policyCompiler;
         private readonly IReadOnlyDictionary<string,ICloudProvider> _cloudProviders;
         private readonly List<IResource> _resources = new List<IResource>();
@@ -28,7 +32,7 @@ namespace Aspect.Commands
             _policyCompiler = policyCompiler;
         }
 
-        public override async Task<int> ExecuteAsync(CommandContext context, InspectCommandSettings settings)
+        public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
         {
             var provider = _cloudProviders[ConsoleExtensions.PromptOrDefault("Select cloud provider:", _cloudProviders.Keys, "AWS")];
             var regions = ConsoleExtensions.MultiSelect("Select region:", provider.GetAllRegions()).ToList();
