@@ -1,7 +1,7 @@
 +++
 title = "aspect watch"
 description = ""
-weight = 11
+weight = 12
 +++
 
 `aspect watch [ARGUMENTS] [OPTIONS]` allows you to watch a specific directory or policy for changes and validate them as the files change. This decreases the total time required to validate policy changes during the development phase.

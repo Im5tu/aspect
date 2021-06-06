@@ -7,25 +7,26 @@ using System.Threading.Tasks;
 using Aspect.Abstractions;
 using Aspect.Extensions;
 using Aspect.Policies;
-using Aspect.Policies.BuiltIn;
 using Aspect.Policies.CompilerServices;
 using Aspect.Policies.CompilerServices.CompilationUnits;
 using Aspect.Policies.CompilerServices.Generator;
 using Aspect.Policies.Suite;
 
-namespace Aspect.Runners
+namespace Aspect.Services
 {
     internal sealed class PolicySuiteRunner : IPolicySuiteRunner
     {
         private readonly IReadOnlyDictionary<string, ICloudProvider> _cloudProviders;
         private readonly IPolicyCompiler _policyCompiler;
-        private readonly IBuiltInPolicyProvider _builtInPolicyProvider;
+        private readonly IPolicyLoader _policyLoader;
 
-        public PolicySuiteRunner(IReadOnlyDictionary<string, ICloudProvider> cloudProviders, IPolicyCompiler policyCompiler, IBuiltInPolicyProvider builtInPolicyProvider)
+        public PolicySuiteRunner(IReadOnlyDictionary<string, ICloudProvider> cloudProviders,
+            IPolicyCompiler policyCompiler,
+            IPolicyLoader policyLoader)
         {
             _cloudProviders = cloudProviders;
             _policyCompiler = policyCompiler;
-            _builtInPolicyProvider = builtInPolicyProvider;
+            _policyLoader = policyLoader;
         }
 
         public async Task<IEnumerable<PolicySuiteRunResult>> RunPoliciesAsync(PolicySuite suite, CancellationToken cancellationToken = default)
@@ -108,28 +109,21 @@ namespace Aspect.Runners
             var types = compiledPolicies.Select(x => x!.Resource!).Distinct().ToList();
             return (compiledPolicies, types);
         }
-        private IEnumerable<CompilationUnit> LoadPoliciesByName(string policyName)
+        private IEnumerable<CompilationUnit> LoadPoliciesByName(string source)
         {
-            if (policyName.EndsWith(FileExtensions.PolicySuiteExtension, StringComparison.OrdinalIgnoreCase))
+            if (source.EndsWith(FileExtensions.PolicySuiteExtension, StringComparison.OrdinalIgnoreCase))
                 yield break;
 
-            if (policyName.StartsWith("builtin\\", StringComparison.OrdinalIgnoreCase))
+            if (source.EndsWith(FileExtensions.PolicyFileExtension, StringComparison.OrdinalIgnoreCase))
             {
-                if (_builtInPolicyProvider.TryGetPolicy(policyName, out var compilationUnit))
-                    yield return compilationUnit;
-                else
-                    foreach (var resource in _builtInPolicyProvider.GetAllResources())
-                        if (resource.Name.StartsWith(policyName, StringComparison.OrdinalIgnoreCase))
-                            yield return resource;
+                var result = _policyLoader.LoadPolicy(source);
+                if (result is { })
+                    yield return result;
             }
-            else if (File.GetAttributes(policyName).HasFlag(FileAttributes.Directory))
+            else if (File.GetAttributes(source).HasFlag(FileAttributes.Directory))
             {
-                foreach (var file in Directory.EnumerateFiles(policyName, $"*{FileExtensions.PolicyFileExtension}", SearchOption.AllDirectories))
-                    yield return new FileCompilationUnit(file);
-            }
-            else if (File.Exists(policyName))
-            {
-                yield return new FileCompilationUnit(policyName);
+                foreach (var unit in _policyLoader.LoadPoliciesInDirectory(source, SearchOption.AllDirectories))
+                    yield return unit;
             }
         }
 

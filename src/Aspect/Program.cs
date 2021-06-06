@@ -1,12 +1,9 @@
-﻿using System;
-using System.IO;
-using Aspect.Commands;
+﻿using Aspect.Commands;
 using Aspect.Dependencies;
 using Aspect.Policies;
 using Aspect.Providers.AWS;
-using Aspect.Providers.AWS.Resources;
 using Aspect.Providers.Azure;
-using Aspect.Runners;
+using Aspect.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
 
@@ -43,13 +40,19 @@ namespace Aspect
                     p.AddCommand<PolicyInitCommand>("init")
                         .WithDescription("Create a new policy or policy suite")
                         .WithExample(new[] {"policy", "init", "D:\\policies\\my_new_policy.policy"});
+
                     p.AddCommand<PolicyListCommand>("list")
                         .WithAlias("ls")
                         .WithDescription("List policies in a directory")
                         .WithExample(new[] {"policy", "list", "D:\\policies"});
+
                     p.AddCommand<PolicyValidateCommand>("validate")
                         .WithDescription("Validate one or more policy documents")
                         .WithExample(new[] {"policy", "validate", "D:\\policies"});
+
+                    p.AddCommand<PolicyViewCommand>("view")
+                        .WithDescription("View the details of a .policy file")
+                        .WithExample(new[] {"policy", "view", "D:\\policies\\my_policy.policy"});
 
                     p.SetDescription("Create, list and validate policy documents.");
                 });
@@ -80,12 +83,10 @@ namespace Aspect
         {
             var services = new ServiceCollection()
                 .AddSingleton<IPolicySuiteRunner, PolicySuiteRunner>()
+                .AddSingleton<IPolicyLoader, PolicyLoader>()
                 .AddCompilerService()
-                .AddAWSCloudProvider();
-
-            #if DEBUG
-                services.AddAzureCloudProvider();
-            #endif
+                .AddAWSCloudProvider()
+                .AddAzureCloudProvider();
 
             return new MicrosoftDiTypeRegistrar(services);
         }

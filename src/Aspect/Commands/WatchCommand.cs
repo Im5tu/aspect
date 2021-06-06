@@ -69,19 +69,25 @@ namespace Aspect.Commands
                         Thread.Sleep(250); // Sleep is to work around file access issues because multiple events fire
 
                         AnsiConsole.Clear();
-                        if (args.FullPath.EndsWith(FileExtensions.PolicyFileExtension, StringComparison.OrdinalIgnoreCase))
-                        {
-                            _policyCompiler.IsPolicyFileValid(args.FullPath, out var cntx);
-                            cntx.WriteCompilationResultToConsole();
-                        }
+
+                        if (File.Exists(args.FullPath))
+                            AnsiConsole.MarkupLine($"[red]File has been deleted: {args.FullPath}[/]");
                         else
                         {
-                            var validationResult = _policySuiteValidator.Validate(LoadPolicySuiteFromString(File.ReadAllText(args.FullPath)));
+                            if (args.FullPath.EndsWith(FileExtensions.PolicyFileExtension, StringComparison.OrdinalIgnoreCase))
+                            {
+                                _policyCompiler.IsPolicyFileValid(args.FullPath, out var cntx);
+                                cntx.WriteCompilationResultToConsole();
+                            }
+                            else
+                            {
+                                var validationResult = _policySuiteValidator.Validate(LoadPolicySuiteFromString(File.ReadAllText(args.FullPath)));
 
-                            var table = new Table();
-                            table.AddColumns("Policy", "IsValid", "Errors");
-                            table.AddRow(args.FullPath, validationResult.IsValid ? "[green]Valid[/]" : "[red]Invalid[/]", string.Join(Environment.NewLine, validationResult.Errors.Select(x => $"- {x}")));
-                            AnsiConsole.Render(table);
+                                var table = new Table();
+                                table.AddColumns("Policy", "IsValid", "Errors");
+                                table.AddRow(args.FullPath, validationResult.IsValid ? "[green]Valid[/]" : "[red]Invalid[/]", string.Join(Environment.NewLine, validationResult.Errors.Select(x => $"- {x}")));
+                                AnsiConsole.Render(table);
+                            }
                         }
                     };
 

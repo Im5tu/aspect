@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Aspect.Abstractions;
 
-namespace Aspect.Runners
+namespace Aspect.Services
 {
     internal class PolicySuiteRunResult
     {

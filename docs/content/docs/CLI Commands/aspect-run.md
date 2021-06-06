@@ -1,7 +1,7 @@
 +++
 title = "aspect run"
 description = ""
-weight = 10
+weight = 11
 +++
 
 `aspect run [ARGUMENTS] [OPTIONS]` allows you to run any policy or policy suite against your cloud infrastructure. If the policies being processed are valid, the CLI will generate a a JSON file with the failed resources for you to process.

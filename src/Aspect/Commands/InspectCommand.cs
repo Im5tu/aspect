@@ -5,12 +5,9 @@ using System.Threading.Tasks;
 using Aspect.Abstractions;
 using Aspect.Extensions;
 using Aspect.Formatters;
-using Aspect.Policies;
 using Aspect.Policies.CompilerServices;
 using Aspect.Policies.CompilerServices.CompilationUnits;
 using Aspect.Policies.CompilerServices.Generator;
-using Aspect.Providers.AWS;
-using Aspect.Providers.AWS.Models;
 using Spectre.Console;
 using Spectre.Console.Cli;
 

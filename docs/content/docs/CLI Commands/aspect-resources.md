@@ -1,7 +1,7 @@
 +++
 title = "aspect resources"
 description = ""
-weight = 9
+weight = 10
 +++
 
 `aspect resources [ARGUMENTS]` provides you an easy way of looking at the currently available resources for all the cloud providers registered in the system. If you are only interested in a specific provider, the follow the format `aspect resources <provider>` to limit the results to just that provider.

@@ -10,6 +10,7 @@ using Aspect.Policies.BuiltIn;
 using Aspect.Policies.CompilerServices;
 using Aspect.Policies.CompilerServices.CompilationUnits;
 using Aspect.Policies.Suite;
+using Aspect.Services;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -32,33 +33,24 @@ namespace Aspect.Commands
         private readonly IPolicySuiteValidator _policySuiteValidator;
         private readonly IPolicySuiteSerializer _policySuiteSerializer;
         private readonly IBuiltInPolicyProvider _builtInPolicyProvider;
+        private readonly IPolicyLoader _policyLoader;
 
-        public PolicyValidateCommand(IPolicyCompiler policyCompiler, IPolicySuiteValidator policySuiteValidator, IPolicySuiteSerializer policySuiteSerializer, IBuiltInPolicyProvider builtInPolicyProvider)
+        public PolicyValidateCommand(IPolicyCompiler policyCompiler,
+            IPolicySuiteValidator policySuiteValidator,
+            IPolicySuiteSerializer policySuiteSerializer,
+            IBuiltInPolicyProvider builtInPolicyProvider,
+            IPolicyLoader policyLoader)
         {
             _policyCompiler = policyCompiler;
             _policySuiteValidator = policySuiteValidator;
             _policySuiteSerializer = policySuiteSerializer;
             _builtInPolicyProvider = builtInPolicyProvider;
+            _policyLoader = policyLoader;
         }
 
         public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] Settings settings)
         {
-            if (string.IsNullOrWhiteSpace(settings.Source))
-                return ValidationResult.Error("Please specify a filename, directory name or builtin");
-
-            if (!settings.Source.StartsWith("builtin", StringComparison.OrdinalIgnoreCase))
-            {
-                var isDirectory = File.GetAttributes(settings.Source!).HasFlag(FileAttributes.Directory);
-                if (isDirectory)
-                {
-                    if (!Directory.Exists(settings.Source))
-                        return ValidationResult.Error("Directory cannot be found");
-                }
-                else if (!File.Exists(settings.Source))
-                    return ValidationResult.Error("File cannot be found");
-            }
-
-            return base.Validate(context, settings);
+            return _policyLoader.ValidateExists(settings.Source) ?? base.Validate(context, settings);
         }
 
         public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings)
@@ -79,7 +71,6 @@ namespace Aspect.Commands
                     }
                     else
                     {
-                        // TODO : TASK : Can we create a more generic policy loader? Would it be beneficial?
                         var result = _policySuiteValidator.Validate(_policySuiteSerializer.Deserialize(resource.GetAllText()));
                         validatedFiles.Add((resource.Name, result.IsValid, result.Errors.ToList()));
                     }

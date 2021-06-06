@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Aspect.Abstractions;
 using Aspect.Formatters;
 using Aspect.Policies;
-using Aspect.Policies.BuiltIn;
 using Aspect.Policies.Suite;
-using Aspect.Runners;
+using Aspect.Services;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -22,52 +20,27 @@ namespace Aspect.Commands
         private readonly IPolicySuiteRunner _policySuiteRunner;
         private readonly IReadOnlyDictionary<string,ICloudProvider> _cloudProviders;
         private readonly IPolicySuiteValidator _policySuiteValidator;
-        private readonly IBuiltInPolicyProvider _builtInPolicyProvider;
-        private readonly IPolicySuiteSerializer _policySuiteSerializer;
-        private bool _isDirectory = false;
-        private bool _isPolicySuite = false;
-        private bool _isBuiltIn = false;
+        private readonly IPolicyLoader _policyLoader;
 
         public RunCommand(IPolicySuiteRunner policySuiteRunner,
             IReadOnlyDictionary<string, ICloudProvider> cloudProviders,
             IPolicySuiteValidator policySuiteValidator,
-            IBuiltInPolicyProvider builtInPolicyProvider,
-            IPolicySuiteSerializer policySuiteSerializer)
+            IPolicyLoader policyLoader)
         {
             _policySuiteRunner = policySuiteRunner;
             _cloudProviders = cloudProviders;
             _policySuiteValidator = policySuiteValidator;
-            _builtInPolicyProvider = builtInPolicyProvider;
-            _policySuiteSerializer = policySuiteSerializer;
+            _policyLoader = policyLoader;
         }
 
         public override ValidationResult Validate(CommandContext context, RunCommandSettings settings)
         {
-            if (string.IsNullOrWhiteSpace(settings.Source))
-                settings.Source = Environment.CurrentDirectory;
+            var source = settings.Source;
 
-            if (settings.Source.StartsWith("builtin\\", StringComparison.OrdinalIgnoreCase))
-            {
-                _isBuiltIn = true;
-            }
-            else
-            {
-                _isDirectory = File.GetAttributes(settings.Source).HasFlag(FileAttributes.Directory);
+            if (string.IsNullOrWhiteSpace(source))
+                source = Environment.CurrentDirectory;
 
-                if (_isDirectory && !Directory.Exists(settings.Source))
-                    return ValidationResult.Error($"Specified directory '{settings.Source}' does not exist.");
-                if (!File.Exists(settings.Source))
-                    return ValidationResult.Error($"Specified file '{settings.Source}' does not exist.");
-
-                var fi = new FileInfo(settings.Source);
-
-                if (fi.Extension.Equals(FileExtensions.PolicySuiteExtension, StringComparison.OrdinalIgnoreCase))
-                    _isPolicySuite = true;
-                else if (!fi.Extension.Equals(FileExtensions.PolicyFileExtension, StringComparison.OrdinalIgnoreCase))
-                    return ValidationResult.Error($"Filename must end with either '{FileExtensions.PolicyFileExtension}' or '{FileExtensions.PolicySuiteExtension}'.");
-            }
-
-            return base.Validate(context, settings);
+            return _policyLoader.ValidateExists(source) ?? base.Validate(context, settings);
         }
 
         public override async Task<int> ExecuteAsync(CommandContext context, RunCommandSettings settings)
@@ -108,8 +81,10 @@ namespace Aspect.Commands
         {
             PolicySuite result;
 
-            if (_isBuiltIn || _isPolicySuite)
-                result = LoadPolicySuiteFromName(name);
+            if (name.EndsWith(FileExtensions.PolicySuiteExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                result = _policyLoader.LoadPolicySuite(name) ?? throw new Exception("Policy suite not found.");
+            }
             else
             {
                 result = new PolicySuite
@@ -120,22 +95,6 @@ namespace Aspect.Commands
             }
 
             return result;
-        }
-
-        private PolicySuite LoadPolicySuiteFromName(string name)
-        {
-            if (!name.EndsWith(FileExtensions.PolicySuiteExtension, StringComparison.OrdinalIgnoreCase))
-                throw new Exception("Invalid policy suite");
-
-            if (name.StartsWith("builtin", StringComparison.OrdinalIgnoreCase))
-            {
-                if (_builtInPolicyProvider.TryGetPolicySuite(name, out var policySuite))
-                    return policySuite;
-            }
-            else
-                return _policySuiteSerializer.Deserialize(File.ReadAllText(name));
-
-            throw new Exception("Policy not found");
         }
 
         private class Result

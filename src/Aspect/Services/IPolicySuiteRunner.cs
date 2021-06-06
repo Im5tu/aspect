@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Aspect.Policies;
 using Aspect.Policies.Suite;
 
-namespace Aspect.Runners
+namespace Aspect.Services
 {
     internal interface IPolicySuiteRunner
     {

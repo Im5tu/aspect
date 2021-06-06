@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using Aspect.Abstractions;
 using Aspect.Policies.CompilerServices.Expressions;
 using Aspect.Policies.CompilerServices.SyntaxTokens;
