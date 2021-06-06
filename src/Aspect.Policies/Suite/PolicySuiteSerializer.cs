@@ -8,6 +8,8 @@ namespace Aspect.Policies.Suite
         public string Serialize(PolicySuite suite)
         {
             var serializer = new SerializerBuilder()
+                .WithIndentedSequences()
+                .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)
                 .Build();
 

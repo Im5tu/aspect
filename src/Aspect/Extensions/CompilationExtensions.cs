@@ -10,9 +10,12 @@ namespace Aspect.Extensions
 {
     internal static class CompilationExtensions
     {
-        internal static string FormatMessage(this CompilationError error)
+        internal static string FormatMessage(this CompilationError error, bool includeLinePosition = true)
         {
-            return $"[red]{error.Code} - {GetMessageForCode(error.Code)} - Line {error.Line} Position: {error.Position}[/]";
+            if (includeLinePosition)
+                return $"[red]{error.Code} - {GetMessageForCode(error.Code)} - Line {error.Line} Position: {error.Position}[/]";
+            else
+                return $"[red]{error.Code} - {GetMessageForCode(error.Code)}[/]";
         }
 
         internal static string FormatMessage(this CompilationWarning warning)
@@ -52,11 +55,11 @@ namespace Aspect.Extensions
                 "CA-PAR-007" => "Resource policy applies to is not present",
                 "CA-PAR-008" => "Type mismatch in expression",
                 "CA-PAR-009" => "Resource that policy specifies cannot be found",
-                "CA-PAR-010" => "No property specified on 'input'",
+                "CA-PAR-010" => "Incorrect syntax for the 'input' object. Syntax must be input.<something>",
                 "CA-PAR-011" => "Statements must be against a function or the value 'input'",
                 "CA-PAR-012" => "Property does not exist on type",
-                "CA-PAR-013" => "Invalid syntax. Collection access must be input.Something[_] / input.Something[*] / input.Something[<int>]",
-                "CA-PAR-014" => "Invalid function name",
+                "CA-PAR-013" => "Invalid syntax. Collection access must be input.Collection[_] / input.Collection[*]",
+                "CA-PAR-014" => "Invalid function expression. Please check the function names and signatures at: https://cloudaspect.app/docs/getting-started/builtin-functions/",
                 "CA-PAR-015" => "Operators cannot be the last element in a statement",
                 _ => "An Unknown error occurred whilst compiling the policy"
             };

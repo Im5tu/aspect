@@ -4,8 +4,8 @@ namespace Aspect.Policies.Suite
 {
     public sealed class PolicySuite
     {
-        public string? Name { get; init; }
-        public string? Description { get; init; }
-        public IEnumerable<PolicyElement>? Policies { get; init; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public IEnumerable<PolicyElement>? Policies { get; set; }
     }
 }

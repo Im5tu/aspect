@@ -37,6 +37,9 @@ namespace Aspect
 
                 config.AddBranch("policy", p =>
                 {
+                    p.AddCommand<PolicyBuildCommand>("build")
+                        .WithDescription("GUI to build policies");
+
                     p.AddCommand<PolicyInitCommand>("init")
                         .WithDescription("Create a new policy or policy suite")
                         .WithExample(new[] {"policy", "init", "D:\\policies\\my_new_policy.policy"});
