@@ -1,7 +1,7 @@
 +++
 title = "AwsSecurityGroup"
 description = "A security group acts as a virtual firewall for your instance to control inbound and outbound traffic. A security group specifies the actions that are allowed, not the actions that are blocked."
-weight = 2
+weight = 14
 +++
 
 A security group acts as a virtual firewall for your instance to control inbound and outbound traffic. A security group specifies the actions that are allowed, not the actions that are blocked.
