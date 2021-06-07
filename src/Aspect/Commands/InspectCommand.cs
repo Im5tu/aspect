@@ -85,7 +85,12 @@ namespace Aspect.Commands
         {
             do
             {
-                AnsiConsole.MarkupLine("Available commands: help, refresh, exit");
+                AnsiConsole.MarkupLine("[grey]Available commands: help, refresh, regions, switch, exit[/]");
+                AnsiConsole.MarkupLine("[grey]  - help: Show the properties that are available for the input type[/]");
+                AnsiConsole.MarkupLine("[grey]  - refresh: Query the cloud provider for the latest data[/]");
+                AnsiConsole.MarkupLine("[grey]  - regions: Switch which regions you are looking at[/]");
+                AnsiConsole.MarkupLine("[grey]  - switch: Change the resource that you are looking at[/]");
+                AnsiConsole.MarkupLine("[grey]  - exit: Exit the REPL interface[/]");
                 string answer;
                 do
                 {
@@ -101,6 +106,20 @@ namespace Aspect.Commands
                     AnsiConsole.MarkupLine($"Available properties for input '{resourceName}':");
                     AnsiConsole.MarkupLine(string.Join(Environment.NewLine, resourceType.GetProperties().OrderBy(x => x.Name).Select(x => $"  - {x.Name}")));
                     AnsiConsole.MarkupLine(string.Empty);
+                    continue;
+                }
+
+                if ("switch".Equals(answer, StringComparison.OrdinalIgnoreCase))
+                {
+                    (resourceName, resourceType) = GetResources(provider);
+                    await LoadResources(provider, resourceType, regions);
+                    continue;
+                }
+
+                if ("regions".Equals(answer, StringComparison.OrdinalIgnoreCase))
+                {
+                    regions = this.MultiSelect("Select region:", provider.GetAllRegions()).ToList();
+                    await LoadResources(provider, resourceType, regions);
                     continue;
                 }
 
@@ -162,7 +181,7 @@ validate {{
             }
             else
             {
-                AnsiConsole.MarkupLine("[italic]No resources matched your specified input. If you are expecting a resource, try the 'refresh' command.[/]");
+                AnsiConsole.MarkupLine("[orange1 italic]No resources matched your specified input. If you are expecting a resource, try the 'refresh' command.[/]");
             }
         }
 
