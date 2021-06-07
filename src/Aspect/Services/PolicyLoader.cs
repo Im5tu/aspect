@@ -37,15 +37,23 @@ namespace Aspect.Services
                 {
                     var isDirectory = File.GetAttributes(path).HasFlag(FileAttributes.Directory);
 
-                    if (isDirectory && !Directory.Exists(path))
-                        return ValidationResult.Error($"Specified directory '{path}' does not exist.");
-                    if (!File.Exists(path))
-                        return ValidationResult.Error($"Specified file '{path}' does not exist.");
+                    if (isDirectory)
+                    {
+                        if (!Directory.Exists(path))
+                        {
+                            return ValidationResult.Error($"Specified directory '{path}' does not exist.");
+                        }
+                    }
+                    else
+                    {
+                        if (!File.Exists(path))
+                            return ValidationResult.Error($"Specified file '{path}' does not exist.");
 
-                    var fi = new FileInfo(path);
+                        var fi = new FileInfo(path);
 
-                    if (!fi.Extension.Equals(FileExtensions.PolicySuiteExtension, StringComparison.OrdinalIgnoreCase) && !fi.Extension.Equals(FileExtensions.PolicyFileExtension, StringComparison.OrdinalIgnoreCase))
-                        return ValidationResult.Error($"Filename must end with either '{FileExtensions.PolicyFileExtension}' or '{FileExtensions.PolicySuiteExtension}'.");
+                        if (!fi.Extension.Equals(FileExtensions.PolicySuiteExtension, StringComparison.OrdinalIgnoreCase) && !fi.Extension.Equals(FileExtensions.PolicyFileExtension, StringComparison.OrdinalIgnoreCase))
+                            return ValidationResult.Error($"Filename must end with either '{FileExtensions.PolicyFileExtension}' or '{FileExtensions.PolicySuiteExtension}'.");
+                    }
                 }
 
                 return null;
