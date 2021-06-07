@@ -22,10 +22,10 @@ namespace Aspect.Providers.AWS.Models.EC2
         public bool EnaSupport { get; init; }
 
         [Description("Indicates whether the instance is enabled for AWS Nitro Enclaves.")]
-        public bool EnclaveOptions { get; init; }
+        public bool EnclaveEnabled { get; init; }
 
         [Description("Indicates whether the instance is enabled for hibernation.")]
-        public bool HibernationOptions { get; init; }
+        public bool HibernationEnabled { get; init; }
 
         [Description("The hypervisor type of the instance. The value 'xen' is used for both Xen and Nitro hypervisors.")]
         public string? Hypervisor { get; init; }
@@ -61,7 +61,7 @@ namespace Aspect.Providers.AWS.Models.EC2
         public IEnumerable<NetworkInterface>? NetworkInterfaces { get; init; }
 
         [Description("The location where the instance launched, if applicable.")]
-        public InstancePlacement? Placements { get; init; }
+        public InstancePlacement? Placement { get; init; }
 
         [Description("The value is 'Windows' for Windows instances; otherwise blank.")]
         public string? Platform { get; init; }

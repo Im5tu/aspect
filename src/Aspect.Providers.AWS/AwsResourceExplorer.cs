@@ -38,5 +38,8 @@ namespace Aspect.Providers.AWS
         }
 
         protected abstract Task<IEnumerable<IResource>> DiscoverResourcesAsync(AwsAccount account, RegionEndpoint region, CancellationToken cancellationToken);
+
+        protected string GenerateArn(AwsAccount account, RegionEndpoint region, string service, string suffix, string awsType = "aws")
+            => $"arn:{awsType}:{service}:{region.SystemName}:{account.Id.Id}:{suffix}";
     }
 }

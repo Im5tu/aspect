@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon;
@@ -11,17 +12,35 @@ namespace Aspect.Providers.AWS.Resources.EC2
 {
     internal sealed class AwsEc2KeyPairResourceExplorer : AWSResourceExplorer
     {
-        public AwsEc2KeyPairResourceExplorer()
+        private readonly Func<AmazonEC2Config, IAmazonEC2> _creator;
+
+        public AwsEc2KeyPairResourceExplorer(Func<AmazonEC2Config, IAmazonEC2> creator)
             : base(typeof(AwsEc2KeyPair))
+        {
+            _creator = creator;
+        }
+
+        public AwsEc2KeyPairResourceExplorer()
+            : this(config => new AmazonEC2Client(config))
         {
         }
 
         protected override async Task<IEnumerable<IResource>> DiscoverResourcesAsync(AwsAccount account, RegionEndpoint region, CancellationToken cancellationToken)
         {
-            using var ec2Client = new AmazonEC2Client(new AmazonEC2Config { RegionEndpoint = region });
+            using var ec2Client = _creator(new AmazonEC2Config { RegionEndpoint = region });
             var result = new List<IResource>();
 
-            await Task.Yield();
+            var response = await ec2Client.DescribeKeyPairsAsync(cancellationToken);
+
+            foreach (var keyPair in response.KeyPairs)
+            {
+                var arn = GenerateArn(account, region, "ec2", $"key-pair/{keyPair.KeyPairId}");
+                result.Add(new AwsEc2KeyPair(account, arn, keyPair.KeyName, keyPair.Tags.Convert(), region.SystemName)
+                {
+                    Id = keyPair.KeyPairId,
+                    Fingerprint = keyPair.KeyFingerprint
+                });
+            }
 
             return result;
         }

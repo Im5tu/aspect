@@ -17,8 +17,8 @@ Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides secure,
 |CpuOptions|The CPU options for the instance.|[Cpu](#cpu)|
 |EbsOptimized|Indicates whether the instance is optimized for Amazon EBS I/O. This optimization provides dedicated throughput to Amazon EBS and an optimized configuration stack to provide optimal I/O performance. This optimization isn't available with all instance types.|Boolean|
 |EnaSupport|Specifies whether enhanced networking with ENA is enabled.|Boolean|
-|EnclaveOptions|Indicates whether the instance is enabled for AWS Nitro Enclaves.|Boolean|
-|HibernationOptions|Indicates whether the instance is enabled for hibernation.|Boolean|
+|EnclaveEnabled|Indicates whether the instance is enabled for AWS Nitro Enclaves.|Boolean|
+|HibernationEnabled|Indicates whether the instance is enabled for hibernation.|Boolean|
 |Hypervisor|The hypervisor type of the instance. The value 'xen' is used for both Xen and Nitro hypervisors.|String|
 |IamInstanceProfile|The IAM instance profile associated with the instance, if applicable|String|
 |ImageId|The ID of the AMI used to launch the instance.|String|
@@ -31,7 +31,7 @@ Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides secure,
 |Monitoring|Indicates whether detailed monitoring is enabled. Otherwise, basic monitoring is enabled.|String|
 |Name|The name of the resource.|String|
 |NetworkInterfaces|The network interfaces for the instance. There may be 0 or more entries in this collection.|Collection\<[NetworkInterface](#networkinterface)>|
-|Placements|The location where the instance launched, if applicable.|[InstancePlacement](#instanceplacement)|
+|Placement|The location where the instance launched, if applicable.|[InstancePlacement](#instanceplacement)|
 |Platform|The value is 'Windows' for Windows instances; otherwise blank.|String|
 |PrivateDnsName|The private DNS hostname name assigned to the instance. This DNS hostname can only be used inside the Amazon EC2 network.|String|
 |PrivateIpAddress|The private IPv4 address assigned to the instance.|String|

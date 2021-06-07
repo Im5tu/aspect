@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,14 +14,22 @@ namespace Aspect.Providers.AWS.Resources.EC2
 {
     internal sealed class AwsEc2InstanceResourceExplorer : AWSResourceExplorer
     {
-        public AwsEc2InstanceResourceExplorer()
+        private readonly Func<AmazonEC2Config, IAmazonEC2> _creator;
+
+        public AwsEc2InstanceResourceExplorer(Func<AmazonEC2Config, IAmazonEC2> creator)
             : base(typeof(AwsEc2Instance))
+        {
+            _creator = creator;
+        }
+
+        public AwsEc2InstanceResourceExplorer()
+            : this(config => new AmazonEC2Client(config))
         {
         }
 
         protected override async Task<IEnumerable<IResource>> DiscoverResourcesAsync(AwsAccount account, RegionEndpoint region, CancellationToken cancellationToken)
         {
-            using var ec2Client = new AmazonEC2Client(new AmazonEC2Config { RegionEndpoint = region });
+            using var ec2Client = _creator(new AmazonEC2Config { RegionEndpoint = region });
             var result = new List<IResource>();
 
             string? nextToken = null;
@@ -29,20 +38,20 @@ namespace Aspect.Providers.AWS.Resources.EC2
                 var response = await ec2Client.DescribeInstancesAsync(new DescribeInstancesRequest { NextToken = nextToken }, cancellationToken);
                 nextToken = response.NextToken;
 
-                foreach (var reservation in response.Reservations)
+                foreach (var reservation in response.Reservations ?? Enumerable.Empty<Reservation>())
                 {
-                    foreach (var instance in reservation.Instances)
+                    foreach (var instance in reservation.Instances ?? Enumerable.Empty<Instance>())
                     {
-                        var arn = $"arn:aws:ec2:{region.SystemName}:{account.Id.Id}:instance/{instance.InstanceId}";
-                        result.Add(new AwsEc2Instance(account, arn, instance.Tags.GetName(), instance.Tags.ConvertTags(), region.SystemName)
+                        var arn = GenerateArn(account, region, "ec2", $"instance/{instance.InstanceId}");
+                        result.Add(new AwsEc2Instance(account, arn, instance.Tags.GetName(), instance.Tags.Convert(), region.SystemName)
                         {
                             Architecture = instance.Architecture?.Value,
                             BootMode = instance.BootMode?.Value,
                             CpuOptions = Map(instance.CpuOptions),
                             EbsOptimized = instance.EbsOptimized,
                             EnaSupport = instance.EnaSupport,
-                            EnclaveOptions = instance.EnclaveOptions?.Enabled ?? false,
-                            HibernationOptions = instance.HibernationOptions?.Configured ?? false,
+                            EnclaveEnabled = instance.EnclaveOptions?.Enabled ?? false,
+                            HibernationEnabled = instance.HibernationOptions?.Configured ?? false,
                             Hypervisor = instance.Hypervisor?.Value,
                             IamInstanceProfile = instance.IamInstanceProfile?.Arn,
                             ImageId = instance.ImageId,
@@ -54,7 +63,7 @@ namespace Aspect.Providers.AWS.Resources.EC2
                             Licenses = instance.Licenses?.Select(x => x.LicenseConfigurationArn)?.ToList(),
                             Monitoring = instance.Monitoring?.State ?? "Unknown",
                             NetworkInterfaces = Map(instance.NetworkInterfaces),
-                            Placements = Map(instance.Placement),
+                            Placement = Map(instance.Placement),
                             Platform = instance.Platform?.Value,
                             PrivateDnsName = instance.PrivateDnsName,
                             PrivateIpAddress = instance.PrivateIpAddress,
@@ -65,7 +74,7 @@ namespace Aspect.Providers.AWS.Resources.EC2
                             RootDeviceType = instance.RootDeviceType?.Value,
                             SourceDestCheck = instance.SourceDestCheck,
                             SriovNetSupport = instance.SriovNetSupport,
-                            State = instance.State?.Name?.Value,
+                            State = instance.State?.Name?.Value ?? "Unknown",
                             SubnetId = instance.SubnetId,
                             VirtualizationType = instance.VirtualizationType?.Value,
                             VpcId = instance.VpcId,
@@ -107,8 +116,8 @@ namespace Aspect.Providers.AWS.Resources.EC2
         {
             return new()
             {
-                Cores = options?.CoreCount,
-                Threads = options?.ThreadsPerCore
+                Cores = options?.CoreCount ?? -1,
+                Threads = options?.ThreadsPerCore ?? -1
             };
         }
 
