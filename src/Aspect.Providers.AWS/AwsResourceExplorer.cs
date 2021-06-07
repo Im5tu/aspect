@@ -21,11 +21,20 @@ namespace Aspect.Providers.AWS
         /// <inheritDoc />
         public async Task<IEnumerable<IResource>> DiscoverResourcesAsync(AwsAccount account, string region, CancellationToken cancellationToken)
         {
-            var endpoint = RegionEndpoint.GetBySystemName(region);
-            if (endpoint is null)
-                throw new Exception($"Region '{region}' is invalid");
+            try
+            {
+                var endpoint = RegionEndpoint.GetBySystemName(region);
+                if (endpoint is null)
+                    throw new Exception($"Region '{region}' is invalid");
 
-            return await DiscoverResourcesAsync(account, endpoint, cancellationToken);
+                return await DiscoverResourcesAsync(account, endpoint, cancellationToken);
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         protected abstract Task<IEnumerable<IResource>> DiscoverResourcesAsync(AwsAccount account, RegionEndpoint region, CancellationToken cancellationToken);

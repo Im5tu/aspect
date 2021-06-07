@@ -45,10 +45,10 @@ namespace Aspect.Providers.AWS
 
         public async Task<IEnumerable<IResource>> DiscoverResourcesAsync(string region, Type resourceType, Action<string> updater, CancellationToken cancellationToken)
         {
-            updater("Authenticating account...");
+            updater("Getting account details from STS...");
             var account = await _accountIdentityProvider.GetAccountAsync(cancellationToken);
 
-            updater($"Loading resources in region {region}...");
+            updater($"Loading {resourceType.Name} resources in region {region}...");
             return await _resourceProviders[resourceType].DiscoverResourcesAsync(account, region, cancellationToken);
         }
     }

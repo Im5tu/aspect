@@ -14,6 +14,7 @@ namespace Aspect.Providers.AWS
     {
         private readonly IAmazonSecurityTokenService _stsClient;
         private readonly IAmazonIdentityManagementService _iamClient;
+        private AwsAccount? _account;
 
         public AWSAccountIdentityProvider()
             : this (new AmazonSecurityTokenServiceClient(), new AmazonIdentityManagementServiceClient())
@@ -28,13 +29,16 @@ namespace Aspect.Providers.AWS
 
         public async Task<AwsAccount> GetAccountAsync(CancellationToken cancellationToken)
         {
+            if (_account is { })
+                return _account;
+
             var stsResponse = await _stsClient.GetCallerIdentityAsync(new GetCallerIdentityRequest(), cancellationToken);
             var request = new ListAccountAliasesRequest();
             var response = await _iamClient.ListAccountAliasesAsync(request, cancellationToken);
             if (response.AccountAliases.Count == 0)
                 return new AwsAccount(new AwsAccount.AwsAccountIdentifier(stsResponse.Account));
 
-            return new AwsAccount(new AwsAccount.AwsAccountIdentifier(stsResponse.Account, response.AccountAliases[0]));
+            return _account ??= new AwsAccount(new AwsAccount.AwsAccountIdentifier(stsResponse.Account, response.AccountAliases[0]));
         }
     }
 }
