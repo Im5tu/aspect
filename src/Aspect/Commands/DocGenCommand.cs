@@ -231,7 +231,7 @@ namespace Aspect.Commands
 
                 var pt = DescribeType(property.PropertyType);
 
-                if (pt.StartsWith(provider.Name, StringComparison.OrdinalIgnoreCase))
+                if (pt.StartsWith(provider.Name, StringComparison.OrdinalIgnoreCase) || (property.PropertyType.IsNested && property.DeclaringType == type))
                 {
                     if (property.PropertyType.IsNested)
                         pt = $"[{pt}](#{pt.ToLowerInvariant()})";
