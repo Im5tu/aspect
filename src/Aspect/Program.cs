@@ -17,6 +17,7 @@ namespace Aspect
             app.Configure(config =>
             {
                 config.Settings.ApplicationName = "aspect";
+                config.SetInterceptor(new DisplayInterceptor());
 
                 config.AddCommand<AutoCompleteCommand>("autocomplete")
                     .WithDescription("Generate an autocomplete script for either powershell or bash.")
