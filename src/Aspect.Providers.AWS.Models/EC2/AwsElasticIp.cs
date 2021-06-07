@@ -7,7 +7,7 @@ namespace Aspect.Providers.AWS.Models.EC2
     public class AwsElasticIp : AwsResource
     {
         [Description("The ID representing the allocation of the address for use with EC2-VPC.")]
-        public string? AllocationId { get; init; }
+        public string? Id { get; init; }
 
         [Description("The ID representing the association of the address with an instance in a VPC.")]
         public string? AssociationId { get; init; }

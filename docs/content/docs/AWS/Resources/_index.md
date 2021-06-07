@@ -16,8 +16,8 @@ weight = 10
 |[AwsEc2Snapshot](/docs/aws/resources/awsec2snapshot/)|Amazon EBS provides the ability to create snapshots (backups) of any EBS volume. A snapshot takes a copy of the EBS volume and places it in Amazon S3, where it is stored redundantly in multiple Availability Zones.|[Goto Docs](/docs/aws/resources/awsec2snapshot/)|
 |[AwsEc2Volume](/docs/aws/resources/awsec2volume/)||[Goto Docs](/docs/aws/resources/awsec2volume/)|
 |[AwsElasticIp](/docs/aws/resources/awselasticip/)|An Elastic IP address is a static IPv4 address designed for dynamic cloud computing. you can mask the failure of an instance or software by rapidly remapping the address to another instance in your account. Alternatively, you can specify the Elastic IP address in a DNS record for your domain, so that your domain points to your instance.|[Goto Docs](/docs/aws/resources/awselasticip/)|
-|[AwsInternetGateway](/docs/aws/resources/awsinternetgateway/)|Coming soon!|[Goto Docs](/docs/aws/resources/awsinternetgateway/)|
-|[AwsNatGateway](/docs/aws/resources/awsnatgateway/)|Coming soon!|[Goto Docs](/docs/aws/resources/awsnatgateway/)|
+|[AwsInternetGateway](/docs/aws/resources/awsinternetgateway/)|Internet gateway are horizontally scaled, redundant, and highly available VPC components that allows communication between your VPC and the internet.|[Goto Docs](/docs/aws/resources/awsinternetgateway/)|
+|[AwsNatGateway](/docs/aws/resources/awsnatgateway/)|Network address translation (NAT) gateways enable instances in a private subnet to connect to the internet or other AWS services, but prevent the internet from initiating a connection with those instances.|[Goto Docs](/docs/aws/resources/awsnatgateway/)|
 |[AwsNetworkInterface](/docs/aws/resources/awsnetworkinterface/)|Coming soon!|[Goto Docs](/docs/aws/resources/awsnetworkinterface/)|
 |[AwsPrefixList](/docs/aws/resources/awsprefixlist/)|Coming soon!|[Goto Docs](/docs/aws/resources/awsprefixlist/)|
 |[AwsReservedInstance](/docs/aws/resources/awsreservedinstance/)|Coming soon!|[Goto Docs](/docs/aws/resources/awsreservedinstance/)|
