@@ -40,7 +40,7 @@ namespace Aspect.Abstractions
                 nameof(Type) => Type,
                 nameof(Region) => Region,
                 nameof(Tags) => string.Join(Environment.NewLine, Tags.Select(x => $"- {x.Key}: {x.Value}")),
-                _ => string.Empty
+                _ => this.GetType().GetProperty(propertyName)!.GetMethod!.Invoke(this, Array.Empty<object>())?.ToString() ?? string.Empty
             };
         }
     }
