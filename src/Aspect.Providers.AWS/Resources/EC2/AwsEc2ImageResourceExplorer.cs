@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon;
@@ -37,25 +36,25 @@ namespace Aspect.Providers.AWS.Resources.EC2
                 var arn = GenerateArn(account, region, "ec2", $"image/{image.ImageId}");
                 result.Add(new AwsEc2Image(account, arn, image.Name ?? string.Empty, image.Tags.Convert(), region.SystemName)
                 {
-                    Architecture = image.Architecture?.Value,
-                    BootMode = image.BootMode?.Value,
-                    Description = image.Description,
+                    Architecture = image.Architecture?.Value.ValueOrEmpty(),
+                    BootMode = image.BootMode?.Value.ValueOrEmpty(),
+                    Description = image.Description.ValueOrEmpty(),
                     EnaSupport = image.EnaSupport,
-                    Hypervisor = image.Hypervisor?.Value,
-                    ImageId = image.ImageId,
-                    ImageLocation = image.ImageLocation,
-                    ImageType = image.ImageType?.Value,
+                    Hypervisor = image.Hypervisor?.Value.ValueOrEmpty(),
+                    ImageId = image.ImageId.ValueOrEmpty(),
+                    ImageLocation = image.ImageLocation.ValueOrEmpty(),
+                    ImageType = image.ImageType?.Value.ValueOrEmpty(),
                     IsPublic = image.Public,
-                    KernelId = image.KernelId,
-                    OwnerId = image.OwnerId,
-                    Platform = image.Platform?.Value,
-                    PlatformDetails = image.PlatformDetails,
-                    RamdiskId = image.RamdiskId,
-                    RootDeviceName = image.RootDeviceName,
-                    RootDeviceType = image.RootDeviceType?.Value,
-                    SriovNetSupport = image.SriovNetSupport,
-                    State = image.State?.Value,
-                    VirtualizationType = image.VirtualizationType?.Value,
+                    KernelId = image.KernelId.ValueOrEmpty(),
+                    OwnerId = image.OwnerId.ValueOrEmpty(),
+                    Platform = image.Platform?.Value.ValueOrEmpty(),
+                    PlatformDetails = image.PlatformDetails.ValueOrEmpty(),
+                    RamdiskId = image.RamdiskId.ValueOrEmpty(),
+                    RootDeviceName = image.RootDeviceName.ValueOrEmpty(),
+                    RootDeviceType = image.RootDeviceType?.Value.ValueOrEmpty(),
+                    SriovNetSupport = image.SriovNetSupport.ValueOrEmpty(),
+                    State = image.State?.Value.ValueOrEmpty(),
+                    VirtualizationType = image.VirtualizationType?.Value.ValueOrEmpty(),
                 });
             }
 

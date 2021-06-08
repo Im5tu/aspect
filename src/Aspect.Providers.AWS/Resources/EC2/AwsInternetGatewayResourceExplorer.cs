@@ -40,11 +40,11 @@ namespace Aspect.Providers.AWS.Resources.EC2
 
                 foreach (var gw in response.InternetGateways)
                 {
-                    var arn = GenerateArn(account, region, "ec2", $"internet-gateway/{gw.InternetGatewayId}");
+                    var arn = GenerateArn(account, region, "ec2", $"internet-gateway/{gw.InternetGatewayId.ValueOrEmpty()}");
                     result.Add(new AwsInternetGateway(account, arn, gw.Tags.GetName(), gw.Tags.Convert(), region.SystemName)
                     {
-                       Id = gw.InternetGatewayId,
-                       OwnerId = gw.OwnerId,
+                       Id = gw.InternetGatewayId.ValueOrEmpty(),
+                       OwnerId = gw.OwnerId.ValueOrEmpty(),
                        Attachments = Map(gw.Attachments)
                     });
                 }
@@ -61,8 +61,8 @@ namespace Aspect.Providers.AWS.Resources.EC2
             {
                 result.Add(new AwsInternetGateway.Attachment
                 {
-                    State = att.State?.Value,
-                    VpcId = att.VpcId
+                    State = att.State?.Value.ValueOrEmpty(),
+                    VpcId = att.VpcId.ValueOrEmpty()
                 });
             }
 

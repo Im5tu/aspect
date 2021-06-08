@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace Aspect.Providers.AWS.Models.EC2
 {
-    [Description("")]
+    [Description("An Amazon EBS volume is a durable, block-level storage device that you can attach to your instances. After you attach a volume to an instance, you can use it as you would use a physical hard drive. ")]
     public class AwsEc2Volume : AwsResource
     {
         [Description("Describes the attachments to an EC2 instances.")]

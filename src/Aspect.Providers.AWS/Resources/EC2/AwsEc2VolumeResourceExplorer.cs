@@ -43,19 +43,19 @@ namespace Aspect.Providers.AWS.Resources.EC2
                     result.Add(new AwsEc2Volume(account, arn, vol.Tags.GetName(), vol.Tags.Convert(), region.SystemName)
                     {
                         Attachments = Map(vol.Attachments),
-                        AvailabilityZone = vol.AvailabilityZone,
+                        AvailabilityZone = vol.AvailabilityZone.ValueOrEmpty(),
                         Encrypted = vol.Encrypted,
                         FastRestored = vol.FastRestored,
-                        Id = vol.VolumeId,
+                        Id = vol.VolumeId.ValueOrEmpty(),
                         Iops = vol.Iops,
-                        KmsKeyId = vol.KmsKeyId,
+                        KmsKeyId = vol.KmsKeyId.ValueOrEmpty(),
                         MultiAttachEnabled = vol.MultiAttachEnabled,
-                        OutpostArn = vol.OutpostArn,
+                        OutpostArn = vol.OutpostArn.ValueOrEmpty(),
                         Size = vol.Size,
-                        SnapshotId = vol.SnapshotId,
-                        State = vol.State?.Value,
+                        SnapshotId = vol.SnapshotId.ValueOrEmpty(),
+                        State = vol.State?.Value.ValueOrEmpty(),
                         Throughput = vol.Throughput,
-                        VolumeType = vol.VolumeType?.Value,
+                        VolumeType = vol.VolumeType?.Value.ValueOrEmpty(),
                     });
                 }
 
@@ -73,10 +73,10 @@ namespace Aspect.Providers.AWS.Resources.EC2
                 result.Add(new AwsEc2Volume.VolumeAttachment
                 {
                     DeleteOnTermination = volAttachment.DeleteOnTermination,
-                    Device = volAttachment.Device,
-                    InstanceId = volAttachment.InstanceId,
-                    State = volAttachment.State?.Value,
-                    VolumeId = volAttachment.VolumeId
+                    Device = volAttachment.Device.ValueOrEmpty(),
+                    InstanceId = volAttachment.InstanceId.ValueOrEmpty(),
+                    State = volAttachment.State?.Value.ValueOrEmpty(),
+                    VolumeId = volAttachment.VolumeId.ValueOrEmpty()
                 });
             }
 

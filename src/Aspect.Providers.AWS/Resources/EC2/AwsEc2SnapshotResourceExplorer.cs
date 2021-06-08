@@ -42,16 +42,16 @@ namespace Aspect.Providers.AWS.Resources.EC2
                     var arn = GenerateArn(account, region, "ec2", $"snapshot/{ss.SnapshotId}");
                     result.Add(new AwsEc2Snapshot(account, arn, ss.Tags.GetName(), ss.Tags.Convert(), region.SystemName)
                     {
-                        DataEncryptionKeyId = ss.DataEncryptionKeyId,
-                        Description = ss.Description,
+                        DataEncryptionKeyId = ss.DataEncryptionKeyId.ValueOrEmpty(),
+                        Description = ss.Description.ValueOrEmpty(),
                         Encrypted = ss.Encrypted,
-                        Id = ss.SnapshotId,
-                        KmsKeyId = ss.KmsKeyId,
-                        OutpostArn = ss.OutpostArn,
-                        OwnerId = ss.OwnerId,
-                        Progress = ss.Progress,
-                        State = ss.State?.Value,
-                        VolumeId = ss.VolumeId,
+                        Id = ss.SnapshotId.ValueOrEmpty(),
+                        KmsKeyId = ss.KmsKeyId.ValueOrEmpty(),
+                        OutpostArn = ss.OutpostArn.ValueOrEmpty(),
+                        OwnerId = ss.OwnerId.ValueOrEmpty(),
+                        Progress = ss.Progress.ValueOrEmpty(),
+                        State = ss.State?.Value.ValueOrEmpty(),
+                        VolumeId = ss.VolumeId.ValueOrEmpty(),
                         VolumeSize = ss.VolumeSize,
                     });
 

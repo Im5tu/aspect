@@ -37,8 +37,8 @@ namespace Aspect.Providers.AWS.Resources.EC2
                 var arn = GenerateArn(account, region, "ec2", $"key-pair/{keyPair.KeyPairId}");
                 result.Add(new AwsEc2KeyPair(account, arn, keyPair.KeyName, keyPair.Tags.Convert(), region.SystemName)
                 {
-                    Id = keyPair.KeyPairId,
-                    Fingerprint = keyPair.KeyFingerprint
+                    Id = keyPair.KeyPairId.ValueOrEmpty(),
+                    Fingerprint = keyPair.KeyFingerprint.ValueOrEmpty()
                 });
             }
 

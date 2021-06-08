@@ -45,39 +45,39 @@ namespace Aspect.Providers.AWS.Resources.EC2
                         var arn = GenerateArn(account, region, "ec2", $"instance/{instance.InstanceId}");
                         result.Add(new AwsEc2Instance(account, arn, instance.Tags.GetName(), instance.Tags.Convert(), region.SystemName)
                         {
-                            Architecture = instance.Architecture?.Value,
-                            BootMode = instance.BootMode?.Value,
+                            Architecture = instance.Architecture?.Value.ValueOrEmpty(),
+                            BootMode = instance.BootMode?.Value.ValueOrEmpty(),
                             CpuOptions = Map(instance.CpuOptions),
                             EbsOptimized = instance.EbsOptimized,
                             EnaSupport = instance.EnaSupport,
                             EnclaveEnabled = instance.EnclaveOptions?.Enabled ?? false,
                             HibernationEnabled = instance.HibernationOptions?.Configured ?? false,
-                            Hypervisor = instance.Hypervisor?.Value,
-                            IamInstanceProfile = instance.IamInstanceProfile?.Arn,
-                            ImageId = instance.ImageId,
-                            InstanceId = instance.InstanceId,
-                            InstanceLifecycle = instance.InstanceLifecycle?.Value,
-                            InstanceType = instance.InstanceType?.Value,
-                            KernelId = instance.KernelId,
-                            KeyName = instance.KeyName,
-                            Licenses = instance.Licenses?.Select(x => x.LicenseConfigurationArn)?.ToList(),
+                            Hypervisor = instance.Hypervisor?.Value.ValueOrEmpty(),
+                            IamInstanceProfile = instance.IamInstanceProfile?.Arn.ValueOrEmpty(),
+                            ImageId = instance.ImageId.ValueOrEmpty(),
+                            InstanceId = instance.InstanceId.ValueOrEmpty(),
+                            InstanceLifecycle = instance.InstanceLifecycle?.Value.ValueOrEmpty(),
+                            InstanceType = instance.InstanceType?.Value.ValueOrEmpty(),
+                            KernelId = instance.KernelId.ValueOrEmpty(),
+                            KeyName = instance.KeyName.ValueOrEmpty(),
+                            Licenses = instance.Licenses?.Select(x => x.LicenseConfigurationArn).ValueOrEmpty(),
                             Monitoring = instance.Monitoring?.State ?? "Unknown",
                             NetworkInterfaces = Map(instance.NetworkInterfaces),
                             Placement = Map(instance.Placement),
-                            Platform = instance.Platform?.Value,
-                            PrivateDnsName = instance.PrivateDnsName,
-                            PrivateIpAddress = instance.PrivateIpAddress,
-                            PublicDnsName = instance.PublicDnsName,
-                            PublicIpAddress = instance.PublicIpAddress,
-                            RamdiskId = instance.RamdiskId,
-                            RootDeviceName = instance.RootDeviceName,
-                            RootDeviceType = instance.RootDeviceType?.Value,
+                            Platform = instance.Platform?.Value.ValueOrEmpty(),
+                            PrivateDnsName = instance.PrivateDnsName.ValueOrEmpty(),
+                            PrivateIpAddress = instance.PrivateIpAddress.ValueOrEmpty(),
+                            PublicDnsName = instance.PublicDnsName.ValueOrEmpty(),
+                            PublicIpAddress = instance.PublicIpAddress.ValueOrEmpty(),
+                            RamdiskId = instance.RamdiskId.ValueOrEmpty(),
+                            RootDeviceName = instance.RootDeviceName.ValueOrEmpty(),
+                            RootDeviceType = instance.RootDeviceType?.Value.ValueOrEmpty(),
                             SourceDestCheck = instance.SourceDestCheck,
-                            SriovNetSupport = instance.SriovNetSupport,
+                            SriovNetSupport = instance.SriovNetSupport.ValueOrEmpty(),
                             State = instance.State?.Name?.Value ?? "Unknown",
-                            SubnetId = instance.SubnetId,
-                            VirtualizationType = instance.VirtualizationType?.Value,
-                            VpcId = instance.VpcId,
+                            SubnetId = instance.SubnetId.ValueOrEmpty(),
+                            VirtualizationType = instance.VirtualizationType?.Value.ValueOrEmpty(),
+                            VpcId = instance.VpcId.ValueOrEmpty(),
                         });
                     }
                 }
@@ -94,18 +94,18 @@ namespace Aspect.Providers.AWS.Resources.EC2
             {
                 result.Add(new()
                 {
-                    Description = ni.Description,
-                    InterfaceType = ni.InterfaceType,
-                    MacAddress = ni.MacAddress,
-                    NetworkInterfaceId = ni.NetworkInterfaceId,
-                    OwnerId = ni.OwnerId,
-                    PrimaryPrivateIpAddress = ni.PrivateIpAddress,
-                    PrivateDnsName = ni.PrivateDnsName,
-                    PrivateIpAddresses = ni.PrivateIpAddresses?.Select(x => x.PrivateIpAddress)?.ToList(),
+                    Description = ni.Description.ValueOrEmpty(),
+                    InterfaceType = ni.InterfaceType.ValueOrEmpty(),
+                    MacAddress = ni.MacAddress.ValueOrEmpty(),
+                    NetworkInterfaceId = ni.NetworkInterfaceId.ValueOrEmpty(),
+                    OwnerId = ni.OwnerId.ValueOrEmpty(),
+                    PrimaryPrivateIpAddress = ni.PrivateIpAddress.ValueOrEmpty(),
+                    PrivateDnsName = ni.PrivateDnsName.ValueOrEmpty(),
+                    PrivateIpAddresses = ni.PrivateIpAddresses?.Select(x => x.PrivateIpAddress).ValueOrEmpty(),
                     SourceDestCheck = ni.SourceDestCheck,
-                    Status = ni.Status?.Value,
-                    SubnetId = ni.SubnetId,
-                    VpcId = ni.VpcId,
+                    Status = ni.Status?.Value.ValueOrEmpty(),
+                    SubnetId = ni.SubnetId.ValueOrEmpty(),
+                    VpcId = ni.VpcId.ValueOrEmpty()
                 });
             }
 
@@ -125,13 +125,13 @@ namespace Aspect.Providers.AWS.Resources.EC2
         {
             return new()
             {
-                Affinity = placement?.Affinity,
-                AvailabilityZone = placement?.AvailabilityZone,
-                GroupName = placement?.GroupName,
-                HostId = placement?.HostId,
+                Affinity = placement?.Affinity.ValueOrEmpty(),
+                AvailabilityZone = placement?.AvailabilityZone.ValueOrEmpty(),
+                GroupName = placement?.GroupName.ValueOrEmpty(),
+                HostId = placement?.HostId.ValueOrEmpty(),
                 PartitionNumber = placement?.PartitionNumber,
-                SpreadDomain = placement?.SpreadDomain,
-                Tenancy = placement?.Tenancy?.Value,
+                SpreadDomain = placement?.SpreadDomain.ValueOrEmpty(),
+                Tenancy = placement?.Tenancy?.Value.ValueOrEmpty(),
             };
         }
     }

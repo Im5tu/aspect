@@ -43,12 +43,12 @@ namespace Aspect.Providers.AWS.Resources.EC2
                     var arn = GenerateArn(account, region, "ec2", $"nat-gateway/{gw.NatGatewayId}");
                     result.Add(new AwsNatGateway(account, arn, gw.Tags.GetName(), gw.Tags.Convert(), region.SystemName)
                     {
-                        Id = gw.NatGatewayId,
-                        State = gw.State?.Value,
-                        FailureCode = gw.FailureCode,
-                        ProvisionedBandwidth = gw.ProvisionedBandwidth?.Provisioned,
-                        SubnetId = gw.SubnetId,
-                        VpcId = gw.VpcId,
+                        Id = gw.NatGatewayId.ValueOrEmpty(),
+                        State = gw.State?.Value.ValueOrEmpty(),
+                        FailureCode = gw.FailureCode.ValueOrEmpty(),
+                        ProvisionedBandwidth = gw.ProvisionedBandwidth?.Provisioned.ValueOrEmpty(),
+                        SubnetId = gw.SubnetId.ValueOrEmpty(),
+                        VpcId = gw.VpcId.ValueOrEmpty(),
                         Addresses = Map(gw.NatGatewayAddresses)
                     });
                 }
@@ -64,10 +64,10 @@ namespace Aspect.Providers.AWS.Resources.EC2
             foreach (var address in gwNatGatewayAddresses ?? Enumerable.Empty<NatGatewayAddress>())
                 result.Add(new AwsNatGateway.Address
                 {
-                    AllocationId = address.AllocationId,
-                    NetworkInterfaceId = address.NetworkInterfaceId,
-                    PrivateIp = address.PrivateIp,
-                    PublicIp = address.PublicIp,
+                    AllocationId = address.AllocationId.ValueOrEmpty(),
+                    NetworkInterfaceId = address.NetworkInterfaceId.ValueOrEmpty(),
+                    PrivateIp = address.PrivateIp.ValueOrEmpty(),
+                    PublicIp = address.PublicIp.ValueOrEmpty(),
                 });
 
             return result;

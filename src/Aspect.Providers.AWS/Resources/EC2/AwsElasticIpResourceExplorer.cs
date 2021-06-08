@@ -34,22 +34,22 @@ namespace Aspect.Providers.AWS.Resources.EC2
 
             foreach (var address in response.Addresses)
             {
-                var name = address.Tags.GetName();
-                var arn = GenerateArn(account, region, "ec2", $"eip/{address.AllocationId}");
+                var name = address.Tags.GetName().ValueOrEmpty();
+                var arn = GenerateArn(account, region, "ec2", $"eip/{address.AllocationId.ValueOrEmpty()}");
                 result.Add(new AwsElasticIp(account, arn, name, address.Tags.Convert(), region.SystemName)
                 {
-                    Id = address.AllocationId,
-                    AssociationId = address.AssociationId,
-                    CarrierIp = address.CarrierIp,
-                    CustomerOwnedIp = address.CustomerOwnedIp,
-                    CustomerOwnedIpv4Pool = address.CustomerOwnedIpv4Pool,
-                    InstanceId = address.InstanceId,
-                    NetworkBorderGroup = address.NetworkBorderGroup,
-                    NetworkInterfaceId = address.NetworkInterfaceId,
-                    NetworkInterfaceOwnerId = address.NetworkInterfaceOwnerId,
-                    PrivateIpAddress = address.PrivateIpAddress,
-                    PublicIp = address.PublicIp,
-                    PublicIpv4Pool = address.PublicIpv4Pool,
+                    Id = address.AllocationId.ValueOrEmpty(),
+                    AssociationId = address.AssociationId.ValueOrEmpty(),
+                    CarrierIp = address.CarrierIp.ValueOrEmpty(),
+                    CustomerOwnedIp = address.CustomerOwnedIp.ValueOrEmpty(),
+                    CustomerOwnedIpv4Pool = address.CustomerOwnedIpv4Pool.ValueOrEmpty(),
+                    InstanceId = address.InstanceId.ValueOrEmpty(),
+                    NetworkBorderGroup = address.NetworkBorderGroup.ValueOrEmpty(),
+                    NetworkInterfaceId = address.NetworkInterfaceId.ValueOrEmpty(),
+                    NetworkInterfaceOwnerId = address.NetworkInterfaceOwnerId.ValueOrEmpty(),
+                    PrivateIpAddress = address.PrivateIpAddress.ValueOrEmpty(),
+                    PublicIp = address.PublicIp.ValueOrEmpty(),
+                    PublicIpv4Pool = address.PublicIpv4Pool.ValueOrEmpty(),
                 });
             }
 
