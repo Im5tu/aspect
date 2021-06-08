@@ -158,7 +158,10 @@ namespace Aspect.Policies.CompilerServices
             if (enumerator.MoveNext() && enumerator.Current is IdentifierSyntaxToken ist)
             {
                 var parameters = SplitOn<SeparatorSyntaxToken>(FindTokensBetween<ParenthesisSyntaxToken>(context, enumerator)).ToList();
-                var constExp = parameters.Skip(1).Select(x => BuildConstantExpression(context, x.ToList()) ?? throw new Exception("No expression built")).ToArray();
+                var constExp = parameters.Skip(1).Select(x => BuildConstantExpression(context, x.ToList())).Where(x => x is {}).ToArray();
+
+                if (!context.IsValid)
+                    return null;
 
                 if (parameters.Count == 0)
                 {
@@ -173,7 +176,7 @@ namespace Aspect.Policies.CompilerServices
                     return null;
                 }
 
-                var types = new[] {accessorExp.Property.PropertyType}.Concat(constExp.Select(x => x.Type));
+                var types = new[] {accessorExp.Property.PropertyType}.Concat(constExp.Select(x => x!.Type));
                 if (!BuiltInFunctions.TryLookupBuiltInFunction(ist.Identifier, types, out var method))
                 {
                     context.RaiseError("CA-PAR-014", ist);
@@ -191,14 +194,14 @@ namespace Aspect.Policies.CompilerServices
                 {
                     var param = methodParams[i];
                     var constParam = constExp[i - 1];
-                    if (!param.ParameterType.IsAssignableFrom(constParam.Type))
+                    if (!param.ParameterType.IsAssignableFrom(constParam!.Type))
                     {
                         context.RaiseError("CA-PAR-008", enumerator.Current);
                         return null;
                     }
                 }
 
-                return new FunctionCallExpression(method, accessorExp, constExp);
+                return new FunctionCallExpression(method, accessorExp, constExp!);
             }
 
             context.RaiseError("CA-PAR-014", enumerator.Current);
@@ -226,9 +229,13 @@ namespace Aspect.Policies.CompilerServices
                     return new ConstantExpression(typeof(bool), bool.Parse(ist.Identifier));
                 }
             }
+            else if (tokens.Count > 1 && tokens[0] is IdentifierSyntaxToken {Identifier: "input"})
+            {
+                context.RaiseError("CA-PAR-017");
+            }
 
             // TODO :: TASK :: Support arrays
-            context.RaiseError("CA-PAR-016", tokens[^1]);
+            context.RaiseError("CA-PAR-016");
             return null;
         }
 

@@ -61,6 +61,7 @@ namespace Aspect.Extensions
                 "CA-PAR-013" => "Invalid syntax. Collection access must be input.Collection[_] / input.Collection[*]",
                 "CA-PAR-014" => "Invalid function expression. Please check the function names and signatures at: https://cloudaspect.app/docs/getting-started/builtin-functions/",
                 "CA-PAR-015" => "Operators cannot be the last element in a statement",
+                "CA-PAR-017" => "Incorrect signature for the function. Please specify the input as the first parameter. See: https://cloudaspect.app/docs/getting-started/builtin-functions/",
                 _ => "An Unknown error occurred whilst compiling the policy"
             };
         }
