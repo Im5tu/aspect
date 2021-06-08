@@ -108,7 +108,7 @@ namespace Aspect.Commands
                 var requiresRetry = false;
                 do
                 {
-                    answer = this.Ask($"Enter statement for the {se} block:");
+                    answer = this.Ask($"Enter statement for the {se} block:", true);
 
                     if (string.IsNullOrWhiteSpace(answer) && !(se == "validate" && statements.Count == 0))
                         break;
