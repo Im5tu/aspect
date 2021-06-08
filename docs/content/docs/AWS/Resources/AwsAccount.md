@@ -12,8 +12,8 @@ The AWS account resource describes the details of the account that a specified r
 {{< table style="table-striped" >}}
 |Name|Description|Type|
 |----------|----------|----------|
-|Id|The account identifier specific to the cloud provider|[AwsAccountIdentifier](#awsaccountidentifier)|
-|Type|The type of the account, eg: AWS/Azure/GCP|String|
+|Id|The account identifier specific to the cloud provider.|[AwsAccountIdentifier](#awsaccountidentifier)|
+|Type|The type of the account, eg: AWS/Azure/GCP.|String|
 {{< /table >}}
 
 ## Policy Template

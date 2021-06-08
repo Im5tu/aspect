@@ -1,10 +1,10 @@
 +++
 title = "AwsEc2Volume"
-description = ""
+description = "An Amazon EBS volume is a durable, block-level storage device that you can attach to your instances. After you attach a volume to an instance, you can use it as you would use a physical hard drive. "
 weight = 6
 +++
 
-
+An Amazon EBS volume is a durable, block-level storage device that you can attach to your instances. After you attach a volume to an instance, you can use it as you would use a physical hard drive. 
 
 ## Properties
 {{< table style="table-striped" >}}
@@ -29,7 +29,7 @@ weight = 6
 |Tags|The tags that are associated with the resource. Each entry has two properties: Key/Value. There may be 0 or more entries in this collection.|Collection\<KeyValuePair<String, String>>|
 |Throughput|The throughput that the volume supports, in MiB/s.|Number|
 |Type|The type of the resource. This is what is used in policy evaluation.|String|
-|VolumeType|The volume type|String|
+|VolumeType|The volume type.|String|
 {{< /table >}}
 
 ## Policy Template

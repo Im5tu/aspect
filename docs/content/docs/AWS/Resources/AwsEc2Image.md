@@ -28,7 +28,7 @@ The AMIs, AKIs, and ARIs available to you or all of the images available to you.
 |PlatformDetails|The platform details associated with the billing code of the AMI.|String|
 |RamdiskId|The RAM disk associated with the image, if any. Only applicable for machine images.|String|
 |Region|The region in which this resource is located.|String|
-|RootDeviceName|The device name of the root device volume (eg: '/dev/sda1')|String|
+|RootDeviceName|The device name of the root device volume (eg: '/dev/sda1').|String|
 |RootDeviceType|The type of root device used by the AMI. The AMI can use an EBS volume or an instance store volume.|String|
 |SriovNetSupport|Specifies whether enhanced networking with the Intel 82599 Virtual Function interface is enabled.|String|
 |State|The current state of the AMI. If the state is available, the image is successfully registered and can be used to launch an instance.|String|

@@ -12,8 +12,8 @@ weight = 1
 {{< table style="table-striped" >}}
 |Name|Description|Type|
 |----------|----------|----------|
-|Id|The account identifier specific to the cloud provider|[AzureAccountIdentifier](#azureaccountidentifier)|
-|Type|The type of the account, eg: AWS/Azure/GCP|String|
+|Id|The account identifier specific to the cloud provider.|[AzureAccountIdentifier](#azureaccountidentifier)|
+|Type|The type of the account, eg: AWS/Azure/GCP.|String|
 {{< /table >}}
 
 ## Policy Template

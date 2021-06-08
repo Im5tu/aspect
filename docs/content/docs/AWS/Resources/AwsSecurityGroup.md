@@ -91,7 +91,7 @@ Describes a security group that is allowed to talk to the defined security group
 |Account|The account that the security group is associated with.|String|
 |Description|A friendly description of what the security group does.|String|
 |Id|The id of the security group.|String|
-|Name|The name of the security group|String|
+|Name|The name of the security group.|String|
 |VpcId|The VPC that the security group is associated with.|String|
 |VpcPeeringConnectionId|The VPC peering connection the security group is associated with.|String|
 {{< /table >}}
