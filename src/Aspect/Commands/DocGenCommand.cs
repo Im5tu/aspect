@@ -229,8 +229,10 @@ namespace Aspect.Commands
                 if (property.PropertyType != typeof(string) && property.PropertyType.IsAssignableTo(typeof(IEnumerable)))
                     propertyDescription += " There may be 0 or more entries in this collection.";
 
-                var pt = DescribeType(property.PropertyType);
+                if (!propertyDescription.EndsWith(".", StringComparison.OrdinalIgnoreCase))
+                    propertyDescription = propertyDescription.Trim() + ".";
 
+                var pt = DescribeType(property.PropertyType);
                 if (pt.StartsWith(provider.Name, StringComparison.OrdinalIgnoreCase) || (property.PropertyType.IsNested && property.DeclaringType == type))
                 {
                     if (property.PropertyType.IsNested)

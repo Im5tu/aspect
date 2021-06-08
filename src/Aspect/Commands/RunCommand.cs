@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Aspect.Abstractions;
-using Aspect.Formatters;
 using Aspect.Policies;
 using Aspect.Policies.Suite;
 using Aspect.Services;
@@ -15,22 +14,28 @@ namespace Aspect.Commands
     internal class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
     {
         internal class RunCommandSettings : FileOrDirectorySettings
-        {}
+        {
+            [CommandOption("--format")]
+            public FormatterType? Formatter { get; init; }
+        }
 
         private readonly IPolicySuiteRunner _policySuiteRunner;
         private readonly IReadOnlyDictionary<string,ICloudProvider> _cloudProviders;
         private readonly IPolicySuiteValidator _policySuiteValidator;
         private readonly IPolicyLoader _policyLoader;
+        private readonly IFormatterFactory _formatterFactory;
 
         public RunCommand(IPolicySuiteRunner policySuiteRunner,
             IReadOnlyDictionary<string, ICloudProvider> cloudProviders,
             IPolicySuiteValidator policySuiteValidator,
-            IPolicyLoader policyLoader)
+            IPolicyLoader policyLoader,
+            IFormatterFactory formatterFactory)
         {
             _policySuiteRunner = policySuiteRunner;
             _cloudProviders = cloudProviders;
             _policySuiteValidator = policySuiteValidator;
             _policyLoader = policyLoader;
+            _formatterFactory = formatterFactory;
         }
 
         public override ValidationResult Validate(CommandContext context, RunCommandSettings settings)
@@ -60,18 +65,19 @@ namespace Aspect.Commands
             }
 
             var results = (await _policySuiteRunner.RunPoliciesAsync(policy, default)).ToList();
-            var formattedResult = new Result
+            var aggregatedResult = new Result
             {
                 Errors = results.Where(x => x.Error is not null).Select(x => x.Error!).ToList(),
                 FailedResources = results.Where(x => x.FailedResources is not null).SelectMany(x => x.FailedResources!).ToList()
             };
 
-            await new JsonFormatter().FormatAsync(formattedResult);
+            var formatter = _formatterFactory.GetFormatterFor(settings.Formatter.GetValueOrDefault(FormatterType.Json));
+            Console.WriteLine(formatter.Format(aggregatedResult));
 
-            if (formattedResult.Errors.Count > 0)
+            if (aggregatedResult.Errors.Count > 0)
                 return 2;
 
-            if (formattedResult.FailedResources.Count > 0)
+            if (aggregatedResult.FailedResources.Count > 0)
                 return -1;
 
             return 0;

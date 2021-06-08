@@ -17,6 +17,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Aspect.Formatting\Aspect.Formatting.csproj" />
       <ProjectReference Include="..\Aspect.Policies\Aspect.Policies.csproj" />
       <ProjectReference Include="..\Aspect.Providers.AWS\Aspect.Providers.AWS.csproj" />
       <ProjectReference Include="..\Aspect.Providers.Azure\Aspect.Providers.Azure.csproj" />

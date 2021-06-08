@@ -55,6 +55,15 @@ If you are running a policy file, the CLI will respect the provider specific env
 |source|0|Lists the policies and policy suites that can be found in the specified location|current working directory|No|
 {{< /table >}}
 
+
+## Options
+
+{{< table style="table-striped" >}}
+|Option|Alias|Description|
+|---|---|---|
+|--format||The format of the successful output. Valid values: Json (default), Yaml|
+{{< /table >}}
+
 ## Exit Codes
 
 {{< table style="table-striped" >}}

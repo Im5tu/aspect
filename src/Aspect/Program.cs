@@ -1,5 +1,6 @@
 ﻿using Aspect.Commands;
 using Aspect.Dependencies;
+using Aspect.Formatting;
 using Aspect.Policies;
 using Aspect.Providers.AWS;
 using Aspect.Providers.Azure;
@@ -88,6 +89,7 @@ namespace Aspect
             var services = new ServiceCollection()
                 .AddSingleton<IPolicySuiteRunner, PolicySuiteRunner>()
                 .AddSingleton<IPolicyLoader, PolicyLoader>()
+                .AddFormatters()
                 .AddCompilerService()
                 .AddAWSCloudProvider()
                 .AddAzureCloudProvider();

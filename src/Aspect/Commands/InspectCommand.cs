@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Aspect.Abstractions;
 using Aspect.Extensions;
-using Aspect.Formatters;
 using Aspect.Policies.CompilerServices;
 using Aspect.Policies.CompilerServices.CompilationUnits;
 using Aspect.Policies.CompilerServices.Generator;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using Spectre.Console.Rendering;
 
 namespace Aspect.Commands
 {
@@ -20,7 +20,7 @@ namespace Aspect.Commands
         }
 
         private readonly IPolicyCompiler _policyCompiler;
-        private readonly IReadOnlyDictionary<string,ICloudProvider> _cloudProviders;
+        private readonly IReadOnlyDictionary<string, ICloudProvider> _cloudProviders;
         private readonly List<IResource> _resources = new List<IResource>();
 
         public InspectCommand(IReadOnlyDictionary<string, ICloudProvider> cloudProviders, IPolicyCompiler policyCompiler)
@@ -132,7 +132,7 @@ namespace Aspect.Commands
                         count = int.Parse(answer.Substring(index + 1));
 
                     if (count.HasValue)
-                        await FormatResourceTable(_resources.Take(count.Value));
+                        await FormatResourceTable(_resources.Take(count.Value).ToList());
                     else
                         await FormatResourceTable(_resources);
 
@@ -185,7 +185,7 @@ validate {{
             }
         }
 
-        private async Task FormatResourceTable(IEnumerable<IResource> resources)
+        private async Task FormatResourceTable(List<IResource> resources)
         {
             await AnsiConsole.Status()
                 .AutoRefresh(true)
@@ -196,12 +196,46 @@ validate {{
                     {
                         // force new thread
                         await Task.Delay(50);
-                        await new ConsoleFormatter().FormatAsync(resources);
+                        await FormatAsync(resources);
                     });
                     await tsk;
                 });
         }
 
+        private ValueTask FormatAsync<T>(List<T> entities) where T : class
+        {
+            var type = entities.FirstOrDefault()?.GetType();
+            if (type is null)
+                return ValueTask.CompletedTask;
 
+            var properties = type.GetProperties().OrderBy(x => x.Name).ToList();
+            var table = new Table();
+            foreach (var property in properties)
+            {
+                table.AddColumn(property.Name);
+            }
+
+            foreach (var entity in entities)
+            {
+                var cols = new List<IRenderable>();
+
+                if (entity is IFormatProperties ifp)
+                {
+                    foreach (var property in properties)
+                        cols.Add(new Text(ifp.Format(property.Name)));
+                }
+                else
+                {
+                    foreach (var property in properties)
+                        cols.Add(new Text(property.GetMethod!.Invoke(entity, Array.Empty<object>())?.ToString() ?? ""));
+                }
+
+                table.AddRow(cols);
+            }
+
+            AnsiConsole.Render(table);
+
+            return ValueTask.CompletedTask;
+        }
     }
 }

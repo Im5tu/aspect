@@ -1,19 +1,21 @@
-﻿using YamlDotNet.Serialization;
+﻿using Aspect.Abstractions;
+using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 namespace Aspect.Policies.Suite
 {
     internal sealed class PolicySuiteSerializer : IPolicySuiteSerializer
     {
+        private readonly IFormatterFactory _formatterFactory;
+
+        public PolicySuiteSerializer(IFormatterFactory formatterFactory)
+        {
+            _formatterFactory = formatterFactory;
+        }
+
         public string Serialize(PolicySuite suite)
         {
-            var serializer = new SerializerBuilder()
-                .WithIndentedSequences()
-                .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
-                .WithNamingConvention(UnderscoredNamingConvention.Instance)
-                .Build();
-
-            return serializer.Serialize(suite);
+            return _formatterFactory.GetFormatterFor(FormatterType.Yaml).Format(suite);
         }
 
         public PolicySuite Deserialize(string policySuite)
