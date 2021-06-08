@@ -9,7 +9,7 @@ using Aspect.Services;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace Aspect.Commands
+namespace Aspect.Commands.old
 {
     internal class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
     {

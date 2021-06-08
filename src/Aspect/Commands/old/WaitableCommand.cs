@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Spectre.Console.Cli;
 
-namespace Aspect.Commands
+namespace Aspect.Commands.old
 {
     internal abstract class WaitableCommand<T> : Command<T>, IDisposable
         where T : CommandSettings

@@ -13,7 +13,7 @@ using Aspect.Policies;
 using Aspect.Policies.BuiltIn;
 using Spectre.Console.Cli;
 
-namespace Aspect.Commands
+namespace Aspect.Commands.old
 {
     internal sealed class DocGenCommand : Command<DocGenCommand.Settings>
     {

@@ -1,4 +1,4 @@
-﻿using Aspect.Commands;
+﻿using Aspect.Commands.old;
 using Aspect.Dependencies;
 using Aspect.Formatting;
 using Aspect.Policies;
@@ -7,6 +7,7 @@ using Aspect.Providers.Azure;
 using Aspect.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
+using InspectCommand = Aspect.Commands.Inspect.InspectCommand;
 
 namespace Aspect
 {

@@ -8,7 +8,7 @@ using Aspect.Policies.Suite;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace Aspect.Commands
+namespace Aspect.Commands.old
 {
     internal class PolicyInitCommand : Command<PolicyInitCommand.Settings>
     {

@@ -10,7 +10,7 @@ using Aspect.Policies.CompilerServices;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace Aspect.Commands
+namespace Aspect.Commands.old
 {
     internal sealed class PolicyListCommand : Command<PolicyListCommand.Settings>
     {

@@ -1,4 +1,5 @@
 ﻿using System;
+using Aspect.Commands;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -13,9 +14,7 @@ namespace Aspect
             AnsiConsole.Clear();
 
             if (!context.Name.Equals("run", StringComparison.OrdinalIgnoreCase))
-            {
-                AnsiConsole.MarkupLine($"[dodgerblue1]Aspect v{fvi.FileMajorPart}.{fvi.FileMinorPart}.{fvi.FileBuildPart}. http://github.com/im5tu/aspect[/]");
-            }
+                AnsiConsole.MarkupLine($"[{ColourPallet.Primary.Foreground.ToMarkup()}]Aspect v{fvi.FileMajorPart}.{fvi.FileMinorPart}.{fvi.FileBuildPart}. Code: http://github.com/im5tu/aspect[/]");
         }
     }
 }

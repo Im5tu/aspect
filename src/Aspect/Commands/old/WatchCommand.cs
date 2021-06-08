@@ -14,7 +14,7 @@ using Spectre.Console.Cli;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace Aspect.Commands
+namespace Aspect.Commands.old
 {
     internal class WatchCommand : WaitableCommand<WatchCommand.Settings>
     {

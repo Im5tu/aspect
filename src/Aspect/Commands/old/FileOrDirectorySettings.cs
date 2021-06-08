@@ -1,6 +1,6 @@
 ﻿using Spectre.Console.Cli;
 
-namespace Aspect.Commands
+namespace Aspect.Commands.old
 {
     internal class FileOrDirectorySettings : CommandSettings
     {

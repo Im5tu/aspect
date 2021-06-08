@@ -8,7 +8,7 @@ using Aspect.Abstractions;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace Aspect.Commands
+namespace Aspect.Commands.old
 {
     internal sealed class ResourcesCommand : Command<ResourcesCommand.Settings>
     {
