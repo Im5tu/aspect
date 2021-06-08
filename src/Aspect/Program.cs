@@ -1,4 +1,7 @@
-﻿using Aspect.Commands.old;
+﻿using Aspect.Commands.AutoComplete;
+using Aspect.Commands.Internal;
+using Aspect.Commands.LanguageServer;
+using Aspect.Commands.old;
 using Aspect.Dependencies;
 using Aspect.Formatting;
 using Aspect.Policies;

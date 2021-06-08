@@ -1,0 +1,19 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using Spectre.Console;
+using Spectre.Console.Cli;
+
+namespace Aspect.Commands.LanguageServer
+{
+    internal class LanguageServerCommand : ExecutableCommand<LanguageServerCommand.Settings>
+    {
+        internal class Settings : CommandSettings
+        {}
+
+        protected override IEnumerable<CommandStage<Settings>> GetCommandStages()
+        {
+            AnsiConsole.MarkupLine("[red bold]This command is not implemented yet[/]");
+            return Enumerable.Empty<CommandStage<Settings>>();
+        }
+    }
+}

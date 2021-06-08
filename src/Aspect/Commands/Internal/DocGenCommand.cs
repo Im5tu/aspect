@@ -8,12 +8,13 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Aspect.Abstractions;
+using Aspect.Commands.old;
 using Aspect.Extensions;
 using Aspect.Policies;
 using Aspect.Policies.BuiltIn;
 using Spectre.Console.Cli;
 
-namespace Aspect.Commands.old
+namespace Aspect.Commands.Internal
 {
     internal sealed class DocGenCommand : Command<DocGenCommand.Settings>
     {
