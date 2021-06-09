@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using Spectre.Console.Cli;
 
-namespace Aspect.Commands.old
+namespace Aspect.Commands
 {
     internal class DirectorySettings : CommandSettings
     {

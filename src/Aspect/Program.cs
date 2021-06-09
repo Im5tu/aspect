@@ -1,7 +1,10 @@
 ﻿using Aspect.Commands.AutoComplete;
+using Aspect.Commands.Inspect;
 using Aspect.Commands.Internal;
 using Aspect.Commands.LanguageServer;
+using Aspect.Commands.Resources;
 using Aspect.Commands.old;
+using Aspect.Commands.Watch;
 using Aspect.Dependencies;
 using Aspect.Formatting;
 using Aspect.Policies;
@@ -10,7 +13,6 @@ using Aspect.Providers.Azure;
 using Aspect.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
-using InspectCommand = Aspect.Commands.Inspect.InspectCommand;
 
 namespace Aspect
 {
@@ -27,12 +29,6 @@ namespace Aspect
                 config.AddCommand<AutoCompleteCommand>("autocomplete")
                     .WithDescription("Generate an autocomplete script for either powershell or bash.")
                     .IsHidden();
-
-#if DEBUG
-                config.AddCommand<DocGenCommand>("docgen")
-                    .WithDescription("Generate documents for the models for each cloud provider")
-                    .IsHidden();
-#endif
 
                 config.AddCommand<LanguageServerCommand>("langserver")
                     .WithDescription("Starts the language server.")
@@ -81,6 +77,10 @@ namespace Aspect
                     .WithExample(new[] {"watch", "D:\\policies"});
 
 #if DEBUG
+                config.AddCommand<DocGenCommand>("docgen")
+                    .WithDescription("Generate documents for the models for each cloud provider")
+                    .IsHidden();
+
                 config.PropagateExceptions();
                 config.ValidateExamples();
 #endif

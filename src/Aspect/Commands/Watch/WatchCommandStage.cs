@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -10,39 +8,25 @@ using Aspect.Policies;
 using Aspect.Policies.CompilerServices;
 using Aspect.Policies.Suite;
 using Spectre.Console;
-using Spectre.Console.Cli;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
-namespace Aspect.Commands.old
+namespace Aspect.Commands.Watch
 {
-    internal class WatchCommand : WaitableCommand<WatchCommand.Settings>
+    internal sealed class WatchCommandStage : WaitableCommandStage<WatchCommand.Settings>
     {
-        internal class Settings : DirectorySettings
-        {
-            [CommandOption("--delay")]
-            [Description("The period of time in milliseconds that needs to elapse between changes to a file.")]
-            public int? DelayInterval { get; init; }
-        }
-
         private readonly IPolicyCompiler _policyCompiler;
         private readonly IPolicySuiteValidator _policySuiteValidator;
+        private readonly IPolicySuiteSerializer _policySuiteSerializer;
 
-        public WatchCommand(IPolicyCompiler policyCompiler, IPolicySuiteValidator policySuiteValidator)
+        public WatchCommandStage(IPolicyCompiler policyCompiler,
+            IPolicySuiteValidator policySuiteValidator,
+            IPolicySuiteSerializer policySuiteSerializer)
         {
             _policyCompiler = policyCompiler;
             _policySuiteValidator = policySuiteValidator;
+            _policySuiteSerializer = policySuiteSerializer;
         }
 
-        public override ValidationResult Validate([NotNull] CommandContext context, [NotNull] Settings settings)
-        {
-            if (string.IsNullOrWhiteSpace(settings.Directory))
-                return ValidationResult.Error("Please specify a directory to watch");
-
-            return base.Validate(context, settings);
-        }
-
-        protected override int ExecuteCommand(CommandContext context, Settings settings, Action waiter)
+        protected override int ExecuteCommand(IExecutionData data, WatchCommand.Settings settings, Action waiter)
         {
             var delay = settings.DelayInterval.GetValueOrDefault(500);
 
@@ -81,7 +65,7 @@ namespace Aspect.Commands.old
                             }
                             else
                             {
-                                var validationResult = _policySuiteValidator.Validate(LoadPolicySuiteFromString(File.ReadAllText(args.FullPath)));
+                                var validationResult = _policySuiteValidator.Validate(_policySuiteSerializer.Deserialize(File.ReadAllText(args.FullPath)));
 
                                 var table = new Table();
                                 table.AddColumns("Policy", "IsValid", "Errors");
@@ -95,16 +79,6 @@ namespace Aspect.Commands.old
                 });
 
             return 0;
-        }
-
-        private PolicySuite LoadPolicySuiteFromString(string policy)
-        {
-            var deserializer = new DeserializerBuilder()
-                .IgnoreUnmatchedProperties()
-                .WithNamingConvention(UnderscoredNamingConvention.Instance)
-                .Build();
-
-            return deserializer.Deserialize<PolicySuite>(policy);
         }
     }
 }

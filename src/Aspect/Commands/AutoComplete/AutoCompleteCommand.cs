@@ -11,7 +11,7 @@ namespace Aspect.Commands.AutoComplete
         {
         }
 
-        protected override IEnumerable<CommandStage<Settings>> GetCommandStages()
+        protected override IEnumerable<CommandStage<Settings>> GetCommandStages(Settings commandSettings)
         {
             AnsiConsole.MarkupLine("[red bold]This command is not implemented yet[/]");
             return Enumerable.Empty<CommandStage<Settings>>();

@@ -16,7 +16,7 @@ namespace Aspect.Commands
             foreach (var line in GetHelpText())
                 Write(line, ColourPallet.Primary);
 
-            var stages = GetCommandStages().ToList();
+            var stages = GetCommandStages(settings).ToList();
             using var data = new ExecutionData();
 
             var index = 0;
@@ -36,7 +36,7 @@ namespace Aspect.Commands
             return 0;
         }
 
-        protected abstract IEnumerable<CommandStage<T>> GetCommandStages();
+        protected abstract IEnumerable<CommandStage<T>> GetCommandStages(T commandSettings);
         protected virtual IEnumerable<string> GetHelpText() => Enumerable.Empty<string>();
         protected void Write(string text, Style style)
         {

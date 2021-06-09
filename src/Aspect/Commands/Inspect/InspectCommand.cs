@@ -20,7 +20,7 @@ namespace Aspect.Commands.Inspect
             _policyCompiler = policyCompiler;
         }
 
-        protected override IEnumerable<CommandStage<Settings>> GetCommandStages()
+        protected override IEnumerable<CommandStage<Settings>> GetCommandStages(Settings commandSettings)
         {
             yield return new SelectCloudProviderCommandStage<Settings>(_cloudProviders);
             yield return new SelectRegionsCommandStage<Settings>();

@@ -1,27 +1,29 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using System.Threading.Tasks;
 using Spectre.Console.Cli;
 
-namespace Aspect.Commands.old
+namespace Aspect.Commands
 {
-    internal abstract class WaitableCommand<T> : Command<T>, IDisposable
+    internal abstract class WaitableCommandStage<T> : CommandStage<T>, IDisposable
         where T : CommandSettings
     {
         private readonly EventWaitHandle _waitHandle = new(false, EventResetMode.AutoReset);
 
-        public sealed override int Execute([NotNull] CommandContext context, [NotNull] T settings)
+        internal sealed override Task<int?> InvokeAsync(IExecutionData data, T settings)
         {
             Console.CancelKeyPress += SetCancelled;
 
-            return ExecuteCommand(context, settings, () =>
+            ExecuteCommand(data, settings, () =>
             {
                 _waitHandle.WaitOne();
                 Console.CancelKeyPress -= SetCancelled;
             });
+
+            return Task.FromResult<int?>(0);
         }
 
-        protected abstract int ExecuteCommand(CommandContext context, T settings, Action waiter);
+        protected abstract int ExecuteCommand(IExecutionData data, T settings, Action waiter);
 
         private void SetCancelled(object? sender, EventArgs e)
         {
