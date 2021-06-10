@@ -4,6 +4,7 @@ using Aspect.Commands.Internal;
 using Aspect.Commands.LanguageServer;
 using Aspect.Commands.Resources;
 using Aspect.Commands.old;
+using Aspect.Commands.Policy;
 using Aspect.Commands.Watch;
 using Aspect.Dependencies;
 using Aspect.Formatting;
