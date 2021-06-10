@@ -12,12 +12,21 @@ namespace Aspect.Providers.AWS.Models.EC2
         private readonly List<Rule> _egressRules = new();
 
         [Description("A friendly description of what the security group allows.")]
-        public string? Description { get; internal set; }
+        public string? Description { get; init; }
 
         [Description("A series of rules that affect inbound traffic.")]
         public IReadOnlyCollection<Rule> IngressRules => _ingressRules;
         [Description("A series of rules that affect outbound traffic.")]
         public IReadOnlyCollection<Rule> EgressRules => _egressRules;
+
+        [Description("The ID of the security group.")]
+        public string? Id { get; init; }
+
+        [Description("The AWS account ID of the owner of the security group.")]
+        public string? OwnerId { get; init; }
+
+        [Description("The ID of the VPC for the security group.")]
+        public string? VpcId { get; init; }
 
         public AwsSecurityGroup(AwsAccount account, string arn, string name, IReadOnlyList<KeyValuePair<string, string>> tags, string region)
             : base(account, arn, name, tags, nameof(AwsSecurityGroup), region)

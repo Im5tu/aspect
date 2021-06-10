@@ -63,7 +63,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
 
             sut.AvailabilityZone.Should().Be(nameof(ReservedInstances.AvailabilityZone));
             sut.CurrencyCode.Should().Be(nameof(ReservedInstances.CurrencyCode));
-            sut.Expires.Should().BeCloseTo(DateTime.UtcNow, 250);
+            sut.Expires.Should().BeCloseTo(DateTime.UtcNow, 1000);
             sut.FixedPrice.Should().Be(100);
             sut.Id.Should().Be(nameof(ReservedInstances.ReservedInstancesId));
             sut.InstanceCount.Should().Be(100);

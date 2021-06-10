@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,14 +14,22 @@ namespace Aspect.Providers.AWS.Resources.EC2
 {
     internal sealed class AwsSecurityGroupResourceExplorer : AWSResourceExplorer
     {
-        public AwsSecurityGroupResourceExplorer()
+        private readonly Func<AmazonEC2Config, IAmazonEC2> _creator;
+
+        public AwsSecurityGroupResourceExplorer(Func<AmazonEC2Config, IAmazonEC2> creator)
             : base(typeof(AwsSecurityGroup))
+        {
+            _creator = creator;
+        }
+
+        public AwsSecurityGroupResourceExplorer()
+            : this(config => new AmazonEC2Client(config))
         {
         }
 
         protected override async Task<IEnumerable<IResource>> DiscoverResourcesAsync(AwsAccount account, RegionEndpoint region, CancellationToken cancellationToken)
         {
-            using var ec2Client = new AmazonEC2Client(new AmazonEC2Config {RegionEndpoint = region});
+            using var ec2Client = _creator(new AmazonEC2Config {RegionEndpoint = region});
 
             var groups = new List<AwsSecurityGroup>();
 
@@ -39,8 +48,14 @@ namespace Aspect.Providers.AWS.Resources.EC2
                     // Inbound: sg.IpPermissions
                     // Egress:  sg.IpPermissionsEgress
 
-                    var arn = $"arn:aws:ec2:{ec2Client.Config.RegionEndpoint.SystemName}:{account.Id.Id}:security-group/{sg.GroupId}";
-                    var securityGroup = new AwsSecurityGroup(account, arn, sg.GroupName, sg.Tags.Select(x => new KeyValuePair<string, string>(x.Key, x.Value)).ToList(), region.SystemName);
+                    var arn = GenerateArn(account, region, "ec2", $"security-group/{sg.GroupId}");
+                    var securityGroup = new AwsSecurityGroup(account, arn, sg.GroupName.ValueOrEmpty(), sg.Tags.Convert(), region.SystemName)
+                    {
+                        Id = sg.GroupId.ValueOrEmpty(),
+                        OwnerId = sg.OwnerId.ValueOrEmpty(),
+                        VpcId = sg.VpcId.ValueOrEmpty(),
+                        Description = sg.Description.ValueOrEmpty()
+                    };
 
                     foreach (var inboundRule in sg.IpPermissions)
                         securityGroup.AddIngressRule(ParseSecurityGroupRule(inboundRule));
@@ -65,16 +80,16 @@ namespace Aspect.Providers.AWS.Resources.EC2
             if (permission.ToPort != 0)
                 rule.ToPort = permission.ToPort;
 
-            foreach (var ipv4Range in permission.Ipv4Ranges)
+            foreach (var ipv4Range in permission.Ipv4Ranges ?? Enumerable.Empty<IpRange>())
                 rule.AddIpV4Cidr(ipv4Range.CidrIp, ipv4Range.Description);
 
-            foreach (var ipv6Range in permission.Ipv6Ranges)
+            foreach (var ipv6Range in permission.Ipv6Ranges ?? Enumerable.Empty<Ipv6Range>())
                 rule.AddIpV6Cidr(ipv6Range.CidrIpv6, ipv6Range.Description);
 
-            foreach (var prefix in permission.PrefixListIds)
+            foreach (var prefix in permission.PrefixListIds ?? Enumerable.Empty<PrefixListId>())
                 rule.AddPrefix(prefix.Id, prefix.Description);
 
-            foreach (var sg in permission.UserIdGroupPairs)
+            foreach (var sg in permission.UserIdGroupPairs ?? Enumerable.Empty<UserIdGroupPair>())
                 rule.AddSecurityGroup(sg.GroupId, sg.GroupName, sg.Description, sg.UserId, sg.VpcId, sg.VpcPeeringConnectionId);
 
             return rule;
