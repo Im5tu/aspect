@@ -10,7 +10,10 @@ namespace Aspect.Policies.Tests.CompilerServices
         public string Name { get; set; } = null!;
         public string Type { get; set; } = nameof(TestResource);
         public string Region { get; } = "eu-west-1";
-        public IReadOnlyList<KeyValuePair<string, string>> Tags { get; set; } = null!;
+        public IReadOnlyList<KeyValuePair<string, string>> Tags { get; set; } = new List<KeyValuePair<string, string>>
+        {
+            new ("TestKey", "TestValue")
+        };
 
 
         public Int16 Int16 { get; set; } = Int16.MaxValue;

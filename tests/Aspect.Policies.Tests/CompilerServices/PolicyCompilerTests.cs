@@ -108,6 +108,10 @@ validate {{
         [InlineData("input.Array[*] == -1", ResourcePolicyExecution.Failed)]
         [InlineData("input.Nested.List[*].Values[*] == 1", ResourcePolicyExecution.Passed)]
         [InlineData("input.Nested.List[*].Values[*] == -1", ResourcePolicyExecution.Failed)]
+        [InlineData("input.Tags[*].Value == \"TestValue\"", ResourcePolicyExecution.Passed)]
+        [InlineData("input.Tags[*].Value != \"TestValue\"", ResourcePolicyExecution.Failed)]
+        [InlineData("input.Tags[_].Value == \"TestValue\"", ResourcePolicyExecution.Passed)]
+        [InlineData("input.Tags[_].Value != \"TestValue\"", ResourcePolicyExecution.Failed)]
         // All tests (token: _)
         [InlineData("input.Enumerable[_] >= 1", ResourcePolicyExecution.Passed)]
         [InlineData("input.Enumerable[_] < 1", ResourcePolicyExecution.Failed)]
