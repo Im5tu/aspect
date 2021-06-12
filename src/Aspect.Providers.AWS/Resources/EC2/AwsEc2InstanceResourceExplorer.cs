@@ -92,7 +92,7 @@ namespace Aspect.Providers.AWS.Resources.EC2
 
             foreach (var ni in interfaces ?? Enumerable.Empty<InstanceNetworkInterface>())
             {
-                result.Add(new()
+                result.Add(new AwsEc2Instance.NetworkInterface()
                 {
                     Description = ni.Description.ValueOrEmpty(),
                     InterfaceType = ni.InterfaceType.ValueOrEmpty(),

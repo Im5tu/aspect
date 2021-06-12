@@ -33,7 +33,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
                 {
                     Images = new List<Image>
                     {
-                        new Image
+                        new()
                         {
                             Architecture = nameof(Image.Architecture),
                             BootMode = BootModeValues.Uefi,
@@ -103,7 +103,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
                 {
                     Images = new List<Image>
                     {
-                        new Image
+                        new()
                         {
                             Architecture = nameof(Image.Architecture),
                             Description = nameof(Image.Description),
@@ -156,7 +156,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             sut.Tags.Should().HaveCount(1).And.Subject.First().Key.Should().Be("Name");
         }
 
-        private AwsAccount GetAccount() => new AwsAccount(new AwsAccount.AwsAccountIdentifier("000000000000", "Test"));
+        private AwsAccount GetAccount() => new(new AwsAccount.AwsAccountIdentifier("000000000000", "Test"));
 
         private IResourceExplorer<AwsAccount, AwsAccount.AwsAccountIdentifier> GetTarget(out Mock<IAmazonEC2> client)
         {

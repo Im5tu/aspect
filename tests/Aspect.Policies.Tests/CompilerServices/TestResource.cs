@@ -20,7 +20,7 @@ namespace Aspect.Policies.Tests.CompilerServices
         public Int32 Int32 { get; set; } = Int32.MaxValue;
         public Int64 Int64 { get; set; } = Int64.MaxValue;
         public Decimal Decimal { get; set; } = Decimal.MaxValue;
-        public NestedResource Nested { get; } = new NestedResource();
+        public NestedResource Nested { get; } = new();
 
 
         public IEnumerable<int> Enumerable { get; set; } = System.Linq.Enumerable.Empty<int>();
@@ -39,9 +39,9 @@ namespace Aspect.Policies.Tests.CompilerServices
             public string Name { get; } = "Nested";
             public List<SubResource> List { get; } = new()
             {
-                new SubResource { Values = new() { 4, 5, 6, 10} },
-                new SubResource { Values = new () { 1, 2, 3, 10} },
-                new SubResource { Values = new () { 10, 11, 12 } },
+                new SubResource { Values = new List<int>() { 4, 5, 6, 10} },
+                new SubResource { Values = new List<int>() { 1, 2, 3, 10} },
+                new SubResource { Values = new List<int>() { 10, 11, 12 } },
             };
 
             public class SubResource

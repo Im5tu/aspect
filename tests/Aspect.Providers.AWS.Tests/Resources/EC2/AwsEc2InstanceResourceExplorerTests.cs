@@ -34,7 +34,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
                     NextToken = nameof(DescribeInstancesResponse.NextToken),
                     Reservations = new List<Reservation>
                     {
-                        new Reservation
+                        new()
                         {
                             Instances = new List<Instance>
                             {
@@ -48,7 +48,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
                 {
                     Reservations = new List<Reservation>
                     {
-                        new Reservation
+                        new()
                         {
                             Instances = new List<Instance>
                             {
@@ -73,7 +73,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
                 {
                     Reservations = new List<Reservation>
                     {
-                        new Reservation
+                        new()
                         {
                             Instances = new List<Instance>
                             {
@@ -129,7 +129,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
                                             PrivateIpAddress = nameof(InstanceNetworkInterface.PrivateIpAddress),
                                             PrivateIpAddresses = new List<InstancePrivateIpAddress>
                                             {
-                                                new InstancePrivateIpAddress { PrivateIpAddress = nameof(InstanceNetworkInterface.PrivateIpAddress) }
+                                                new() { PrivateIpAddress = nameof(InstanceNetworkInterface.PrivateIpAddress) }
                                             },
                                             SourceDestCheck = true,
                                             Status = NetworkInterfaceStatus.Available,
@@ -256,7 +256,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
                 {
                     Reservations = new List<Reservation>
                     {
-                        new Reservation
+                        new()
                         {
                             Instances = new List<Instance>
                             {
@@ -341,7 +341,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             sut.SourceDestCheck.Should().BeTrue();
         }
 
-        private AwsAccount GetAccount() => new AwsAccount(new AwsAccount.AwsAccountIdentifier("000000000000", "Test"));
+        private AwsAccount GetAccount() => new(new AwsAccount.AwsAccountIdentifier("000000000000", "Test"));
 
         private IResourceExplorer<AwsAccount, AwsAccount.AwsAccountIdentifier> GetTarget(out Mock<IAmazonEC2> client)
         {

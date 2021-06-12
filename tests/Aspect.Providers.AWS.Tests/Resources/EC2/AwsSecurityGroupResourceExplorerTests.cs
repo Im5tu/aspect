@@ -78,7 +78,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             sut.EgressRules.Should().HaveCount(1);
         }
 
-        private AwsAccount GetAccount() => new AwsAccount(new AwsAccount.AwsAccountIdentifier("000000000000", "Test"));
+        private AwsAccount GetAccount() => new(new AwsAccount.AwsAccountIdentifier("000000000000", "Test"));
 
         private IResourceExplorer<AwsAccount, AwsAccount.AwsAccountIdentifier> GetTarget(out Mock<IAmazonEC2> client)
         {

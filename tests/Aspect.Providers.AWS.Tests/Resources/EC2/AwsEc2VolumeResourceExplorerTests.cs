@@ -36,7 +36,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
                         {
                             Attachments = new List<VolumeAttachment>
                             {
-                                new VolumeAttachment
+                                new()
                                 {
                                     Device = nameof(VolumeAttachment.Device),
                                     State = nameof(VolumeAttachment.State),
@@ -150,7 +150,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             sut.Throughput.Should().Be(100);
         }
 
-        private AwsAccount GetAccount() => new AwsAccount(new AwsAccount.AwsAccountIdentifier("000000000000", "Test"));
+        private AwsAccount GetAccount() => new(new AwsAccount.AwsAccountIdentifier("000000000000", "Test"));
 
         private IResourceExplorer<AwsAccount, AwsAccount.AwsAccountIdentifier> GetTarget(out Mock<IAmazonEC2> client)
         {

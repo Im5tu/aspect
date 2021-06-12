@@ -5,7 +5,7 @@ namespace Aspect.Formatting
 {
     internal sealed class JsonFormatter : IFormatter
     {
-        private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
+        private readonly JsonSerializerSettings _settings = new()
         {
             NullValueHandling = NullValueHandling.Ignore,
             Formatting = Newtonsoft.Json.Formatting.Indented,

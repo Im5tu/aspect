@@ -30,11 +30,11 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             ec2Client.Setup(x => x.DescribeRouteTablesAsync(It.IsAny<DescribeRouteTablesRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new DescribeRouteTablesResponse
                 {
-                    RouteTables = new()
+                    RouteTables = new List<RouteTable>()
                     {
                         new()
                         {
-                            Associations = new ()
+                            Associations = new List<RouteTableAssociation>()
                             {
                                 new()
                                 {
@@ -46,7 +46,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
                                     RouteTableAssociationId = nameof(RouteTableAssociation.RouteTableAssociationId),
                                 }
                             },
-                            Routes = new ()
+                            Routes = new List<Route>()
                             {
                                 new ()
                                 {
@@ -98,7 +98,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             sut.Id.Should().Be(nameof(RouteTable.RouteTableId));
         }
 
-        private AwsAccount GetAccount() => new AwsAccount(new AwsAccount.AwsAccountIdentifier("000000000000", "Test"));
+        private AwsAccount GetAccount() => new(new AwsAccount.AwsAccountIdentifier("000000000000", "Test"));
 
         private IResourceExplorer<AwsAccount, AwsAccount.AwsAccountIdentifier> GetTarget(out Mock<IAmazonEC2> client)
         {

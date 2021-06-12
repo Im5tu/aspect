@@ -42,7 +42,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
                             AddressFamily = nameof(ManagedPrefixList.AddressFamily),
                             Tags = new List<Tag>
                             {
-                                new Tag { Key = "Name", Value = nameof(ManagedPrefixList.PrefixListName) }
+                                new() { Key = "Name", Value = nameof(ManagedPrefixList.PrefixListName) }
                             }
                         }
                     }
@@ -61,7 +61,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             sut.State.Should().Be("create-complete");
         }
 
-        private AwsAccount GetAccount() => new AwsAccount(new AwsAccount.AwsAccountIdentifier("000000000000", "Test"));
+        private AwsAccount GetAccount() => new(new AwsAccount.AwsAccountIdentifier("000000000000", "Test"));
 
         private IResourceExplorer<AwsAccount, AwsAccount.AwsAccountIdentifier> GetTarget(out Mock<IAmazonEC2> client)
         {
