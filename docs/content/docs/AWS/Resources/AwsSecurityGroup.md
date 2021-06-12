@@ -14,11 +14,14 @@ A security group acts as a virtual firewall for your instance to control inbound
 |Arn|The Amazon Resource Names (ARN) uniquely identifying an AWS resource.|String|
 |Description|A friendly description of what the security group allows.|String|
 |EgressRules|A series of rules that affect outbound traffic. There may be 0 or more entries in this collection.|Collection\<[Rule](#rule)>|
+|Id|The ID of the security group.|String|
 |IngressRules|A series of rules that affect inbound traffic. There may be 0 or more entries in this collection.|Collection\<[Rule](#rule)>|
 |Name|The name of the resource.|String|
+|OwnerId|The AWS account ID of the owner of the security group.|String|
 |Region|The region in which this resource is located.|String|
 |Tags|The tags that are associated with the resource. Each entry has two properties: Key/Value. There may be 0 or more entries in this collection.|Collection\<KeyValuePair<String, String>>|
 |Type|The type of the resource. This is what is used in policy evaluation.|String|
+|VpcId|The ID of the VPC for the security group.|String|
 {{< /table >}}
 
 ## Policy Template

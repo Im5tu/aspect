@@ -27,8 +27,6 @@ namespace Aspect.Providers.AWS
                 .AddResourceExplorer<AwsRouteTableResourceExplorer>()
                 .AddResourceExplorer<AwsSecurityGroupResourceExplorer>()
                 .AddResourceExplorer<AwsTransitGatewayResourceExplorer>()
-                .AddResourceExplorer<AwsVpcEndpointResourceExplorer>()
-                .AddResourceExplorer<AwsVpcPeeringConnectionResourceExplorer>()
                 .AddResourceExplorer<AwsVpcResourceExplorer>()
                 .AddCloudProvider<AWSCloudProvider>();
         }
