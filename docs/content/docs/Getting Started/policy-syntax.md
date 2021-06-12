@@ -107,11 +107,61 @@ Aspects type system is designed to be as simple as possible to reason about. The
 
 Aspect performs some very basic type coercion on your behalf. For example, if you want to check if `1` is equal to `1.2`, Aspect will correct the data types if it can so that the equality check has a chance to succeed. If the input and the constant expressions can not be coerced, you will recieve a compiler error which will need to be fixed.
 
+### Collections
+
+A lot of the resources that area available in Aspect have one or more collections contained inside, often with resources nested underneath them. A good example of this is the `[AwsSecurityGroup](/docs/aws/resources/awssecuritygroup/)` which has the the `IngressRules` property, with a nested collection for `IPV4Ranges`. You can access collections using the following syntax declarations:
+
+{{< code lang="tf" >}}
+<statement block name> {
+    input.<collection name>[<access type>] <operator> <constant value>
+}
+{{< /code >}}
+
+The `<access type>` can either be set to ensure that all elements in a collection match the specified syntax, using the `input.<collection name>[_]` syntax: 
+
+{{< code lang="tf" >}}
+<statement block name> {
+    input.<collection name>[_] <operator> <constant value>
+}
+
+# eg:
+
+validate {
+    input.CollectionOfNumbers[_] > 0
+}
+{{< /code >}}
+
+; or they can be set to match any element in the collection using the `input.<collection name>[*]` syntax:
+
+{{< code lang="tf" >}}
+<statement block name> {
+    input.<collection name>[*] <operator> <constant value>
+}
+
+# eg:
+
+validate {
+    input.CollectionOfNumbers[*] > 0
+}
+{{< /code >}}
+
+Take a look at the following examples of how to use collections:
+
+{{< table style="table-striped" >}}
+|input|Description|
+|---|---|
+|`input.Collection[_] == 1`|All elements in `Collection` must be equal to `1`|
+|`input.Collection[*] == 1`|Any element in `Collection` must be equal to `1`|
+|`input.Collection[_].SubCollection[*] == 1`|All elements in `Collection` must have a `SubCollection` element equal to `1`|
+|`input.Collection[*].SubCollection[_] == 1`|Any element in `Collection` must have all elements in `SubCollection` equal to `1`|
+{{< /table >}}
+
+
 ## Functions
 
 When building your policies, you may which to perform certain operations like seeing whether or not a string contains a specific value. Aspect provides you with a set of built in functions to help you. Please see the [BuiltIn Functions](/docs/getting-started/builtin-functions/) documentation to see how to use functions properly.
 
-{{< alert style="warning" >}} _Note: You may not access any properties nested inside of collections at this time._ {{< /alert >}}
+{{< alert style="danger" >}}**Note:** _You cannot use functions with anything other than `collection<KeyValuePair>` which has limited function support._{{< /alert >}}
 
 ## Evaluation Logic
 

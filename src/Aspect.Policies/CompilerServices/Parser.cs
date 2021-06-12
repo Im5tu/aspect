@@ -25,7 +25,15 @@ namespace Aspect.Policies.CompilerServices
             if (policy is null)
                 return null;
 
-            return GenerateAST(context, policy);
+            var ast = GenerateAST(context, policy);
+
+            if (ast is {} && !ast.Validation.Expressions.Any())
+            {
+                context.RaiseError("CA-PAR-XXX");
+                return null;
+            }
+
+            return ast;
         }
 
         private PolicyAst? GenerateAST(CompilationContext context, PolicyStatement policy)
@@ -108,7 +116,9 @@ namespace Aspect.Policies.CompilerServices
             var type = right.Type;
             newExpression = null;
 
-            if (left.IsAssignableTo(typeof(IEnumerable)))
+            if (left.IsArray)
+                left = left.GetElementType()!; // We know this is an array so will always return a value
+            else if (left.IsAssignableTo(typeof(IEnumerable)))
             {
                 var args = left.GetGenericArguments();
                 if (args.Length == 1)
@@ -279,14 +289,14 @@ namespace Aspect.Policies.CompilerServices
                     if (!(
                             set[0] is IdentifierSyntaxToken ist
                             && set[1] is BracketSyntaxToken {BracketPosition: BracketPosition.Start} && set[3] is BracketSyntaxToken {BracketPosition: BracketPosition.End}
-                            && set[2] is NumericValueSyntaxToken or StarSyntaxToken or UnderscoreSyntaxToken
+                            && set[2] is StarSyntaxToken or UnderscoreSyntaxToken
                     ))
                     {
                         context.RaiseError("CA-PAR-013", set[1]);
                         return null;
                     }
 
-                    if (set[2] is StarSyntaxToken est)
+                    if (set[2] is StarSyntaxToken sst)
                     {
                         var property = type.GetProperty(ist.Identifier);
                         if (property is null)
@@ -295,23 +305,11 @@ namespace Aspect.Policies.CompilerServices
                             return null;
                         }
 
-                        accessor = new CollectionAccessorExpression(accessor, property, CollectionAccessorExpression.IndexerMode.Everything, est);
-                        type = property.PropertyType.GetGenericArguments()[0];
+                        var pt = property.PropertyType;
+                        accessor = new CollectionAccessorExpression(accessor, property, CollectionAccessorExpression.IndexerMode.Any, sst);
+                        type = pt.IsArray ? pt.GetElementType()  ?? throw new InvalidOperationException("Underlying element for array cannot be null") : pt.GetGenericArguments()[0];
                     }
-                    else if (set[2] is UnderscoreSyntaxToken alost)
-                    {
-                        // TODO :: TASK :: refactor this repetitiveness
-                        var property = type.GetProperty(ist.Identifier);
-                        if (property is null)
-                        {
-                            context.RaiseError("CA-PAR-012", ist);
-                            return null;
-                        }
-
-                        accessor = new CollectionAccessorExpression(accessor, property, CollectionAccessorExpression.IndexerMode.AtLeastOne, alost);
-                        type = property.PropertyType.GetGenericArguments()[0];
-                    }
-                    else if (set[2] is NumericValueSyntaxToken nvst && nvst.Type == typeof(int))
+                    else if (set[2] is UnderscoreSyntaxToken ust)
                     {
                         var property = type.GetProperty(ist.Identifier);
                         if (property is null)
@@ -320,8 +318,9 @@ namespace Aspect.Policies.CompilerServices
                             return null;
                         }
 
-                        accessor = new CollectionAccessorExpression(accessor, property, CollectionAccessorExpression.IndexerMode.IndexValue, nvst);
-                        type = property.PropertyType.GetGenericArguments()[0];
+                        var pt = property.PropertyType;
+                        accessor = new CollectionAccessorExpression(accessor, property, CollectionAccessorExpression.IndexerMode.All, ust);
+                        type = pt.IsArray ? pt.GetElementType() ?? throw new InvalidOperationException("Underlying element for array cannot be null") : pt.GetGenericArguments()[0];
                     }
                 }
             }

@@ -14,7 +14,7 @@ functionName(input.<property>, <arg1> [, arg2..])
 
 The first argument to each function must be an accessor to a property on the input. This is followed by the function arguments specified in one of the functions below.
 
-{{< alert style="warning" >}} _Note: You may not access any properties nested inside of collections at this time._ {{< /alert >}}
+{{< alert style="danger" >}}**Note:** _You cannot use functions with anything other than `collection<KeyValuePair>` which has limited function support._{{< /alert >}}
 
 ## Contains
 

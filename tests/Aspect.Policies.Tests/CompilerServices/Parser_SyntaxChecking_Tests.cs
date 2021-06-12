@@ -167,8 +167,8 @@ validate {
 }";
             var ast = await GetPolicyAstForDocument(policy, out var context);
 
-            ast.Should().NotBeNull();
-            context.Errors.Should().HaveCount(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
+            ast.Should().BeNull();
+            context.Errors.Should().HaveCountGreaterThan(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
         }
 
         [Fact(Timeout = TestTimeoutMs)]
@@ -195,8 +195,8 @@ validate {
 }";
             var ast = await GetPolicyAstForDocument(policy, out var context);
 
-            ast.Should().NotBeNull();
-            context.Errors.Should().HaveCount(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
+            ast.Should().BeNull();
+            context.Errors.Should().HaveCountGreaterThan(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
         }
 
         [Fact(Timeout = TestTimeoutMs)]
@@ -223,8 +223,8 @@ validate {{
 }}";
             var ast = await GetPolicyAstForDocument(policy, out var context);
 
-            ast.Should().NotBeNull();
-            context.Errors.Should().HaveCount(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
+            ast.Should().BeNull();
+            context.Errors.Should().HaveCountGreaterThan(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
         }
 
         [Fact(Timeout = TestTimeoutMs)]
@@ -251,8 +251,8 @@ validate {{
 }}";
             var ast = await GetPolicyAstForDocument(policy, out var context);
 
-            ast.Should().NotBeNull();
-            context.Errors.Should().HaveCount(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
+            ast.Should().BeNull();
+            context.Errors.Should().HaveCountGreaterThan(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
         }
 
         [Fact(Timeout = TestTimeoutMs)]
@@ -279,8 +279,8 @@ validate {{
 }}";
             var ast = await GetPolicyAstForDocument(policy, out var context);
 
-            ast.Should().NotBeNull();
-            context.Errors.Should().HaveCount(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
+            ast.Should().BeNull();
+            context.Errors.Should().HaveCountGreaterThan(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
         }
 
         [Fact(Timeout = TestTimeoutMs)]
@@ -307,8 +307,8 @@ validate {{
 }}";
             var ast = await GetPolicyAstForDocument(policy, out var context);
 
-            ast.Should().NotBeNull();
-            context.Errors.Should().HaveCount(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
+            ast.Should().BeNull();
+            context.Errors.Should().HaveCountGreaterThan(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
         }
 
         [Fact(Timeout = TestTimeoutMs)]
@@ -335,8 +335,8 @@ validate {{
 }}";
             var ast = await GetPolicyAstForDocument(policy, out var context);
 
-            ast.Should().NotBeNull();
-            context.Errors.Should().HaveCount(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
+            ast.Should().BeNull();
+            context.Errors.Should().HaveCountGreaterThan(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
         }
 
         [Fact(Timeout = TestTimeoutMs)]
@@ -363,8 +363,8 @@ validate {{
 }}";
             var ast = await GetPolicyAstForDocument(policy, out var context);
 
-            ast.Should().NotBeNull();
-            context.Errors.Should().HaveCount(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
+            ast.Should().BeNull();
+            context.Errors.Should().HaveCountGreaterThan(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
         }
 
         [Fact(Timeout = TestTimeoutMs)]
@@ -391,8 +391,8 @@ validate {{
 }}";
             var ast = await GetPolicyAstForDocument(policy, out var context);
 
-            ast.Should().NotBeNull();
-            context.Errors.Should().HaveCount(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
+            ast.Should().BeNull();
+            context.Errors.Should().HaveCountGreaterThan(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
         }
 
         [Fact(Timeout = TestTimeoutMs)]
@@ -419,8 +419,8 @@ validate {{
 }}";
             var ast = await GetPolicyAstForDocument(policy, out var context);
 
-            ast.Should().NotBeNull();
-            context.Errors.Should().HaveCount(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
+            ast.Should().BeNull();
+            context.Errors.Should().HaveCountGreaterThan(1).And.Subject.First().Code.Should().Be("CA-PAR-008");
         }
 
         [Fact(Timeout = TestTimeoutMs)]

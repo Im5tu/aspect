@@ -46,7 +46,7 @@ validate {{
             };
             var executor = await GetPolicyValidatorForPolicy(policy);
 
-            executor?.Invoke(testObject).Should().Be(expected);
+            executor!.Invoke(testObject).Should().Be(expected);
         }
 
         [Theory(Timeout = TestTimeoutMs)]
@@ -95,15 +95,31 @@ validate {{
             var executor = await GetPolicyValidatorForPolicy(policy);
 
             executor.Should().NotBeNull();
-            executor?.Invoke(testObject).Should().Be(expected);
+            executor!.Invoke(testObject).Should().Be(expected);
         }
 
-        [Theory(Timeout = TestTimeoutMs, Skip = "Implementation not complete")]
-        [InlineData("input.Enumerable[_] == 1", ResourcePolicyExecution.Passed)]
-        [InlineData("input.Nested.List[_].Values[_] == 1", ResourcePolicyExecution.Passed)]
-        [InlineData("input.Nested.List[_].Values[_] == 5", ResourcePolicyExecution.Failed)]
-        [InlineData("input.List[_] == 1", ResourcePolicyExecution.Passed)]
-        [InlineData("input.Array[_] == 1", ResourcePolicyExecution.Passed)]
+        [Theory(Timeout = TestTimeoutMs)]
+        // Any tests (token: *)
+        [InlineData("input.Enumerable[*] == 1", ResourcePolicyExecution.Passed)]
+        [InlineData("input.Enumerable[*] == -1", ResourcePolicyExecution.Failed)]
+        [InlineData("input.List[*] == 1", ResourcePolicyExecution.Passed)]
+        [InlineData("input.List[*] == -1", ResourcePolicyExecution.Failed)]
+        [InlineData("input.Array[*] == 1", ResourcePolicyExecution.Passed)]
+        [InlineData("input.Array[*] == -1", ResourcePolicyExecution.Failed)]
+        [InlineData("input.Nested.List[*].Values[*] == 1", ResourcePolicyExecution.Passed)]
+        [InlineData("input.Nested.List[*].Values[*] == -1", ResourcePolicyExecution.Failed)]
+        // All tests (token: _)
+        [InlineData("input.Enumerable[_] >= 1", ResourcePolicyExecution.Passed)]
+        [InlineData("input.Enumerable[_] < 1", ResourcePolicyExecution.Failed)]
+        [InlineData("input.List[_] >= 1", ResourcePolicyExecution.Passed)]
+        [InlineData("input.List[_] < -1", ResourcePolicyExecution.Failed)]
+        [InlineData("input.Array[_] >= 1", ResourcePolicyExecution.Passed)]
+        [InlineData("input.Array[_] < -1", ResourcePolicyExecution.Failed)]
+        [InlineData("input.Nested.List[_].Values[_] >= 1", ResourcePolicyExecution.Passed)]
+        [InlineData("input.Nested.List[_].Values[_] < -1", ResourcePolicyExecution.Failed)]
+        // Mixed tests on nested
+        [InlineData("input.Nested.List[_].Values[*] < 20", ResourcePolicyExecution.Passed)]
+        [InlineData("input.Nested.List[*].Values[_] < 20", ResourcePolicyExecution.Passed)]
         public async Task UsingArrayIterationsAsExpected(string policyPart, ResourcePolicyExecution expected)
         {
             var policy = $@"resource ""TestResource""
@@ -117,8 +133,8 @@ validate {{
                 List = new List<int> { 1, 2, 3 },
                 Array = new [] { 1, 2, 3 },
             };
-            var executor = await GetPolicyValidatorForPolicy(policy);
-            executor?.Invoke(testObject).Should().Be(expected);
+            var executor = await GetPolicyValidatorForPolicy(policy, out var context);
+            executor!.Invoke(testObject).Should().Be(expected);
         }
 
         [Fact(Timeout = TestTimeoutMs)]
@@ -130,7 +146,7 @@ validate {{
     input.Type == ""Test""
 }}";
             var executor = await GetPolicyValidatorForPolicy(policy);
-            executor?.Invoke(null!).Should().Be(ResourcePolicyExecution.Null);
+            executor!.Invoke(null!).Should().Be(ResourcePolicyExecution.Null);
         }
 
         [Fact(Timeout = TestTimeoutMs)]
@@ -146,7 +162,7 @@ validate {{
     input.Type == ""Test""
 }}";
             var executor = await GetPolicyValidatorForPolicy(policy);
-            executor?.Invoke(new TestResource { Name = "Test" }).Should().Be(ResourcePolicyExecution.SkippedByPolicy);
+            executor!.Invoke(new TestResource { Name = "Test" }).Should().Be(ResourcePolicyExecution.SkippedByPolicy);
         }
 
         [Fact(Timeout = TestTimeoutMs)]
@@ -162,7 +178,7 @@ validate {{
     input.Type == ""Test""
 }}";
             var executor = await GetPolicyValidatorForPolicy(policy);
-            executor?.Invoke(new TestResource { Name = "Test" }).Should().Be(ResourcePolicyExecution.SkippedByPolicy);
+            executor!.Invoke(new TestResource { Name = "Test" }).Should().Be(ResourcePolicyExecution.SkippedByPolicy);
         }
 
         internal static async Task<Func<IResource, ResourcePolicyExecution>?> GetPolicyValidatorForPolicy(string policyDocument)
@@ -172,7 +188,13 @@ validate {{
             // Task is needed to work around this issue: https://github.com/xunit/xunit/issues/2222
             var c = new CompilationContext(new SourceTextCompilationUnit(policyDocument));
             context = c;
-            return Task.Run(() => new PolicyCompiler(new Lexer(), new Parser(new TestResourceTypeLocator())).GetFunctionForPolicy(c.Source));
+            return Task.Run(() =>
+            {
+                var lexer = new Lexer();
+                var parser = new Parser(new TestResourceTypeLocator());
+                var compiler = new PolicyCompiler(lexer, parser);
+                return compiler.GetFunctionForPolicy(c.Source);
+            });
         }
     }
 }

@@ -22,25 +22,28 @@ namespace Aspect.Policies.Tests.CompilerServices
 
         public IEnumerable<int> Enumerable { get; set; } = System.Linq.Enumerable.Empty<int>();
         public List<int> List  { get; set; }= System.Linq.Enumerable.Empty<int>().ToList();
-        public List<List<int>> NestedList  { get; set; }= System.Linq.Enumerable.Empty<List<int>>().ToList();
         public int[] Array  { get; set; }= System.Linq.Enumerable.Empty<int>().ToArray();
+
+        public List<string> ListOfStrings { get; set; } = new()
+        {
+            "Hello World",
+            "Hello Stu",
+            "Hello Ash"
+        };
 
         public class NestedResource
         {
             public string Name { get; } = "Nested";
             public List<SubResource> List { get; } = new()
             {
-                new SubResource()
+                new SubResource { Values = new() { 4, 5, 6, 10} },
+                new SubResource { Values = new () { 1, 2, 3, 10} },
+                new SubResource { Values = new () { 10, 11, 12 } },
             };
 
             public class SubResource
             {
-                public List<int> Values { get; } = new()
-                {
-                    1,
-                    2,
-                    3
-                };
+                public List<int> Values { get; init; } = new();
             }
         }
     }

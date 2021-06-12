@@ -17,22 +17,17 @@ namespace Aspect.Policies.CompilerServices.Expressions
 
         public override string ToString()
         {
-            switch (Mode)
+            return Mode switch
             {
-                case IndexerMode.AtLeastOne:
-                    return $"{Accessor}.{Property.Name}[_]";
-                case IndexerMode.IndexValue:
-                    return $"{Accessor}.{Property.Name}[{((NumericValueSyntaxToken)Token).Value}]";
-            }
-
-            return $"{Accessor}.{Property.Name}[*]";
+                IndexerMode.Any => $"{Accessor}.{Property.Name}[_]",
+                _ => $"{Accessor}.{Property.Name}[*]"
+            };
         }
 
         public enum IndexerMode
         {
-            Everything,
-            AtLeastOne,
-            IndexValue
+            All,
+            Any
         }
     }
 }
