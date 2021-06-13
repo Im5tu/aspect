@@ -71,6 +71,7 @@ If you are running a policy file, the CLI will respect the provider specific env
 |---|---|
 |-1|One or more resources failed policy evaluation|
 |0|Ran to completion with no failed resources or errors|
-|1|Policy could not be validated successfully|
-|2|The policy run returned errors|
+|1|The policy suite could not be found|
+|2|Policy could not be validated successfully|
+|3|The policy run returned errors|
 {{< /table >}}
