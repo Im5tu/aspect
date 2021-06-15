@@ -83,12 +83,16 @@ namespace Aspect.Policies.CompilerServices
                         if (left is null || right is null)
                             continue;
 
-                        if (TryCoerseProperty(left.Property.PropertyType, right, out var newExpression))
+                        var leftType = left.Property.PropertyType;
+                        if (TryCoerseProperty(leftType, right, out var newExpression))
                             right = newExpression;
-                        else if (left.Property.PropertyType != right.Type)
+                        else if (leftType != right.Type)
                         {
-                            context.RaiseError("CA-PAR-008", operatorToken);
-                            continue;
+                            if (Nullable.GetUnderlyingType(leftType) != right.Type)
+                            {
+                                context.RaiseError("CA-PAR-008", operatorToken);
+                                continue;
+                            }
                         }
 
                         expressions.Add(new BinaryExpression(left, operatorToken, right));
@@ -129,12 +133,16 @@ namespace Aspect.Policies.CompilerServices
                     return false;
             }
 
+            var nullableType = Nullable.GetUnderlyingType(left);
+            var isNullable = nullableType is not null;
+            left = nullableType ?? left;
+
             // We can rewrite the constant expression in certain cases before we do the type checking
             if (left == typeof(Int32))
             {
                 if (type == typeof(Int16))
                 {
-                    newExpression = new ConstantExpression(typeof(Int32), Convert.ToInt32(right.Value));
+                    newExpression = new ConstantExpression(isNullable ? typeof(Nullable<Int32>) : typeof(Int32), Convert.ToInt32(right.Value));
                     return true;
                 }
             }
@@ -143,7 +151,7 @@ namespace Aspect.Policies.CompilerServices
                 if (type == typeof(Int16)
                     || type == typeof(Int32))
                 {
-                    newExpression = new ConstantExpression(typeof(Int64), Convert.ToInt64(right.Value));
+                    newExpression = new ConstantExpression(isNullable ? typeof(Nullable<Int64>) : typeof(Int64), Convert.ToInt64(right.Value));
                     return true;
                 }
             }
@@ -153,9 +161,14 @@ namespace Aspect.Policies.CompilerServices
                     || type == typeof(Int32)
                     || type == typeof(Int64))
                 {
-                    newExpression = new ConstantExpression(typeof(Decimal), Convert.ToDecimal(right.Value));
+                    newExpression = new ConstantExpression(isNullable ? typeof(Nullable<Decimal>) : typeof(Decimal), Convert.ToDecimal(right.Value));
                     return true;
                 }
+            }
+            else if (left == typeof(bool) && isNullable)
+            {
+                newExpression = new ConstantExpression(typeof(Nullable<bool>),  Convert.ToBoolean(right.Value));
+                return true;
             }
 
             return false;

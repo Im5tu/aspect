@@ -134,12 +134,12 @@ namespace Aspect.Policies.CompilerServices.Generator
             var right = Visit(expression.Right, input);
             Func<Expression, Expression> func = expression.OperatorToken switch
             {
-                EqualsSyntaxToken => l => Expression.Equal(l, right),
-                DoesNotEqualSyntaxToken => l => Expression.NotEqual(l, right),
-                GreaterThanSyntaxToken => l => Expression.GreaterThan(l, right),
-                GreaterThanOrEqualSyntaxToken => l => Expression.GreaterThanOrEqual(l, right),
-                LessThanSyntaxToken => l => Expression.LessThan(l, right),
-                LessThanOrEqualSyntaxToken => l => Expression.LessThanOrEqual(l, right),
+                EqualsSyntaxToken => l => Expression.Equal(l.ValueOrDefault(), right.ValueOrDefault()),
+                DoesNotEqualSyntaxToken => l => Expression.NotEqual(l.ValueOrDefault(), right.ValueOrDefault()),
+                GreaterThanSyntaxToken => l => Expression.GreaterThan(l.ValueOrDefault(), right.ValueOrDefault()),
+                GreaterThanOrEqualSyntaxToken => l => Expression.GreaterThanOrEqual(l.ValueOrDefault(), right.ValueOrDefault()),
+                LessThanSyntaxToken => l => Expression.LessThan(l.ValueOrDefault(), right.ValueOrDefault()),
+                LessThanOrEqualSyntaxToken => l => Expression.LessThanOrEqual(l.ValueOrDefault(), right.ValueOrDefault()),
                 _ => throw new NotSupportedException()
             };
 
@@ -208,5 +208,21 @@ namespace Aspect.Policies.CompilerServices.Generator
         }
 
         private Expression VisitConstant(ConstantExpression expression) => Expression.Constant(expression.Value, expression.Type);
+    }
+
+    internal static class ExpressionExtensions
+    {
+        internal static Expression ValueOrDefault(this Expression expression)
+        {
+            if (!(expression is System.Linq.Expressions.ConstantExpression or System.Linq.Expressions.MemberExpression))
+                return expression;
+
+            var nullableType = Nullable.GetUnderlyingType(expression.Type);
+            if (nullableType is null)
+                return expression;
+
+            var method = expression.Type.GetMethod(nameof(Nullable<int>.GetValueOrDefault), Array.Empty<Type>())!;
+            return Expression.Call(expression, method);
+        }
     }
 }
