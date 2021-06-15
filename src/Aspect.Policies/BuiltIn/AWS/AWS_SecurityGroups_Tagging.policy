@@ -1,5 +1,0 @@
-﻿resource "AwsSecurityGroup"
-
-validate {
-    input.Name == "default"
-}

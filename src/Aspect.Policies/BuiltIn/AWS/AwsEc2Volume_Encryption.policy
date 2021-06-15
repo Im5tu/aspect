@@ -1,0 +1,9 @@
+﻿resource "AwsEc2Volume"
+
+exclude {
+    hasKey(input.Tags, "AspectIgnore")
+}
+
+validate {
+    input.Encrypted == true
+}

@@ -1,0 +1,9 @@
+﻿resource "AwsEc2Instance"
+
+exclude {
+    hasKey(input.Tags, "AspectIgnore")
+}
+
+validate {
+    input.NetworkInterfaces[_].SourceDestCheck == true
+}

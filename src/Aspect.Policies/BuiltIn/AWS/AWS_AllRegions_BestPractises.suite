@@ -1,10 +1,7 @@
 ﻿name: AWS Best Practises
-description: The best practises for all AWS resources. (EXPERIMENTAL)
-scopes:
+description: Includes some best practises for AWS resources, such as tagging, egress rules and more.
+policies:
     -   type: AWS
-        name: Test
-        regions:
-            - eu-west-1
-            - eu-west-2
+        name: All built in policies
         policies:
-            - BuiltIn\AWS\AWS_SecurityGroups_Tagging.policy
+            - BuiltIn\AWS\

@@ -1,0 +1,10 @@
+﻿resource "AwsSecurityGroup"
+
+exclude {
+    hasKey(input.Tags, "AspectIgnore")
+    hasKey(input.Tags, "PubliclyAccessible")
+}
+
+validate {
+    input.IngressRules[_].IPV4Ranges[_].CIDR != "0.0.0.0/0"
+}

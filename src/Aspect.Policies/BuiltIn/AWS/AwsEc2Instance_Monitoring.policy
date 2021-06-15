@@ -1,0 +1,10 @@
+﻿resource "AwsEc2Instance"
+
+exclude {
+    hasKey(input.Tags, "AspectIgnore")
+    hasKey(input.Tags, "PubliclyAccessible")
+}
+
+validate {
+    input.Monitoring == "enabled"
+}

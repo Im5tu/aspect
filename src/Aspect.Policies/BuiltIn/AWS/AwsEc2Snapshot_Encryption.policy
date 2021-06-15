@@ -1,0 +1,10 @@
+﻿resource "AwsEc2Snapshot"
+
+exclude {
+    hasKey(input.Tags, "AspectIgnore")
+    input.Progress != "100%"
+}
+
+validate {
+    input.Encrypted == true
+}

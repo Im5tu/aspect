@@ -1,0 +1,12 @@
+﻿resource "AwsEc2Instance"
+
+exclude {
+    hasKey(input.Tags, "AspectIgnore")
+}
+
+validate {
+    hasKey(input.Tags, "Name")
+    hasKey(input.Tags, "Product")
+    hasKey(input.Tags, "Product-Group")
+    hasKey(input.Tags, "Environment")
+}
