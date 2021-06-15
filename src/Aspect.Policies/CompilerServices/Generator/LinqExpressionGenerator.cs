@@ -33,20 +33,18 @@ namespace Aspect.Policies.CompilerServices.Generator
             // Setup arguments and variable to hold the correct type
             var resourceType = typeof(IResource);
             var inputParameter = Expression.Parameter(resourceType);
+
+            // Skip if null
+            var skipIfNull = Expression.IfThen(Expression.Equal(inputParameter, Expression.Constant(null, typeof(object))), returnNull);
+            expressions.Add(skipIfNull);
+
+            // Variable assignment and type check
             var variableParameter = Expression.Variable(policy.ResourceType);
             var variableAssignment = Expression.IfThenElse(Expression.Not(Expression.TypeEqual(inputParameter, policy.ResourceType)), returnByType, Expression.Assign(variableParameter, Expression.Convert(inputParameter, policy.ResourceType)));
 
             // Ensure that we start the function body with the correct parameters
             expressions.Add(resultVariableAssignment);
             expressions.Add(variableAssignment);
-
-            // Validate the type is what we expect
-            var typeProperty = policy.ResourceType.GetProperty(nameof(IResource.Type));
-            var skipIfNull = Expression.IfThen(Expression.Equal(variableParameter, Expression.Constant(null, typeof(object))), returnNull);
-            var resourceEquality = Expression.IfThen(Expression.NotEqual(Expression.MakeMemberAccess(variableParameter, typeProperty!), Expression.Constant(policy.Resource)), returnByType);
-
-            expressions.Add(skipIfNull);
-            expressions.Add(resourceEquality);
 
             // Build the parts for the body, where applicable
             GenerateExpressionsForStatement(policy.Include, expressions, variableParameter, returnFailed, returnByPolicy, true);
