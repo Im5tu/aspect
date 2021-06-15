@@ -40,6 +40,14 @@ namespace Aspect.Commands
             return answer;
         }
 
+        internal static IEnumerable<string> AskToSelectMultiple(this IExecutionData data, string message, IEnumerable<string> choices, bool required)
+        {
+            var prompt = new MultiSelectionPrompt<string> {Title = message, Required = required, HighlightStyle = ColourPallet.Selection};
+            prompt.AddChoices(choices.OrderBy(x => x));
+
+            return AnsiConsole.Prompt(prompt);
+        }
+
         internal static IEnumerable<string> AskToSelectMultiple(this IExecutionData data, string key, string message, IEnumerable<string> choices, bool required)
         {
             var prompt = new MultiSelectionPrompt<string> {Title = message, Required = required, HighlightStyle = ColourPallet.Selection};

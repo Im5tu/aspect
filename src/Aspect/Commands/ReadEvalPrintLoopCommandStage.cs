@@ -33,9 +33,12 @@ namespace Aspect.Commands
             {
                 await OnNextIterationAsync(data);
 
-                Write($"Available commands: {string.Join(", ", userCommands.Select(x => x.Prefix))}", ColourPallet.Primary);
-                foreach (var cmd in userCommands)
-                    Write($"  - {cmd.Prefix}: {cmd.Description}", ColourPallet.Primary);
+                if (userCommands.Count > 1)
+                {
+                    Write($"Available commands: {string.Join(", ", userCommands.Select(x => x.Prefix))}", ColourPallet.Primary);
+                    foreach (var cmd in userCommands)
+                        Write($"  - {cmd.Prefix}: {cmd.Description}", ColourPallet.Primary);
+                }
 
                 var input = data.AskQuestion(_statementPrompt, _emptyMeansExit);
                 exit = "exit".Equals(input.Trim(), StringComparison.OrdinalIgnoreCase) || _emptyMeansExit && string.IsNullOrWhiteSpace(input);

@@ -20,6 +20,9 @@ namespace Aspect.Commands.Run
         {
             [CommandOption("--format")]
             public FormatterType? Formatter { get; init; }
+
+            [CommandOption("-o|--out")]
+            public string? OutputFile { get; set; }
         }
 
         public RunCommand(IPolicyLoader policyLoader,
@@ -41,6 +44,9 @@ namespace Aspect.Commands.Run
 
             if (string.IsNullOrWhiteSpace(source))
                 source = Environment.CurrentDirectory;
+
+            if (string.IsNullOrWhiteSpace(settings.OutputFile))
+                settings.OutputFile = $"PolicyRun-{DateTime.Now:yyyyMMddHHmmss}.{settings.Formatter.GetValueOrDefault(FormatterType.Json).ToString().ToLowerInvariant()}";
 
             return _policyLoader.ValidateExists(source) ?? base.Validate(context, settings);
         }

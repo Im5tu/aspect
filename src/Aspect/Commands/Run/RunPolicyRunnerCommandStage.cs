@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Aspect.Abstractions;
@@ -22,20 +23,17 @@ namespace Aspect.Commands.Run
         internal override async Task<int?> InvokeAsync(IExecutionData data, RunCommand.Settings settings)
         {
             var policy = data.Get<PolicySuite>(nameof(PolicySuite));
-            var results = (await _policySuiteRunner.RunPoliciesAsync(policy, default)).ToList();
-            var aggregatedResult = new Result
-            {
-                Errors = results.Where(x => x.Error is not null).Select(x => x.Error!).ToList(),
-                FailedResources = results.Where(x => x.FailedResources is not null).SelectMany(x => x.FailedResources!).ToList()
-            };
+            var results = await _policySuiteRunner.RunPoliciesAsync(policy, default);
 
             var formatter = _formatterFactory.GetFormatterFor(settings.Formatter.GetValueOrDefault(FormatterType.Json));
-            Console.WriteLine(formatter.Format(aggregatedResult));
+            var formattedResult = formatter.Format(results);
 
-            if (aggregatedResult.Errors.Count > 0)
-                return 2;
+            await File.WriteAllTextAsync(settings.OutputFile!, formattedResult);
 
-            if (aggregatedResult.FailedResources.Count > 0)
+            if (results.Errors?.Any() ?? false)
+                 return 2;
+
+            if (results.FailedResources?.Any() ?? false)
                 return -1;
 
             return 0;
