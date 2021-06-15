@@ -5,13 +5,13 @@ namespace Aspect.Services
 {
     internal class PolicySuiteRunResult
     {
-        public string? Error { get; set; }
-        public List<FailedResource>? FailedResources { get; set; }
+        public IEnumerable<string>? Errors { get; init; }
+        public IEnumerable<FailedResource>? FailedResources { get; set; }
 
-        public class FailedResource
+        internal class FailedResource
         {
             public IResource? Resource { get; init; }
-            public string? Source { get; init; }
+            public IEnumerable<string>? FailedPolicies { get; init; }
         }
     }
 }

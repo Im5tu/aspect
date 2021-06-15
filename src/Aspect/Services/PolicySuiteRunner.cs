@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,7 @@ using Aspect.Policies.BuiltIn;
 using Aspect.Policies.CompilerServices;
 using Aspect.Policies.CompilerServices.CompilationUnits;
 using Aspect.Policies.Suite;
+using Spectre.Console;
 
 namespace Aspect.Services
 {
@@ -32,37 +34,64 @@ namespace Aspect.Services
             _builtInPolicyProvider = builtInPolicyProvider;
         }
 
-        public async Task<IEnumerable<PolicySuiteRunResult>> RunPoliciesAsync(PolicySuite suite, CancellationToken cancellationToken = default)
+        public async Task<PolicySuiteRunResult> RunPoliciesAsync(PolicySuite suite, CancellationToken cancellationToken = default)
         {
             var scopes = suite.Policies?.ToList();
             if (scopes is null || scopes.Count == 0)
-                return Enumerable.Empty<PolicySuiteRunResult>();
+                return new PolicySuiteRunResult
+                {
+                    Errors = new List<string> { "Policy does not specify any policies." },
+                    FailedResources = Enumerable.Empty<PolicySuiteRunResult.FailedResource>()
+                };
 
-            var resultScopes = scopes.Select(scope => RunPolicy(scope, cancellationToken)).ToArray();
-            return await Task.WhenAll(resultScopes);
+            var failedResources = new ConcurrentDictionary<IResource, List<string>>();
+            var errors = new List<string>();
+            var result = new PolicySuiteRunResult
+            {
+                Errors = errors
+            };
+
+            var evaluationTask = scopes.Select(scope => RunPolicy(scope, cancellationToken)).ToArray();
+            foreach (var task in evaluationTask)
+            {
+                try
+                {
+                    var tsk = await task;
+                    foreach (var r in tsk.FailedResources)
+                        failedResources.GetOrAdd(r.Key, _ => new()).AddRange(r.Value);
+                }
+                catch (Exception e)
+                {
+                    errors.Add(e.ToString());
+                    AnsiConsole.WriteException(e);
+                }
+            }
+
+            result.FailedResources = failedResources.Select(x => new PolicySuiteRunResult.FailedResource
+            {
+                Resource = x.Key,
+                FailedPolicies = x.Value
+            }).ToList();
+
+            return result;
         }
 
-        private async Task<PolicySuiteRunResult> RunPolicy(PolicyElement scope, CancellationToken cancellationToken)
+        private async Task<EvaluationResult> RunPolicy(PolicyElement scope, CancellationToken cancellationToken)
         {
             if (!_cloudProviders.TryGetValue(scope.Type ?? string.Empty, out var provider))
-            {
-                return new PolicySuiteRunResult { Error = $"Invalid cloud provider: '{scope.Type ?? string.Empty}'" };
-            }
+                throw new InvalidOperationException($"Invalid cloud provider: '{scope.Type ?? string.Empty}'");
 
             // Get all the policies we need
             var policies = GetPolicies(scope);
 
             // Compile all the policies
             var (evaluators, types) = GetCompiledPolicies(policies);
-
             var evaluationPipeline = new EvaluationPipeline(evaluators);
 
             // Load all of the resources
             await LoadResourcesAsync(scope.Regions ?? provider.GetAllRegions(), types, provider, evaluationPipeline, cancellationToken);
 
-            // Validation
-            var failedResources = await evaluationPipeline.CompleteAsync();
-            return new PolicySuiteRunResult { FailedResources = failedResources };
+            return await evaluationPipeline.CompleteAsync();
         }
 
         private async Task LoadResourcesAsync(IEnumerable<string> regions, List<Type> types, ICloudProvider provider, EvaluationPipeline evaluationPipeline, CancellationToken cancellationToken)

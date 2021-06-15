@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -13,7 +14,8 @@ namespace Aspect.Services
         private readonly IEnumerable<ExecutablePolicy> _policies;
         private readonly Channel<IResource> _channel;
         private readonly Task _evaluator;
-        private readonly List<PolicySuiteRunResult.FailedResource> _failed = new();
+        private readonly ConcurrentDictionary<IResource, List<string>> _failed = new();
+        private int _resourceCount = 0;
 
         public EvaluationPipeline(IEnumerable<ExecutablePolicy> policies)
         {
@@ -28,9 +30,10 @@ namespace Aspect.Services
 
             await foreach (var resource in _channel.Reader.ReadAllAsync())
             {
+                _resourceCount += 1;
                 foreach (var policy in _policies)
                     if (policy.Evaluator(resource) == ResourcePolicyExecution.Failed)
-                        _failed.Add(new PolicySuiteRunResult.FailedResource {Resource = resource, Source = policy.Source.GetPolicyName()});
+                        _failed.GetOrAdd(resource, _ => new List<string>()).Add(policy.Source.GetPolicyName());
             }
         }
 
@@ -40,11 +43,13 @@ namespace Aspect.Services
                 await _channel.Writer.WriteAsync(resource);
         }
 
-        internal async Task<List<PolicySuiteRunResult.FailedResource>> CompleteAsync()
+        internal async Task<EvaluationResult> CompleteAsync()
         {
             _channel.Writer.TryComplete();
             await _channel.Reader.Completion;
-            return _failed;
+            return new EvaluationResult(_resourceCount, _failed);
         }
     }
+
+    internal record EvaluationResult(int ResourceCount, IReadOnlyDictionary<IResource, List<string>> FailedResources);
 }
