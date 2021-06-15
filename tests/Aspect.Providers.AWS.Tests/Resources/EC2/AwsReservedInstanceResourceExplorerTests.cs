@@ -58,7 +58,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             var sut = (AwsReservedInstance)resources[0];
             sut.Type.Should().Be(nameof(AwsReservedInstance));
             sut.Name.Should().Be("Test");
-            sut.Arn.Should().Be("arn:aws:ec2:eu-west-1:000000000000:reserved-instances/ReservedInstancesId");
+            sut.CloudId.Should().Be("arn:aws:ec2:eu-west-1:000000000000:reserved-instances/ReservedInstancesId");
             sut.Region.Should().Be("eu-west-1");
 
             sut.AvailabilityZone.Should().Be(nameof(ReservedInstances.AvailabilityZone));

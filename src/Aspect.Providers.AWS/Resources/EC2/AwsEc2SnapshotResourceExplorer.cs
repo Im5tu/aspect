@@ -34,7 +34,10 @@ namespace Aspect.Providers.AWS.Resources.EC2
             string? nextToken = null;
             do
             {
-                var response = await ec2Client.DescribeSnapshotsAsync(new DescribeSnapshotsRequest { NextToken = nextToken }, cancellationToken);
+                var response = await ec2Client.DescribeSnapshotsAsync(new DescribeSnapshotsRequest { NextToken = nextToken, Filters = new List<Filter>
+                {
+                    new() { Name = "owner-id", Values = new() { account.Id.Id } }
+                }}, cancellationToken);
                 nextToken = response.NextToken;
 
                 foreach (var ss in response.Snapshots)

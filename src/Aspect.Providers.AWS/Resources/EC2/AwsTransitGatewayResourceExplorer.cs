@@ -34,7 +34,10 @@ namespace Aspect.Providers.AWS.Resources.EC2
             string? nextToken = null;
             do
             {
-                var response = await ec2Client.DescribeTransitGatewaysAsync(new DescribeTransitGatewaysRequest { NextToken = nextToken }, cancellationToken);
+                var response = await ec2Client.DescribeTransitGatewaysAsync(new DescribeTransitGatewaysRequest { NextToken = nextToken, Filters = new List<Filter>
+                {
+                    new() { Name = "owner-id", Values = new() { account.Id.Id } }
+                } }, cancellationToken);
                 nextToken = response.NextToken;
 
                 foreach (var tg in response.TransitGateways)
@@ -59,16 +62,16 @@ namespace Aspect.Providers.AWS.Resources.EC2
         {
             return new()
             {
-                SupportsDNS = "enable".Equals(tgo.DnsSupport?.Value.ValueOrEmpty(), StringComparison.OrdinalIgnoreCase),
-                SupportsMulticast = "enable".Equals(tgo.MulticastSupport?.Value.ValueOrEmpty(), StringComparison.OrdinalIgnoreCase),
-                AmazonAsn = tgo.AmazonSideAsn,
-                SupportsECMP = "enable".Equals(tgo.VpnEcmpSupport?.Value.ValueOrEmpty(), StringComparison.OrdinalIgnoreCase),
-                AutoAcceptsSharedAttachments = "enable".Equals(tgo.AutoAcceptSharedAttachments?.Value.ValueOrEmpty(), StringComparison.OrdinalIgnoreCase),
-                DefaultRouteTableAssociation = "enable".Equals(tgo.DefaultRouteTableAssociation?.Value.ValueOrEmpty(), StringComparison.OrdinalIgnoreCase),
-                DefaultRouteTablePropagation = "enable".Equals(tgo.DefaultRouteTablePropagation?.Value.ValueOrEmpty(), StringComparison.OrdinalIgnoreCase),
-                TransitGatewayCidrBlocks = tgo.TransitGatewayCidrBlocks.ValueOrEmpty(),
-                AssociationDefaultRouteTableId = tgo.AssociationDefaultRouteTableId.ValueOrEmpty(),
-                PropagationDefaultRouteTableId = tgo.PropagationDefaultRouteTableId.ValueOrEmpty(),
+                SupportsDNS = "enable".Equals(tgo?.DnsSupport?.Value.ValueOrEmpty(), StringComparison.OrdinalIgnoreCase),
+                SupportsMulticast = "enable".Equals(tgo?.MulticastSupport?.Value.ValueOrEmpty(), StringComparison.OrdinalIgnoreCase),
+                AmazonAsn = tgo?.AmazonSideAsn ?? -1,
+                SupportsECMP = "enable".Equals(tgo?.VpnEcmpSupport?.Value.ValueOrEmpty(), StringComparison.OrdinalIgnoreCase),
+                AutoAcceptsSharedAttachments = "enable".Equals(tgo?.AutoAcceptSharedAttachments?.Value.ValueOrEmpty(), StringComparison.OrdinalIgnoreCase),
+                DefaultRouteTableAssociation = "enable".Equals(tgo?.DefaultRouteTableAssociation?.Value.ValueOrEmpty(), StringComparison.OrdinalIgnoreCase),
+                DefaultRouteTablePropagation = "enable".Equals(tgo?.DefaultRouteTablePropagation?.Value.ValueOrEmpty(), StringComparison.OrdinalIgnoreCase),
+                TransitGatewayCidrBlocks = tgo?.TransitGatewayCidrBlocks.ValueOrEmpty(),
+                AssociationDefaultRouteTableId = tgo?.AssociationDefaultRouteTableId.ValueOrEmpty(),
+                PropagationDefaultRouteTableId = tgo?.PropagationDefaultRouteTableId.ValueOrEmpty(),
             };
         }
     }

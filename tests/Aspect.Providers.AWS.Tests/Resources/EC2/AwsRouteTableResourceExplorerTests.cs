@@ -87,7 +87,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             var sut = (AwsRouteTable)resources[0];
             sut.Type.Should().Be(nameof(AwsRouteTable));
             sut.Name.Should().Be("Test");
-            sut.Arn.Should().Be("arn:aws:ec2:eu-west-1:000000000000:route-table/RouteTableId");
+            sut.CloudId.Should().Be("arn:aws:ec2:eu-west-1:000000000000:route-table/RouteTableId");
             sut.Region.Should().Be("eu-west-1");
 
             sut.Associations.Should().HaveCount(1);

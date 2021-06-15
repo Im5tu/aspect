@@ -59,7 +59,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             var sut = (AwsElasticIp)resources[0];
             sut.Type.Should().Be(nameof(AwsElasticIp));
             sut.Name.Should().Be("Test");
-            sut.Arn.Should().Be("arn:aws:ec2:eu-west-1:000000000000:eip/AllocationId");
+            sut.CloudId.Should().Be("arn:aws:ec2:eu-west-1:000000000000:eip/AllocationId");
             sut.Region.Should().Be("eu-west-1");
             sut.Id.Should().Be(nameof(Address.AllocationId));
             sut.AssociationId.Should().Be(nameof(Address.AssociationId));

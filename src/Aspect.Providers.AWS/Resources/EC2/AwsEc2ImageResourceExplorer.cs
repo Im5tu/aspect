@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.EC2;
+using Amazon.EC2.Model;
 using Aspect.Abstractions;
 using Aspect.Providers.AWS.Models;
 using Aspect.Providers.AWS.Models.EC2;
@@ -29,7 +30,10 @@ namespace Aspect.Providers.AWS.Resources.EC2
         {
             using var ec2Client = _creator(new AmazonEC2Config { RegionEndpoint = region });
             var result = new List<IResource>();
-            var response = await ec2Client.DescribeImagesAsync(cancellationToken);
+            var response = await ec2Client.DescribeImagesAsync(new DescribeImagesRequest { Filters = new List<Filter>
+            {
+                new() { Name = "owner-id", Values = new() { account.Id.Id } }
+            }}, cancellationToken);
 
             foreach (var image in response.Images)
             {

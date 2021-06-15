@@ -37,7 +37,10 @@ namespace Aspect.Providers.AWS.Resources.EC2
             string? nextToken = null;
             do
             {
-                var response = await ec2Client.DescribeVpcsAsync(new DescribeVpcsRequest { NextToken = nextToken }, cancellationToken);
+                var response = await ec2Client.DescribeVpcsAsync(new DescribeVpcsRequest { NextToken = nextToken, Filters = new List<Filter>
+                {
+                    new() { Name = "owner-id", Values = new() { account.Id.Id } }
+                }}, cancellationToken);
                 foreach (var vpc in response.Vpcs)
                 {
                     var arn = GenerateArn(account, region, "ec2", $"vpc/{vpc.VpcId}");

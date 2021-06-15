@@ -31,7 +31,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
         //     var sut = (AwsTransitGateway)resources[0];
         //     sut.Type.Should().Be(nameof(AwsTransitGateway));
         //     sut.Name.Should().Be("Test");
-        //     sut.Arn.Should().Be("arn:aws:ec2:eu-west-1:000000000000:image/ImageId");
+        //     sut.CloudId.Should().Be("arn:aws:ec2:eu-west-1:000000000000:image/ImageId");
         //     sut.Region.Should().Be("eu-west-1");
         // }
 
@@ -47,7 +47,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
         //     var sut = (AwsTransitGateway)resources[0];
         //     sut.Type.Should().Be(nameof(AwsTransitGateway));
         //     sut.Name.Should().Be("Test");
-        //     sut.Arn.Should().Be("arn:aws:ec2:eu-west-1:000000000000:image/ImageId");
+        //     sut.CloudId.Should().Be("arn:aws:ec2:eu-west-1:000000000000:image/ImageId");
         //     sut.Region.Should().Be("eu-west-1");
         // }
 

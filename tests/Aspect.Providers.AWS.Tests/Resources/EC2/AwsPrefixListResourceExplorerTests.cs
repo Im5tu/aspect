@@ -53,7 +53,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             var sut = (AwsPrefixList)resources[0];
             sut.Type.Should().Be(nameof(AwsPrefixList));
             sut.Name.Should().Be(nameof(ManagedPrefixList.PrefixListName));
-            sut.Arn.Should().Be(nameof(ManagedPrefixList.PrefixListArn));
+            sut.CloudId.Should().Be(nameof(ManagedPrefixList.PrefixListArn));
             sut.Region.Should().Be("eu-west-1");
             sut.AddressFamily.Should().Be(nameof(ManagedPrefixList.AddressFamily));
             sut.Id.Should().Be(nameof(ManagedPrefixList.PrefixListId));

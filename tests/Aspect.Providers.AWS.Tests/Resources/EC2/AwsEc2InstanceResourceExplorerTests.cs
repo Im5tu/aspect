@@ -177,7 +177,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             var sut = (AwsEc2Instance)resources[0];
             sut.Type.Should().Be(nameof(AwsEc2Instance));
             sut.Name.Should().Be("Test");
-            sut.Arn.Should().Be("arn:aws:ec2:eu-west-1:000000000000:instance/InstanceId");
+            sut.CloudId.Should().Be("arn:aws:ec2:eu-west-1:000000000000:instance/InstanceId");
             sut.Region.Should().Be("eu-west-1");
             sut.Architecture.Should().Be(nameof(Instance.Architecture));
             sut.Hypervisor.Should().Be(nameof(Instance.Hypervisor));
@@ -302,7 +302,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             var sut = (AwsEc2Instance)resources[0];
             sut.Type.Should().Be(nameof(AwsEc2Instance));
             sut.Name.Should().Be("Test");
-            sut.Arn.Should().Be("arn:aws:ec2:eu-west-1:000000000000:instance/InstanceId");
+            sut.CloudId.Should().Be("arn:aws:ec2:eu-west-1:000000000000:instance/InstanceId");
             sut.Region.Should().Be("eu-west-1");
             sut.Architecture.Should().Be(nameof(Instance.Architecture));
             sut.Hypervisor.Should().Be(nameof(Instance.Hypervisor));

@@ -69,7 +69,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             var sut = (AwsEc2Image)resources[0];
             sut.Type.Should().Be(nameof(AwsEc2Image));
             sut.Name.Should().Be("Test");
-            sut.Arn.Should().Be("arn:aws:ec2:eu-west-1:000000000000:image/ImageId");
+            sut.CloudId.Should().Be("arn:aws:ec2:eu-west-1:000000000000:image/ImageId");
             sut.Region.Should().Be("eu-west-1");
             sut.Architecture.Should().Be(nameof(Image.Architecture));
             sut.BootMode.Should().Be("uefi");
@@ -133,7 +133,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             var sut = (AwsEc2Image)resources[0];
             sut.Type.Should().Be(nameof(AwsEc2Image));
             sut.Name.Should().Be("Test");
-            sut.Arn.Should().Be("arn:aws:ec2:eu-west-1:000000000000:image/ImageId");
+            sut.CloudId.Should().Be("arn:aws:ec2:eu-west-1:000000000000:image/ImageId");
             sut.Region.Should().Be("eu-west-1");
             sut.Architecture.Should().Be(nameof(Image.Architecture));
             sut.BootMode.Should().BeNull();

@@ -85,7 +85,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             var sut = (AwsNatGateway)resources[0];
             sut.Type.Should().Be(nameof(AwsNatGateway));
             sut.Name.Should().Be("Test");
-            sut.Arn.Should().Be("arn:aws:ec2:eu-west-1:000000000000:nat-gateway/NatGatewayId");
+            sut.CloudId.Should().Be("arn:aws:ec2:eu-west-1:000000000000:nat-gateway/NatGatewayId");
             sut.Region.Should().Be("eu-west-1");
             sut.Id.Should().Be(nameof(NatGateway.NatGatewayId));
             sut.State.Should().Be("available");

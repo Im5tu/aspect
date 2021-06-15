@@ -35,7 +35,10 @@ namespace Aspect.Providers.AWS.Resources.EC2
             string? nextToken = null;
             do
             {
-                var response = await ec2Client.DescribeNetworkInterfacesAsync(new DescribeNetworkInterfacesRequest { NextToken = nextToken }, cancellationToken);
+                var response = await ec2Client.DescribeNetworkInterfacesAsync(new DescribeNetworkInterfacesRequest { NextToken = nextToken, Filters = new List<Filter>
+                {
+                    new() { Name = "owner-id", Values = new() { account.Id.Id } }
+                }}, cancellationToken);
                 nextToken = response.NextToken;
 
                 foreach (var ni in response.NetworkInterfaces)
@@ -73,13 +76,13 @@ namespace Aspect.Providers.AWS.Resources.EC2
         {
             return new()
             {
-                DeleteOnTermination = attach.DeleteOnTermination,
-                DeviceIndex = attach.DeviceIndex,
-                Id = attach.AttachmentId.ValueOrEmpty(),
-                InstanceId = attach.InstanceId.ValueOrEmpty(),
-                InstanceOwnerId = attach.InstanceOwnerId.ValueOrEmpty(),
-                NetworkCardIndex = attach.NetworkCardIndex,
-                Status = attach.Status?.Value.ValueOrEmpty(),
+                DeleteOnTermination = attach?.DeleteOnTermination ?? false,
+                DeviceIndex = attach?.DeviceIndex ?? -1,
+                Id = attach?.AttachmentId.ValueOrEmpty(),
+                InstanceId = attach?.InstanceId.ValueOrEmpty(),
+                InstanceOwnerId = attach?.InstanceOwnerId.ValueOrEmpty(),
+                NetworkCardIndex = attach?.NetworkCardIndex ?? -1,
+                Status = attach?.Status?.Value.ValueOrEmpty(),
             };
         }
 
@@ -101,13 +104,13 @@ namespace Aspect.Providers.AWS.Resources.EC2
         {
             return new()
             {
-                AllocationId = assoc.AllocationId.ValueOrEmpty(),
-                AssociationId = assoc.AssociationId.ValueOrEmpty(),
-                CarrierIp = assoc.CarrierIp.ValueOrEmpty(),
-                PublicIp = assoc.PublicIp.ValueOrEmpty(),
-                CustomerOwnedIp = assoc.CustomerOwnedIp.ValueOrEmpty(),
-                IpOwnerId = assoc.IpOwnerId.ValueOrEmpty(),
-                PublicDnsName = assoc.PublicDnsName.ValueOrEmpty(),
+                AllocationId = assoc?.AllocationId.ValueOrEmpty(),
+                AssociationId = assoc?.AssociationId.ValueOrEmpty(),
+                CarrierIp = assoc?.CarrierIp.ValueOrEmpty(),
+                PublicIp = assoc?.PublicIp.ValueOrEmpty(),
+                CustomerOwnedIp = assoc?.CustomerOwnedIp.ValueOrEmpty(),
+                IpOwnerId = assoc?.IpOwnerId.ValueOrEmpty(),
+                PublicDnsName = assoc?.PublicDnsName.ValueOrEmpty(),
             };
         }
     }

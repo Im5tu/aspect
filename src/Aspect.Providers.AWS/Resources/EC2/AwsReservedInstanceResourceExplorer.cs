@@ -31,7 +31,7 @@ namespace Aspect.Providers.AWS.Resources.EC2
             using var ec2Client = _creator(new AmazonEC2Config { RegionEndpoint = region });
             var result = new List<IResource>();
 
-            var response = await ec2Client.DescribeReservedInstancesAsync(new DescribeReservedInstancesRequest(), cancellationToken);
+            var response = await ec2Client.DescribeReservedInstancesAsync(cancellationToken);
             foreach (var ri in response.ReservedInstances)
             {
                 var arn = GenerateArn(account, region, "ec2", $"reserved-instances/{ri.ReservedInstancesId}");

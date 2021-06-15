@@ -8,6 +8,7 @@ namespace Aspect.Policies.Tests.CompilerServices
     public class TestResource : IResource
     {
         public string Name { get; set; } = null!;
+        public string CloudId { get; set; } = null!;
         public string Type { get; set; } = nameof(TestResource);
         public string Region { get; } = "eu-west-1";
         public IReadOnlyList<KeyValuePair<string, string>> Tags { get; set; } = new List<KeyValuePair<string, string>>
@@ -48,6 +49,37 @@ namespace Aspect.Policies.Tests.CompilerServices
             {
                 public List<int> Values { get; init; } = new();
             }
+        }
+
+        public bool Equals(IResource? other)
+            => false;
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((TestResource) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(Name);
+            hashCode.Add(CloudId);
+            hashCode.Add(Type);
+            hashCode.Add(Region);
+            hashCode.Add(Tags);
+            hashCode.Add(Int16);
+            hashCode.Add(Int32);
+            hashCode.Add(Int64);
+            hashCode.Add(Decimal);
+            hashCode.Add(Nested);
+            hashCode.Add(Enumerable);
+            hashCode.Add(List);
+            hashCode.Add(Array);
+            hashCode.Add(ListOfStrings);
+            return hashCode.ToHashCode();
         }
     }
 }

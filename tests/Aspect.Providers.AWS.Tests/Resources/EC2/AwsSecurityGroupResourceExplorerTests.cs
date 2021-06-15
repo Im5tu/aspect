@@ -66,7 +66,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             var sut = (AwsSecurityGroup)resources[0];
             sut.Type.Should().Be(nameof(AwsSecurityGroup));
             sut.Name.Should().Be("Test");
-            sut.Arn.Should().Be($"arn:aws:ec2:eu-west-1:000000000000:security-group/{nameof(SecurityGroup.GroupId)}");
+            sut.CloudId.Should().Be($"arn:aws:ec2:eu-west-1:000000000000:security-group/{nameof(SecurityGroup.GroupId)}");
             sut.Region.Should().Be("eu-west-1");
 
             sut.Description.Should().Be(nameof(SecurityGroup.Description));

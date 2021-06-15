@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.EC2;
@@ -29,6 +30,9 @@ namespace Aspect.Providers.AWS.Resources.EC2
 
         protected override async Task<IEnumerable<IResource>> DiscoverResourcesAsync(AwsAccount account, RegionEndpoint region, CancellationToken cancellationToken)
         {
+            if (region == RegionEndpoint.APNortheast3)
+                return Enumerable.Empty<IResource>();
+
             using var ec2Client = _creator(new AmazonEC2Config { RegionEndpoint = region });
             var result = new List<AwsPrefixList>();
 
@@ -37,7 +41,10 @@ namespace Aspect.Providers.AWS.Resources.EC2
             string? nextToken = null;
             do
             {
-                var response = await ec2Client.DescribeManagedPrefixListsAsync(new DescribeManagedPrefixListsRequest { NextToken = nextToken }, cancellationToken);
+                var response = await ec2Client.DescribeManagedPrefixListsAsync(new DescribeManagedPrefixListsRequest { NextToken = nextToken, Filters = new List<Filter>
+                {
+                    new() { Name = "owner-id", Values = new() { account.Id.Id } }
+                }}, cancellationToken);
                 nextToken = response.NextToken;
 
                 foreach (var pl in response.PrefixLists)

@@ -38,7 +38,11 @@ namespace Aspect.Providers.AWS.Resources.EC2
             {
                 var response = await ec2Client.DescribeSecurityGroupsAsync(new DescribeSecurityGroupsRequest
                 {
-                    NextToken = nextToken
+                    NextToken = nextToken,
+                    Filters = new List<Filter>
+                    {
+                        new() { Name = "owner-id", Values = new() { account.Id.Id } }
+                    }
                 }, cancellationToken);
 
                 nextToken = response.NextToken;

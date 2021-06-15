@@ -35,7 +35,10 @@ namespace Aspect.Providers.AWS.Resources.EC2
             string? nextToken = null;
             do
             {
-                var response = await ec2Client.DescribeRouteTablesAsync(new DescribeRouteTablesRequest { NextToken = nextToken }, cancellationToken);
+                var response = await ec2Client.DescribeRouteTablesAsync(new DescribeRouteTablesRequest { NextToken = nextToken, Filters = new List<Filter>
+                {
+                    new() { Name = "owner-id", Values = new() { account.Id.Id } }
+                }}, cancellationToken);
                 nextToken = response.NextToken;
 
                 foreach (var rt in response.RouteTables)

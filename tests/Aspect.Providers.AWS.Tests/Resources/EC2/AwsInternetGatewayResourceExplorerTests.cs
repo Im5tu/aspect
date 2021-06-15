@@ -85,7 +85,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             var sut = (AwsInternetGateway)resources[0];
             sut.Type.Should().Be(nameof(AwsInternetGateway));
             sut.Name.Should().Be("Test");
-            sut.Arn.Should().Be("arn:aws:ec2:eu-west-1:000000000000:internet-gateway/InternetGatewayId");
+            sut.CloudId.Should().Be("arn:aws:ec2:eu-west-1:000000000000:internet-gateway/InternetGatewayId");
             sut.Region.Should().Be("eu-west-1");
             sut.OwnerId.Should().Be(nameof(InternetGateway.OwnerId));
             sut.Id.Should().Be(nameof(InternetGateway.InternetGatewayId));

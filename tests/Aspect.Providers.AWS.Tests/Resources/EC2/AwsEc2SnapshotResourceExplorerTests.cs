@@ -90,7 +90,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             var sut = (AwsEc2Snapshot)resources[0];
             sut.Type.Should().Be(nameof(AwsEc2Snapshot));
             sut.Name.Should().Be("Test");
-            sut.Arn.Should().Be("arn:aws:ec2:eu-west-1:000000000000:snapshot/SnapshotId");
+            sut.CloudId.Should().Be("arn:aws:ec2:eu-west-1:000000000000:snapshot/SnapshotId");
             sut.Region.Should().Be("eu-west-1");
             sut.DataEncryptionKeyId.Should().Be(nameof(Snapshot.DataEncryptionKeyId));
             sut.Description.Should().Be(nameof(Snapshot.Description));
@@ -144,7 +144,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             var sut = (AwsEc2Snapshot)resources[0];
             sut.Type.Should().Be(nameof(AwsEc2Snapshot));
             sut.Name.Should().Be("Test");
-            sut.Arn.Should().Be("arn:aws:ec2:eu-west-1:000000000000:snapshot/SnapshotId");
+            sut.CloudId.Should().Be("arn:aws:ec2:eu-west-1:000000000000:snapshot/SnapshotId");
             sut.Region.Should().Be("eu-west-1");
             sut.DataEncryptionKeyId.Should().Be(nameof(Snapshot.DataEncryptionKeyId));
             sut.Description.Should().Be(nameof(Snapshot.Description));
