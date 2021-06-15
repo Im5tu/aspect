@@ -10,9 +10,7 @@ using Aspect.Policies;
 using Aspect.Policies.BuiltIn;
 using Aspect.Policies.CompilerServices;
 using Aspect.Policies.CompilerServices.CompilationUnits;
-using Aspect.Policies.CompilerServices.Generator;
 using Aspect.Policies.Suite;
-using Spectre.Console;
 
 namespace Aspect.Services
 {
@@ -57,27 +55,18 @@ namespace Aspect.Services
             // Compile all the policies
             var (evaluators, types) = GetCompiledPolicies(policies);
 
+            var evaluationPipeline = new EvaluationPipeline(evaluators);
+
             // Load all of the resources
-            var resources = await LoadResourcesAsync(scope.Regions ?? provider.GetAllRegions(), types, provider, cancellationToken);
+            await LoadResourcesAsync(scope.Regions ?? provider.GetAllRegions(), types, provider, evaluationPipeline, cancellationToken);
 
             // Validation
-            var failedResources = new List<PolicySuiteRunResult.FailedResource>();
-            foreach (var resource in resources)
-            {
-                foreach (var eval in evaluators)
-                {
-                    if (eval.Evaluator!(resource) == ResourcePolicyExecution.Failed)
-                        failedResources.Add(new PolicySuiteRunResult.FailedResource { Resource = resource, Source = eval.Source.GetPolicyName() });
-                }
-            }
-
+            var failedResources = await evaluationPipeline.CompleteAsync();
             return new PolicySuiteRunResult { FailedResources = failedResources };
         }
 
-        private async Task<List<IResource>> LoadResourcesAsync(IEnumerable<string> regions, List<Type> types, ICloudProvider provider, CancellationToken cancellationToken)
+        private async Task LoadResourcesAsync(IEnumerable<string> regions, List<Type> types, ICloudProvider provider, EvaluationPipeline evaluationPipeline, CancellationToken cancellationToken)
         {
-            // TODO :: Make this an evaluation channel so we evaluate once a provider has completed loading
-            var resources = new List<IResource>();
             var tasks = new List<Task<IEnumerable<IResource>>>();
             foreach (var region in regions)
             {
@@ -88,9 +77,7 @@ namespace Aspect.Services
             }
 
             foreach (var tsk in tasks)
-                resources.AddRange(await tsk);
-
-            return resources;
+                await evaluationPipeline.AddResources(await tsk);
         }
         private List<CompilationUnit> GetPolicies(PolicyElement scope)
         {
@@ -140,20 +127,6 @@ namespace Aspect.Services
             {
                 foreach (var unit in _policyLoader.LoadPoliciesInDirectory(source, SearchOption.AllDirectories))
                     yield return unit;
-            }
-        }
-
-        private class ExecutablePolicy
-        {
-            internal Func<IResource, ResourcePolicyExecution> Evaluator { get; }
-            internal Type Resource { get; }
-            internal CompilationUnit Source { get; }
-
-            public ExecutablePolicy(Func<IResource, ResourcePolicyExecution> evaluator, Type resource, CompilationUnit source)
-            {
-                Evaluator = evaluator;
-                Resource = resource;
-                Source = source;
             }
         }
     }
