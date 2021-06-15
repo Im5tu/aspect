@@ -30,7 +30,7 @@ namespace Aspect.Services
 
                 if (path.StartsWith("builtin\\", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (_builtInPolicyProvider.GetAllResources().All(x => x.Name != path))
+                    if (_builtInPolicyProvider.GetAllResources().All(x => !x.Name.Equals(path, StringComparison.OrdinalIgnoreCase)))
                         return ValidationResult.Error($"The path '{path}' is not a built in resource.");
                 }
                 else

@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 using Aspect.Abstractions;
 using Aspect.Extensions;
 using Aspect.Policies;
+using Aspect.Policies.BuiltIn;
 using Aspect.Policies.CompilerServices;
 using Aspect.Policies.CompilerServices.CompilationUnits;
 using Aspect.Policies.CompilerServices.Generator;
 using Aspect.Policies.Suite;
+using Spectre.Console;
 
 namespace Aspect.Services
 {
@@ -19,14 +21,17 @@ namespace Aspect.Services
         private readonly IReadOnlyDictionary<string, ICloudProvider> _cloudProviders;
         private readonly IPolicyCompiler _policyCompiler;
         private readonly IPolicyLoader _policyLoader;
+        private readonly IBuiltInPolicyProvider _builtInPolicyProvider;
 
         public PolicySuiteRunner(IReadOnlyDictionary<string, ICloudProvider> cloudProviders,
             IPolicyCompiler policyCompiler,
-            IPolicyLoader policyLoader)
+            IPolicyLoader policyLoader,
+            IBuiltInPolicyProvider builtInPolicyProvider)
         {
             _cloudProviders = cloudProviders;
             _policyCompiler = policyCompiler;
             _policyLoader = policyLoader;
+            _builtInPolicyProvider = builtInPolicyProvider;
         }
 
         public async Task<IEnumerable<PolicySuiteRunResult>> RunPoliciesAsync(PolicySuite suite, CancellationToken cancellationToken = default)
@@ -53,7 +58,7 @@ namespace Aspect.Services
             var (evaluators, types) = GetCompiledPolicies(policies);
 
             // Load all of the resources
-            var resources = await LoadResourcesAsync(scope.Regions!, types, provider, cancellationToken);
+            var resources = await LoadResourcesAsync(scope.Regions ?? provider.GetAllRegions(), types, provider, cancellationToken);
 
             // Validation
             var failedResources = new List<PolicySuiteRunResult.FailedResource>();
@@ -71,14 +76,19 @@ namespace Aspect.Services
 
         private async Task<List<IResource>> LoadResourcesAsync(IEnumerable<string> regions, List<Type> types, ICloudProvider provider, CancellationToken cancellationToken)
         {
+            // TODO :: Make this an evaluation channel so we evaluate once a provider has completed loading
             var resources = new List<IResource>();
+            var tasks = new List<Task<IEnumerable<IResource>>>();
             foreach (var region in regions)
             {
                 foreach (var type in types)
                 {
-                    resources.AddRange(await provider.DiscoverResourcesAsync(region, type, _ => { }, cancellationToken));
+                    tasks.Add(provider.DiscoverResourcesAsync(region, type, _ => { }, cancellationToken));
                 }
             }
+
+            foreach (var tsk in tasks)
+                resources.AddRange(await tsk);
 
             return resources;
         }
@@ -109,6 +119,7 @@ namespace Aspect.Services
             var types = compiledPolicies.Select(x => x!.Resource!).Distinct().ToList();
             return (compiledPolicies, types);
         }
+
         private IEnumerable<CompilationUnit> LoadPoliciesByName(string source)
         {
             if (source.EndsWith(FileExtensions.PolicySuiteExtension, StringComparison.OrdinalIgnoreCase))
@@ -119,6 +130,11 @@ namespace Aspect.Services
                 var result = _policyLoader.LoadPolicy(source);
                 if (result is { })
                     yield return result;
+            }
+            else if (source.StartsWith("Builtin", StringComparison.OrdinalIgnoreCase))
+            {
+                foreach (var unit in _builtInPolicyProvider.GetAllResources().Where(x => x.Name.StartsWith(source, StringComparison.OrdinalIgnoreCase) && x.Name.EndsWith(FileExtensions.PolicyFileExtension, StringComparison.OrdinalIgnoreCase)))
+                    yield return unit;
             }
             else if (File.GetAttributes(source).HasFlag(FileAttributes.Directory))
             {
