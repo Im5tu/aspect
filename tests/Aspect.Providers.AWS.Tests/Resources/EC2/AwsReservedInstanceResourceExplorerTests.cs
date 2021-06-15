@@ -28,7 +28,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
         {
             var account = GetAccount();
             var target = GetTarget(out var ec2Client);
-            ec2Client.Setup(x => x.DescribeReservedInstancesAsync(It.IsAny<DescribeReservedInstancesRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new DescribeReservedInstancesResponse
+            ec2Client.Setup(x => x.DescribeReservedInstancesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new DescribeReservedInstancesResponse
                 {
                     ReservedInstances = new List<ReservedInstances>
                     {

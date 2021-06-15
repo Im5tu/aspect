@@ -28,7 +28,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             var account = GetAccount();
             var target = GetTarget(out var ec2Client);
 
-            ec2Client.Setup(x => x.DescribeImagesAsync(It.IsAny<CancellationToken>()))
+            ec2Client.Setup(x => x.DescribeImagesAsync(It.IsAny<DescribeImagesRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new DescribeImagesResponse
                 {
                     Images = new List<Image>
@@ -98,7 +98,7 @@ namespace Aspect.Providers.AWS.Tests.Resources.EC2
             var account = GetAccount();
             var target = GetTarget(out var ec2Client);
 
-            ec2Client.Setup(x => x.DescribeImagesAsync(It.IsAny<CancellationToken>()))
+            ec2Client.Setup(x => x.DescribeImagesAsync(It.IsAny<DescribeImagesRequest>(),It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new DescribeImagesResponse
                 {
                     Images = new List<Image>
