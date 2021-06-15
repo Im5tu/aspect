@@ -1,16 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Aspect.Abstractions
 {
     /// <summary>
     ///     Represents a resource in a cloud provider
     /// </summary>
-    public interface IResource
+    public interface IResource : IEquatable<IResource>
     {
         /// <summary>
         ///     The name of the resource
         /// </summary>
         string Name { get; }
+
+        /// <summary>
+        ///     The cloud specific unique identifier for this resource, eg: the AWS ARN
+        /// </summary>
+        string CloudId { get; }
 
         /// <summary>
         ///     The type of the resource to be referenced in policies
