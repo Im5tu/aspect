@@ -32,7 +32,7 @@ namespace Aspect.Providers.AWS
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Console.WriteLine($"{ResourceType.Name} ({region}) - {e.Message}");
                 throw;
             }
         }
