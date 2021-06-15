@@ -11,9 +11,9 @@ An Elastic IP address is a static IPv4 address designed for dynamic cloud comput
 |Name|Description|Type|
 |----------|----------|----------|
 |Account|The account that is associated with the resource.|[AwsAccount](/docs/aws/resources/awsaccount/)|
-|Arn|The Amazon Resource Names (ARN) uniquely identifying an AWS resource.|String|
 |AssociationId|The ID representing the association of the address with an instance in a VPC.|String|
 |CarrierIp|The carrier IP address associated. This option is only available for network interfaces which reside in a subnet in a Wavelength Zone (for example an EC2 instance).|String|
+|CloudId|The cloud specific unique identifier for this resource, eg: AWS Arn.|String|
 |CustomerOwnedIp|The customer-owned IP address.|String|
 |CustomerOwnedIpv4Pool|The ID of the customer-owned address pool.|String|
 |Id|The ID representing the allocation of the address for use with EC2-VPC.|String|

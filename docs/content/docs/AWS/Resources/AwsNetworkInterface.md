@@ -11,10 +11,10 @@ An elastic network interface is a logical networking component in a VPC that rep
 |Name|Description|Type|
 |----------|----------|----------|
 |Account|The account that is associated with the resource.|[AwsAccount](/docs/aws/resources/awsaccount/)|
-|Arn|The Amazon Resource Names (ARN) uniquely identifying an AWS resource.|String|
 |Association|The association information for an Elastic IP address (IPv4) associated with the network interface.|[NetworkAssociation](#networkassociation)|
 |Attachment|The network interface attachment.|[NetworkAttachment](#networkattachment)|
 |AvailabilityZone|The Availability Zone.|String|
+|CloudId|The cloud specific unique identifier for this resource, eg: AWS Arn.|String|
 |Description|A description.|String|
 |Groups|Any security groups for the network interface. There may be 0 or more entries in this collection.|Collection\<[Group](#group)>|
 |Id|The ID of the network interface.|String|

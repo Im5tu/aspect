@@ -12,8 +12,8 @@ A prefix list is a set of one or more CIDR blocks. You can use prefix lists to m
 |----------|----------|----------|
 |Account|The account that is associated with the resource.|[AwsAccount](/docs/aws/resources/awsaccount/)|
 |AddressFamily|The IP address version.|String|
-|Arn|The Amazon Resource Names (ARN) uniquely identifying an AWS resource.|String|
 |Cidrs|Information about the prefix list entries. There may be 0 or more entries in this collection.|Collection\<String>|
+|CloudId|The cloud specific unique identifier for this resource, eg: AWS Arn.|String|
 |Id|The ID of the prefix list.|String|
 |Name|The name of the resource.|String|
 |OwnerId|The ID of the owner of the prefix list.|String|

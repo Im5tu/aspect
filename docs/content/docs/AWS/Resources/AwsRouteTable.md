@@ -11,8 +11,8 @@ A route table contains a set of rules, called routes, that are used to determine
 |Name|Description|Type|
 |----------|----------|----------|
 |Account|The account that is associated with the resource.|[AwsAccount](/docs/aws/resources/awsaccount/)|
-|Arn|The Amazon Resource Names (ARN) uniquely identifying an AWS resource.|String|
 |Associations|The associations between the route table and one or more subnets or a gateway. There may be 0 or more entries in this collection.|Collection\<[Association](#association)>|
+|CloudId|The cloud specific unique identifier for this resource, eg: AWS Arn.|String|
 |Id|The ID of the route table.|String|
 |Name|The name of the resource.|String|
 |OwnerId|The ID of the AWS account that owns the route table.|String|

@@ -11,8 +11,8 @@ Reserved Instances (RI) provide a significant discount (up to 72%) compared to O
 |Name|Description|Type|
 |----------|----------|----------|
 |Account|The account that is associated with the resource.|[AwsAccount](/docs/aws/resources/awsaccount/)|
-|Arn|The Amazon Resource Names (ARN) uniquely identifying an AWS resource.|String|
 |AvailabilityZone|The Availability Zone in which the Reserved Instance can be used.|String|
+|CloudId|The cloud specific unique identifier for this resource, eg: AWS Arn.|String|
 |CurrencyCode|The currency of the Reserved Instance. It's specified using ISO 4217 standard currency codes.|String|
 |Expires|The time when the Reserved Instance expires.|DateTime|
 |FixedPrice|The purchase price of the Reserved Instance.|Single|

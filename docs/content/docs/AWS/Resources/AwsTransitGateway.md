@@ -11,7 +11,7 @@ AWS Transit Gateway connects VPCs and on-premises networks through a central hub
 |Name|Description|Type|
 |----------|----------|----------|
 |Account|The account that is associated with the resource.|[AwsAccount](/docs/aws/resources/awsaccount/)|
-|Arn|The Amazon Resource Names (ARN) uniquely identifying an AWS resource.|String|
+|CloudId|The cloud specific unique identifier for this resource, eg: AWS Arn.|String|
 |Configuration|The current configuration of the transit gateway.|[Config](#config)|
 |Description|The description of the transit gateway.|String|
 |Id|The ID of the transit gateway.|String|

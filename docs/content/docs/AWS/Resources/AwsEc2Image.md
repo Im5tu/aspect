@@ -12,8 +12,8 @@ The AMIs, AKIs, and ARIs available to you or all of the images available to you.
 |----------|----------|----------|
 |Account|The account that is associated with the resource.|[AwsAccount](/docs/aws/resources/awsaccount/)|
 |Architecture|The architecture of the image.|String|
-|Arn|The Amazon Resource Names (ARN) uniquely identifying an AWS resource.|String|
 |BootMode|The boot mode of the image. For more information, see "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ami-boot.html" (Boot modes) in the Amazon Elastic Compute Cloud User Guide.|String|
+|CloudId|The cloud specific unique identifier for this resource, eg: AWS Arn.|String|
 |Description|The description of the AMI that was provided during image creation.|String|
 |EnaSupport|Specifies whether enhanced networking with ENA is enabled.|Boolean|
 |Hypervisor|The hypervisor type of the image.|String|

@@ -12,8 +12,8 @@ Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides secure,
 |----------|----------|----------|
 |Account|The account that is associated with the resource.|[AwsAccount](/docs/aws/resources/awsaccount/)|
 |Architecture|The architecture of the image.|String|
-|Arn|The Amazon Resource Names (ARN) uniquely identifying an AWS resource.|String|
 |BootMode|The boot mode of the image. For more information, see "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ami-boot.html" (Boot modes) in the Amazon Elastic Compute Cloud User Guide.|String|
+|CloudId|The cloud specific unique identifier for this resource, eg: AWS Arn.|String|
 |CpuOptions|The CPU options for the instance.|[Cpu](#cpu)|
 |EbsOptimized|Indicates whether the instance is optimized for Amazon EBS I/O. This optimization provides dedicated throughput to Amazon EBS and an optimized configuration stack to provide optimal I/O performance. This optimization isn't available with all instance types.|Boolean|
 |EnaSupport|Specifies whether enhanced networking with ENA is enabled.|Boolean|

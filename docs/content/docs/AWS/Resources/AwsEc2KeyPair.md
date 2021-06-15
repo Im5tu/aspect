@@ -11,7 +11,7 @@ A key pair, consisting of a private key and a public key, is a set of security c
 |Name|Description|Type|
 |----------|----------|----------|
 |Account|The account that is associated with the resource.|[AwsAccount](/docs/aws/resources/awsaccount/)|
-|Arn|The Amazon Resource Names (ARN) uniquely identifying an AWS resource.|String|
+|CloudId|The cloud specific unique identifier for this resource, eg: AWS Arn.|String|
 |Fingerprint|If you used CreateKeyPair to create the key pair, this is the SHA-1 digest of the DER encoded private key. If you used ImportKeyPair to provide AWS the public key, this is the MD5 public key fingerprint as specified in section 4 of RFC4716.|String|
 |Id|The ID of the key pair.|String|
 |Name|The name of the resource.|String|

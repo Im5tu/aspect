@@ -12,7 +12,7 @@ Network address translation (NAT) gateways enable instances in a private subnet 
 |----------|----------|----------|
 |Account|The account that is associated with the resource.|[AwsAccount](/docs/aws/resources/awsaccount/)|
 |Addresses|Information about the IP addresses and network interface associated with the NAT gateway. There may be 0 or more entries in this collection.|Collection\<[Address](#address)>|
-|Arn|The Amazon Resource Names (ARN) uniquely identifying an AWS resource.|String|
+|CloudId|The cloud specific unique identifier for this resource, eg: AWS Arn.|String|
 |FailureCode|If the NAT gateway could not be created, specifies the error code for the failure.|String|
 |Id|The ID of the NAT gateway.|String|
 |Name|The name of the resource.|String|

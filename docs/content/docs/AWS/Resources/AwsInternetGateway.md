@@ -11,8 +11,8 @@ Internet gateway are horizontally scaled, redundant, and highly available VPC co
 |Name|Description|Type|
 |----------|----------|----------|
 |Account|The account that is associated with the resource.|[AwsAccount](/docs/aws/resources/awsaccount/)|
-|Arn|The Amazon Resource Names (ARN) uniquely identifying an AWS resource.|String|
 |Attachments|Any VPCs attached to the internet gateway. There may be 0 or more entries in this collection.|Collection\<[Attachment](#attachment)>|
+|CloudId|The cloud specific unique identifier for this resource, eg: AWS Arn.|String|
 |Id|The ID of the internet gateway.|String|
 |Name|The name of the resource.|String|
 |OwnerId|The ID of the AWS account that owns the internet gateway.|String|

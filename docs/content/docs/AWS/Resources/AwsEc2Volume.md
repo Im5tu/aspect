@@ -11,9 +11,9 @@ An Amazon EBS volume is a durable, block-level storage device that you can attac
 |Name|Description|Type|
 |----------|----------|----------|
 |Account|The account that is associated with the resource.|[AwsAccount](/docs/aws/resources/awsaccount/)|
-|Arn|The Amazon Resource Names (ARN) uniquely identifying an AWS resource.|String|
 |Attachments|Describes the attachments to an EC2 instances. There may be 0 or more entries in this collection.|Collection\<[VolumeAttachment](#volumeattachment)>|
 |AvailabilityZone|The Availability Zone for the volume.|String|
+|CloudId|The cloud specific unique identifier for this resource, eg: AWS Arn.|String|
 |Encrypted|Indicates whether the volume is encrypted.|Boolean|
 |FastRestored|Indicates whether the volume was created using fast snapshot restore.|Boolean|
 |Id|The ID of the volume.|String|
