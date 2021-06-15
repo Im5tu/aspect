@@ -20,12 +20,6 @@ namespace Aspect.Policies.CompilerServices.Generator
             // Set the expressions for the function body
             var expressions = new List<Expression>();
 
-            // Setup arguments and variable to hold the correct type
-            var resourceType = typeof(IResource);
-            var inputParameter = Expression.Parameter(resourceType);
-            var variableParameter = Expression.Variable(policy.ResourceType);
-            var variableAssignment = Expression.Assign(variableParameter, Expression.Convert(inputParameter, policy.ResourceType));
-
             // Setup the return stuff
             var resultVariable = Expression.Variable(typeof(ResourcePolicyExecution), "result");
             var resultVariableAssignment = Expression.Assign(resultVariable, Expression.Constant(ResourcePolicyExecution.Failed));
@@ -35,6 +29,12 @@ namespace Aspect.Policies.CompilerServices.Generator
             var returnByPolicy = Expression.Block(Expression.Assign(resultVariable, Expression.Constant(ResourcePolicyExecution.SkippedByPolicy)), Expression.Return(returnTarget, resultVariable));
             var returnPassed = Expression.Block(Expression.Assign(resultVariable, Expression.Constant(ResourcePolicyExecution.Passed)), Expression.Return(returnTarget, resultVariable));
             var returnFailed = Expression.Block(Expression.Assign(resultVariable, Expression.Constant(ResourcePolicyExecution.Failed)), Expression.Return(returnTarget, resultVariable));
+
+            // Setup arguments and variable to hold the correct type
+            var resourceType = typeof(IResource);
+            var inputParameter = Expression.Parameter(resourceType);
+            var variableParameter = Expression.Variable(policy.ResourceType);
+            var variableAssignment = Expression.IfThenElse(Expression.Not(Expression.TypeEqual(inputParameter, policy.ResourceType)), returnByType, Expression.Assign(variableParameter, Expression.Convert(inputParameter, policy.ResourceType)));
 
             // Ensure that we start the function body with the correct parameters
             expressions.Add(resultVariableAssignment);
